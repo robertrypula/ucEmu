@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>ucEmu</title>
+
+        <script src="drivers/KeyboardDriver.js"></script>
+        <script src="drivers/ScreenDriver.js"></script>
+        <script src="drivers/TimerDriver.js"></script>
+        <script src="services/FrameBufferService.js"></script>
+        <script src="services/InterpolationService.js"></script>
+        <script src="services/KeyboardService.js"></script>
+        <script src="services/RasterizerService.js"></script>
+
+        <!-- ucEmu library files -->
+        <script src="ucEmu/devices/KeyboardDevice.js"></script>
+        <script src="ucEmu/devices/ScreenDevice.js"></script>
+        <script src="ucEmu/devices/TimerDevice.js"></script>
+        <script src="ucEmu/ucEmu.js"></script>
+
+        <script>
+            'use strict';
+
+            var timerOne = 0;
+            var timerOneMs = 5500;
+            var timerTwo = 0;
+            var timerTwoMs = 500;
+            var sinceStartMsPrev = 0;
+            var diffMs;
+            var randomChar;
+            var text = "";
+
+            function rasterizerTriangle(x1, y1, x2, y2, x3, y3)
+            {
+                fbSet(x1, y1, 15);
+                fbSet(x2, y2, 15);
+                fbSet(x3, y3, 15);
+            }
+
+            var trXY = [-1, -1, -1, -1, -1, -1];
+            var trXYprev = [-1, -1, -1, -1, -1, -1];
+            var header = "triangle test";
+
+            function demo1()
+            {
+                var t1 = timerOne / timerOneMs;
+
+                fbClear(0);
+                rasterizerTriangle(
+                    round(interpolationLinear([trXYprev[0], trXY[0]], t1)), round(interpolationLinear([trXYprev[1], trXY[1]], t1)),
+                    round(interpolationLinear([trXYprev[2], trXY[2]], t1)), round(interpolationLinear([trXYprev[3], trXY[3]], t1)),
+                    round(interpolationLinear([trXYprev[4], trXY[4]], t1)), round(interpolationLinear([trXYprev[5], trXY[5]], t1))
+                );
+
+                if (header !== "") {
+                    rasterizerDrawText(round(0.5 * (fbWidth - header.length * 6) + sinMul(0.5 * fbWidth, t1)), round(0.5 * (fbHeight - 8)), header);
+                }
+
+                timerOne += diffMs;
+                if (timerOne > timerOneMs) {
+                    for (var i = 0; i < 6; i++) {
+                        trXYprev[i] = trXY[i];
+                        trXY[i] = (i % 2 === 0) ? randomInt(-0.25 * fbWidth, 1.25 * fbWidth) : randomInt(-0.25 * fbHeight, 1.25 * fbHeight)
+                    }
+                    header = "";
+
+                    timerOne = timerOne % timerOneMs;
+                }
+            }
+
+            function demo0()
+            {
+                var t1 = timerOne / timerOneMs;
+
+                if (kbEvents.length) {
+                    var event = kbEvents.shift();
+                    text += event < 128 ? event : '';
+                }
+
+                fbClear(0);
+                rasterizerDrawRect(
+                    round(0.25 * fbWidth + sinMul(0.2 * fbWidth, 0.132 - t1)),
+                    round(0.25 * fbHeight + sinMul(0.2 * fbHeight, 0.26 - t1)),
+                    round(0.75 * fbWidth + sinMul(0.2 * fbWidth, 0.674 - t1)),
+                    round(0.75 * fbHeight + sinMul(0.2 * fbHeight, 0.435 - t1))
+                );
+                rasterizerDrawText(round(sinMul(0.5 * fbWidth, t1)), 0, "ucEmu lib 2015");
+                rasterizerDrawText(round(sinMul(0.1 * fbWidth, t1)), 10, text);
+
+                var state = "";
+
+                for (var i = kbKeyAU; i <= kbKeyACT; i++) {
+                    state += kbPressed(i) ? "+" : "-";
+                }
+                rasterizerDrawText(0, 20, state);
+                rasterizerDrawChar(0, 30, randomChar);
+
+                timerOne += diffMs;
+                if (timerOne > timerOneMs) {
+                    text = "";
+                    timerOne = timerOne % timerOneMs;
+                }
+
+                timerTwo += diffMs;
+                if (timerTwo > timerTwoMs) {
+                    randomChar = String.fromCharCode(Math.round(String(' ').charCodeAt(0) + Math.random()*26));
+                    timerTwo = timerTwo % timerTwoMs;
+                }
+            }
+
+            // ------------------------------------
+
+            var demo = -1;
+
+            function engineTimeLapse(sinceStartMs)
+            {
+                diffMs = sinceStartMs - sinceStartMsPrev;
+                sinceStartMsPrev = sinceStartMs;
+
+                if (demo === -1) {
+                    demo = randomInt(0, 1);
+                }
+
+                switch (demo) {
+                    case 0:
+                        demo0();
+                        break;
+                    case 1:
+                        demo1();
+                        break;
+                }
+            }
+
+            function randomInt(min, max) 
+            {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+        
+            function round(x)
+            {
+                return Math.round(x);
+            }
+
+            function sinMul(m, x)
+            {
+                return m * Math.sin(2 * Math.PI * x);
+            }
+
+            // ------------------------------
+
+            function init()
+            {
+                kbInit();
+                fbInit(96, 48);
+            }
+
+            function loop()
+            {
+                var sinceStartMs;
+
+                driverKeyboardUpdate();
+                sinceStartMs = driverTimerGetSinceStartMs();
+                engineTimeLapse(sinceStartMs);
+                driverScreenUpdate();
+            }
+
+        </script>
+
+        <style>
+            body, html { overflow: hidden; width: 100%; height: 100%; display: block; border: none; outline: 0; margin: 0; padding: 0; }
+            #c { display: block; border: none; outline: 0; margin: 0; padding: 0; position: relative; z-index: 9; }
+            #fps { display: block; width: 50px; height: 50px; position: fixed; top: 10px; left: 10px; z-index: 10; color: black; font-family: Arial; font-weight: bold; font-size: 25px; line-height: 1em; }
+        </style>
+    </head>
+
+    <body onLoad="appRun()" onResize="appResize()">
+        <canvas id="c"></canvas>
+        <div id="fps"></div>
+    </body>
+</html>
