@@ -2,6 +2,7 @@
 <html>
     <head lang="en">
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>ucEmu</title>
 
         <script src="drivers/KeyboardDriver.js"></script>
@@ -30,11 +31,101 @@
             var randomChar;
             var text = "";
 
-            function rasterizerTriangle(x1, y1, x2, y2, x3, y3)
+            function rasterizerDrawTriangle(x1, y1, x2, y2, x3, y3)
             {
-                fbSet(x1, y1, 15);
-                fbSet(x2, y2, 15);
-                fbSet(x3, y3, 15);
+                fbSet(x1, y1);
+                fbSet(x2, y2);
+                fbSet(x3, y3);
+
+                rasterizerDrawLine(x1, y1, x2, y2);
+                rasterizerDrawLine(x2, y2, x3, y3);
+                rasterizerDrawLine(x3, y3, x1, y1);
+            }
+
+            function rasterizerDrawLine(x1, y1, x2, y2)
+            {
+                var slowPos, fastPos;
+                var fast, slow;
+                var xMode, e;
+
+                if (x1 == x2) {
+                    rasterizerDrawLineV(y1, y2, x1);
+                    return;
+                }
+
+                if (y1 == y2) {
+                    rasterizerDrawLineH(x1, x2, y1);
+                    return;
+                }
+
+                // TODO: clip line here
+
+                // bresenham line below
+                xMode = Math.abs(x2 - x1) >= Math.abs(y2 - y1);
+                if ((xMode && x1 > x2) || (!xMode && y1 > y2)) {
+                    var tmp;
+
+                    tmp = x1;
+                    x1 = x2;
+                    x2 = tmp;
+                    tmp = y1;
+                    y1 = y2;
+                    y2 = tmp;
+                }
+                fast = xMode ? x2 - x1 : y2 - y1;
+                slow = xMode ? y2 - y1 : x2 - x1;
+                slowPos = xMode ? y1 : x1;
+                fastPos = xMode ? x1 : y1;
+                xMode ? fbSet(fastPos, slowPos) : fbSet(slowPos, fastPos);
+                e = fast >> 2;
+                for (var i = 0; i < fast; i++) {
+                    fastPos++;
+                    e = e - (slow > 0 ? slow : -slow);
+                    if (e < 0) {
+                        e = e + fast;
+                        slowPos = slow > 0 ? slowPos + 1 : slowPos - 1;
+                    }
+                    xMode ? fbSet(fastPos, slowPos) : fbSet(slowPos, fastPos);
+                }
+            }
+
+            var shadeTest = "Shade test";
+            var shadeCurrent = 0;
+
+            function demo2()
+            {
+                var t1 = timerOne / timerOneMs;
+
+                fbSetColor(7);
+                fbClear();
+
+                var barWidth = Math.floor(fbWidth / FB_COLORS);
+                for (var bar = 0; bar < FB_COLORS; bar++) {
+                    for (var y = 0; y < round(0.5 * fbHeight); y++) {
+                        fbSetColor(bar);
+                        rasterizerDrawLineH(
+                            bar * barWidth, 
+                            (bar + 1) * barWidth - 3, 
+                            y + Math.abs(round(sinMul(0.25 * fbHeight, t1)))
+                        );
+                    }
+                }
+                fbSetColor(shadeCurrent);
+                for (var y = round(0.6 * fbHeight); y < fbHeight - 1; y++) {
+                    rasterizerDrawLineH(1, fbWidth - 2, y);
+                }
+
+                if (shadeTest !== "") {
+                    fbSetColor(0);
+                    rasterizerDrawText(round(0.5 * (fbWidth - shadeTest.length * 6) + sinMul(0.5 * fbWidth, t1)), round(0.5 * (fbHeight - 8)), shadeTest);
+                }
+
+                timerOne += diffMs;
+                if (timerOne > timerOneMs) {
+                    shadeTest = "";
+                    timerOne = timerOne % timerOneMs;
+                    shadeCurrent = (shadeCurrent + 1) % FB_COLORS;
+                }
             }
 
             var trXY = [-1, -1, -1, -1, -1, -1];
@@ -45,8 +136,10 @@
             {
                 var t1 = timerOne / timerOneMs;
 
-                fbClear(0);
-                rasterizerTriangle(
+                fbSetColor(7);
+                fbClear();
+                fbSetColor(0);
+                rasterizerDrawTriangle(
                     round(interpolationLinear([trXYprev[0], trXY[0]], t1)), round(interpolationLinear([trXYprev[1], trXY[1]], t1)),
                     round(interpolationLinear([trXYprev[2], trXY[2]], t1)), round(interpolationLinear([trXYprev[3], trXY[3]], t1)),
                     round(interpolationLinear([trXYprev[4], trXY[4]], t1)), round(interpolationLinear([trXYprev[5], trXY[5]], t1))
@@ -77,7 +170,9 @@
                     text += event < 128 ? event : '';
                 }
 
-                fbClear(0);
+                fbSetColor(7);
+                fbClear();
+                fbSetColor(0);
                 rasterizerDrawRect(
                     round(0.25 * fbWidth + sinMul(0.2 * fbWidth, 0.132 - t1)),
                     round(0.25 * fbHeight + sinMul(0.2 * fbHeight, 0.26 - t1)),
@@ -118,7 +213,7 @@
                 sinceStartMsPrev = sinceStartMs;
 
                 if (demo === -1) {
-                    demo = randomInt(0, 1);
+                    demo = randomInt(0, 2);
                 }
 
                 switch (demo) {
@@ -127,6 +222,9 @@
                         break;
                     case 1:
                         demo1();
+                        break;
+                    case 2:
+                        demo2();
                         break;
                 }
             }

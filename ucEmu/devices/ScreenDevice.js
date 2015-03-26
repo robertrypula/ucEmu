@@ -1,3 +1,7 @@
+var DEV_SCREEN_PIX_DARK = '#3b4128';
+var DEV_SCREEN_PIX_LIGHT = '#909c7c';
+var DEV_SCREEN_BACKGROUND = '#96a488';
+
 var devScrOp = -1;
 var devScrContext = 0;
 var devScrCanvas = 0;
@@ -44,7 +48,7 @@ function deviceScreenBrowserResizeCheck()
     if (devScrBrowserWidthPrev !== appBrowserWidth || devScrBrowserHeightPrev !== appBrowserHeight) {
         devScrCanvas.width = appBrowserWidth;
         devScrCanvas.height = appBrowserHeight;
-        devScrContext.fillStyle = '#96a488';
+        devScrContext.fillStyle = DEV_SCREEN_BACKGROUND;
         devScrContext.fillRect(0, 0, appBrowserWidth, appBrowserHeight);
         devScrBrowserWidthPrev = appBrowserWidth;
         devScrBrowserHeightPrev = appBrowserHeight;
@@ -60,7 +64,7 @@ function deviceScreenSetPixelOperation(data)
         x = devScrPixCounter % devScrWidth;
         y = Math.floor(devScrPixCounter / devScrWidth);
         if (devScrFillStylePrev !== data) {
-            devScrContext.fillStyle = data ? '#3b4128' : '#909c7c';
+            devScrContext.fillStyle = data ? DEV_SCREEN_PIX_DARK : DEV_SCREEN_PIX_LIGHT;
             devScrFillStylePrev = data;
         }
         devScrContext.fillRect(devScrSizeOffsetX + x * devScrSizeGrid, devScrSizeOffsetY + y * devScrSizeGrid, devScrSizePix, devScrSizePix);
@@ -69,7 +73,7 @@ function deviceScreenSetPixelOperation(data)
         for (var y = 0; y < devScrHeight; y++) {
             for (var x = 0; x < devScrWidth; x++) {
                 if (devScrFillStylePrev !== data[y * devScrWidth + x]) {
-                    devScrContext.fillStyle = data[y * devScrWidth + x] ? '#3b4128' : '#909c7c';
+                    devScrContext.fillStyle = data[y * devScrWidth + x] ? DEV_SCREEN_PIX_DARK : DEV_SCREEN_PIX_LIGHT;
                     devScrFillStylePrev = data[y * devScrWidth + x];
                 }
                 devScrContext.fillRect(devScrSizeOffsetX + x * devScrSizeGrid, devScrSizeOffsetY + y * devScrSizeGrid, devScrSizePix, devScrSizePix);
