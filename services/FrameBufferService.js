@@ -1,23 +1,28 @@
 var FB_COLORS = 8; // frameBuffer supports only eight 'colors' - 0 is dark, 7 is white
 
 var fb = [];
+var fbBytes = 0;
 var fbWidth = 0;
 var fbHeight = 0;
 var fbColor = FB_COLORS - 1;
 
 var fbGrayScale = [
     0xFF, 0xFF, 0xFF, 0xFF, // dark
-    0xAA, 0xFF, 0x55, 0xFF, // shade #1
+    0x77, 0xFF, 0xDD, 0xFF, // shade #1
     0x55, 0xFF, 0x55, 0xFF, // shade #2
-    0x55, 0xAA, 0x55, 0xAA  // shade #3
+    0x77, 0xAA, 0xDD, 0xAA  // shade #3
     // next 4 shades are inversions of previous
 ];
 
 function fbInit(width, height)
 {
+    var pixels;
+
+    pixels = width * height;
+    fbBytes = (pixels >> 3) + (pixels & 0x7 !== 0 ? 1 : 0);
     fb.length = 0;
-    for (var i = 0; i < width * height; i++) {
-        fb.push(FB_COLORS - 1);
+    for (var i = 0; i < fbBytes; i++) {
+        fb.push(0);
     }
     fbWidth = width;
     fbHeight = height;
@@ -41,7 +46,7 @@ function fbGet(x, y)
         return 0;
     }
 
-    return fb[y * fbWidth + x];
+    return fb[y * fbWidth + x] & 0xFF;
 }
 
 function fbSet(x, y)
@@ -49,6 +54,9 @@ function fbSet(x, y)
     var xShade, yShade;
     var pix;
     var fbGrayIdx;
+    var pixIdx;
+    var fbByteIdx;
+    var fbBytePos;
 
     if (x < 0 || x >= fbWidth) {
         return;
@@ -69,7 +77,14 @@ function fbSet(x, y)
         pix = (~pix) & 0x1;
     }
 
-    fb[y * fbWidth + x] = pix;     // TODO change to only pix store
+    pixIdx = y * fbWidth + x;
+    fbByteIdx = pixIdx >> 3;
+    fbBytePos = pixIdx & 0x7;
+    if (pix) {
+        fb[fbByteIdx] = fb[fbByteIdx] | (0x80 >> fbBytePos);
+    } else {
+        fb[fbByteIdx] = fb[fbByteIdx] & (~(0x80 >> fbBytePos) & 0xFF);
+    }
 }
 
 function fbSetColor(value)

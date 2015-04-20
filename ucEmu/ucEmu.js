@@ -1,5 +1,3 @@
-var PORT_SCREEN_BYTE_MODE = false;        // keep it false for performance reasons
-
 var PORT_KEYBOARD_IN = 0x00;
 var PORT_KEYBOARD_OUT = 0x01;
 var PORT_TIMER_IN = 0x02;

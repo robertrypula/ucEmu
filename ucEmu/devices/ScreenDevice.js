@@ -58,27 +58,26 @@ function deviceScreenBrowserResizeCheck()
 
 function deviceScreenSetPixelOperation(data)
 {
-    if (PORT_SCREEN_BYTE_MODE) {
-        var x, y;   
+    var pixTotal;
 
+    pixTotal = devScrWidth * devScrHeight;
+
+    for (var i = 0; i < 8; i++) {
+        var pix, x, y;
+
+        pix = (data >> (7 - i)) & 0x1;
         x = devScrPixCounter % devScrWidth;
         y = Math.floor(devScrPixCounter / devScrWidth);
-        if (devScrFillStylePrev !== data) {
-            devScrContext.fillStyle = data ? DEV_SCREEN_PIX_DARK : DEV_SCREEN_PIX_LIGHT;
-            devScrFillStylePrev = data;
+        if (devScrFillStylePrev !== pix) {
+            devScrContext.fillStyle = pix ? DEV_SCREEN_PIX_DARK : DEV_SCREEN_PIX_LIGHT;
+            devScrFillStylePrev = pix;
         }
-        devScrContext.fillRect(devScrSizeOffsetX + x * devScrSizeGrid, devScrSizeOffsetY + y * devScrSizeGrid, devScrSizePix, devScrSizePix);
-        devScrPixCounter = (devScrPixCounter + 1) % (devScrWidth * devScrHeight);
-    } else {
-        for (var y = 0; y < devScrHeight; y++) {
-            for (var x = 0; x < devScrWidth; x++) {
-                if (devScrFillStylePrev !== data[y * devScrWidth + x]) {
-                    devScrContext.fillStyle = data[y * devScrWidth + x] ? DEV_SCREEN_PIX_DARK : DEV_SCREEN_PIX_LIGHT;
-                    devScrFillStylePrev = data[y * devScrWidth + x];
-                }
-                devScrContext.fillRect(devScrSizeOffsetX + x * devScrSizeGrid, devScrSizeOffsetY + y * devScrSizeGrid, devScrSizePix, devScrSizePix);
-            }
-        }
+        devScrContext.fillRect(
+            devScrSizeOffsetX + x * devScrSizeGrid, 
+            devScrSizeOffsetY + y * devScrSizeGrid, 
+            devScrSizePix, devScrSizePix
+        );
+        devScrPixCounter = (devScrPixCounter + 1) % pixTotal;
     }
 }
 

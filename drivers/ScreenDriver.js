@@ -12,13 +12,7 @@ function driverScreenUpdate()
         driverScreenHeight = fbHeight;
     }
     portWrite(PORT_SCREEN_OUT, true, DEV_SCREEN_OPCODE_SET_PIXELS);
-    if (PORT_SCREEN_BYTE_MODE) {
-        for (var y = 0; y < fbHeight; y++) {
-            for (var x = 0; x < fbWidth; x++) {
-                portWrite(PORT_SCREEN_OUT, false, fbGet(x, y));
-            }
-        }
-    } else {
-        portWrite(PORT_SCREEN_OUT, false, fb);
+    for (var i = 0; i < fbBytes; i++) {
+        portWrite(PORT_SCREEN_OUT, false, fb[i]);
     }
 }
