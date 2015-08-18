@@ -1,29 +1,29 @@
 function div(a, b)
 {
-    var aMinus, bMinus, quotient;
+    var aMinus, bMinus, q;
 
     if (eq(b, 0)) {
-        return DEFINE_MAX_POSITIVE_INTEGER;
+        return BT_MAX;
     }
 
     aMinus = 0;
     bMinus = 0;
-    if (bAnd(a, DEFINE_SIGN_BIT_MASK)) {
+    if (bAnd(a, BT_SIGN_MASK)) {
         aMinus = 1;
         a = neg(a);
     }
-    if (bAnd(b, DEFINE_SIGN_BIT_MASK)) {
+    if (bAnd(b, BT_SIGN_MASK)) {
         bMinus = 1;
         b = neg(b);
     }
 
-    quotient = _divModCore(a, b, 0);
+    q = _divModCore(a, b, 0);
 
     if (lXor(aMinus, bMinus)) {
-        quotient = neg(quotient);
+        q = neg(q);
     }
 
-    return quotient;
+    return q;
 }
 
 function mod(a, b)
@@ -31,15 +31,15 @@ function mod(a, b)
     var aMinus, modulo;
 
     if (eq(b, 0)) {
-        return DEFINE_MAX_POSITIVE_INTEGER;
+        return BT_MAX;
     }
 
     aMinus = 0;
-    if (bAnd(a, DEFINE_SIGN_BIT_MASK)) {
+    if (bAnd(a, BT_SIGN_MASK)) {
         aMinus = 1;
         a = neg(a);
     }
-    if (bAnd(b, DEFINE_SIGN_BIT_MASK)) {
+    if (bAnd(b, BT_SIGN_MASK)) {
         b = neg(b);
     }
 
@@ -51,21 +51,29 @@ function mod(a, b)
     return modulo;
 }
 
+function _bitIsNotSet(a, b)
+{
+    a = bAnd(a, b);
+    a = eq(a, 0);
+
+    return a;
+}
+
 function _divModCore(a, b, mod)
 {
-    var mask, quotient, difference;
+    var mask, q, diff;
 
     mask = 1;
-    while (eq(bAnd(b, DEFINE_LAST_U2_NUMBER_BIT_MASK), 0)) {
+    while (_bitIsNotSet(b, BT_ONE_BEFORE_MSB_MASK)) {
         b = bSh(b, 1);
         mask = bSh(mask, 1);
     }
-    quotient = 0;
+    q = 0;
     while (mask) {
-        difference = sub(a, b);
-        if (eq(bAnd(difference, DEFINE_SIGN_BIT_MASK), 0)) {
-            a = difference;
-            quotient = bOr(quotient, mask);
+        diff = sub(a, b);
+        if (_bitIsNotSet(diff, BT_SIGN_MASK)) {
+            a = diff;
+            q = bOr(q, mask);
         }
         b = bSh(b, -1);
         mask = bSh(mask, -1);
@@ -75,5 +83,5 @@ function _divModCore(a, b, mod)
         return a;
     }
 
-    return quotient;
+    return q;
 }

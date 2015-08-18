@@ -1,5 +1,7 @@
 function lAnd(a, b)
 {
+    var ab;
+
     if (a) {
         a = 1;
     }

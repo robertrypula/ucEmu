@@ -4,11 +4,11 @@ function mul(a, b)
 
     aMinus = 0;
     bMinus = 0;
-    if (bAnd(a, DEFINE_SIGN_BIT_MASK)) {
+    if (bAnd(a, BT_SIGN_MASK)) {
         aMinus = 1;
         a = neg(a);
     }
-    if (bAnd(b, DEFINE_SIGN_BIT_MASK)) {
+    if (bAnd(b, BT_SIGN_MASK)) {
         bMinus = 1;
         b = neg(b);
     }

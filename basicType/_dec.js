@@ -1,6 +1,6 @@
 function dec(v)
 {
-    v = __ASM_add(v, DEFINE_MINUS_ONE);
+    v = __ASM_add(v, BT_MINUS_ONE);
 
     return v;
 }

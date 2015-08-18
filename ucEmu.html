@@ -53,6 +53,10 @@
         <script>
             'use strict';
 
+            console.log(
+                div(32000, 21)
+            );
+
             var timerOne = 0;
             var timerOneMs = 5500;
             var timerTwo = 0;
@@ -344,7 +348,7 @@
         </style>
     </head>
 
-    <body ><!-- onLoad="appRun()" onResize="appResize()" -->
+    <body onLoad="appRun()" onResize="appResize()">
         <canvas id="c"></canvas>
         <div id="fps"></div>
     </body>

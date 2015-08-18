@@ -7,7 +7,7 @@ function gt(a, b)
     diff = __ASM_add(a, b);
 
     if (diff) {
-        tmp = __ASM_nand(diff, DEFINE_SIGN_BIT_MASK);
+        tmp = __ASM_nand(diff, BT_SIGN_MASK);
         negDiffFlag = __ASM_nand(tmp, tmp);
         if (negDiffFlag) {
             return 0;

@@ -1,0 +1,838 @@
+<html>
+<body>
+<pre style="width: 1000px;">
+                            SimpleC language documentation
+
+                            (c) Robert Rypula 2015
+
+
+string escape
+javadcript emulator
+compiller expectayipns - for ex no code outside functions etc
+variables in functions before code
+introdution to simplec at the begginig
+cannot execute nested expressions
+cannot use elseif trains
+max 4 nested brackets {}
+
+
+-----------------------
+Variable initialization
+-----------------------
+
+    1. Simple single variable
+
+        There is only one type of variable - word. Because CPU registers have 16 bits, all memory 
+        read/write operations works also on 16 bits (signed integer in U2 code). You can create 
+        variable by using 'var' keyword. Variables can be initialized with predefined values only 
+        in global scope. You can't initialize variable with predefined values at functions. Use 
+        separate 'var' for each variable name.
+
+            // global scope
+            var a = 3;           // will put 0x0003 into memory at 'a' address
+            var b = 0xFF3254;    // will put 0x3254 into memory at 'b' address (all above 16 bits is truncated)
+            var c = -1;          // will put 0xFFFF into memory at 'c' address
+            var d;               // will put 0x0000 (default is zero at global scope)
+            var e, f;            // ERROR, use separate var for each variable name
+            var g = a;           // ERROR, only constant values
+
+            // function
+            function test()
+            {
+                var a = 2;           // ERROR, can't use predefined values at funtions
+                var b;               // OK, will give 0x???? - two bytes of uninitialized memory state (variable on stack)
+
+                b = 2;               // OK, assing by '=' operator
+            }
+
+        Only variables created on global scope can have predefined state because they have fixed 
+        memory locations in generated machine code. Variables created at functions are allocated 
+        at stack so you should assign values to them later with '=' operator. More about functions 
+        and assign operator you can find later in this doc.
+
+
+    2. Arrays - predefined values
+
+        If you want to create an array with predefined values you should use '{}' syntax as below. 
+        By default all values are stored as 16 bits signed integers.
+
+            var arr = { 3, 6, -1, 15, 255 };              // will put 0x0003, 0x0006, 0xFFFF, 0x000F, 0x00FF
+
+        There are few special keywords that can be used at predefined list inside '{}'.
+
+            <byte[x]>    - each next value will be stored as byte repeated 'x' times (x > 0).
+            <word[x]>    - each next value will be stored as word repeated 'x' times (x > 0).
+
+        If none is specified default is <word[1]> so 'arr' from previous example could be also 
+        expressed like below and we will get same result.
+
+            var arr = { <word[1]>, 3, 6, -1, 15, 255 };   // will put 0x0003, 0x0006, 0xFFFF, 0x000F, 0x00FF
+
+        Number in '[]' tell how many times each value should be repeated. If we use <byte[2]> 
+        values will be stored as 8 bit signed integers and each value separated with ',' will 
+        be stored twice.
+
+            var arr = { <byte[2]>, 3, 6, -1 };   // will put 0x03, 0x03, 0x06, 0x06, 0xFF, 0xFF
+
+        Keywords <byte[x]> and <word[x]> works as a switches of internal state. It doesn't put 
+        any data by itself. You can switch byte/word state any time you want.
+
+            var arr1 = { 1, <byte[2]>, 2, 1, <word[1]>, -1 };     // 0x0001, 0x02, 0x02, 0x01, 0x01, 0xFFFF
+            var arr2 = { 1, <byte[2]>, 2, 1, <word[1]>, -1 };     // 0x0001, 0x02, 0x02, 0x01, 0x01, 0xFFFF
+
+        Again, remember that <byte[x]> and <word[x]> doesn't put any data. Below example will 
+        trigger an error.
+
+            var arr1 = { <byte[1]> };       // ERROR, empty predefined value list
+            var arr2 = { <word[3]> };       // ERROR, empty predefined value list
+
+
+    3. Arrays - memory reservation
+
+        If you need to reserve some memory space you can use special keywords listed below.
+
+            <byteReserve[x]>   - Reserves x number of bytes without initialization value.
+            <wordReserve[x]>   - Reserves x number of words without initialization value.
+
+        Because those two keywords only reserves space they can be used at functions. Every var 
+        declared at function is created on stack so memory state is unknown. At global scope 
+        it's different - values are initialized with 0 by default.
+
+            // global scope
+            var arr1 = { <byteReserve[2]>, 3, 6 };               // will give 0x00, 0x00, 0x0003, 0x0006 - 3 and 6 is 
+                                                                 //   treated as word because <word[1]> is default
+            var arr2 = { <byteReserve[2]>, <byte[1]>, 3, 6 };    // will give 0x00, 0x00, 0x03, 0x06 - 3 and 6 is treated 
+                                                                 //   as byte because of passed <byte[1]>
+
+            // function
+            function test()
+            {
+                var arr1 = { <byteReserve[2]>, 3, 6 };       // ERROR, 3 and 6 will trigger error
+                var arr2 = { <byteReserve[2]> };             // OK, no predefined values, it will give 0x??, 0x??
+                var arr3 = { <wordReserve[2]> };             // OK, no predefined values, it will give 0x????, 0x????
+                var arr4 = { <wordReserve[2]>, <byte[3]> };  // Also OK, no predefined values, it will give 0x????, 
+                                                             //   0x????. <byte[3]> changes internal state but 
+                                                             //   doesn't put any data
+            }
+            
+        Reserve keywords (<byteReserve[x]>/<wordReserve[x]>) doesn't change any internal state 
+        like <byte[x]>/<word[x]> do.
+         
+            
+    4. Strings support
+
+        Only way to define string variable is to declare it at global scope in array predefined 
+        list. Remember that by default internal state of predefined list is <word[1]>.
+
+            var text = { "abc" };         // will give 0x0061, 0x0062, 0x0063
+
+        Strings are not terminated with null character. To create valid C-string you need to add it add the end.
+
+            var text = { "abc", 0 };      // will give 0x0061, 0x0062, 0x0063, 0x0000
+
+        Wait a minute, using 16 bit per character is memory waste! To fix it you need to switch 
+        internal state by using <byte[1]> keyword.
+
+            var text = { <byte[1]>, "abc", 0 };      // will give 0x61, 0x62, 0x63, 0x00
+
+        You can also reserve some space to have string buffer variable. Below example assings 
+        6 bytes in total to variable 'strBuffer'. You can store zero terminated string up to 
+        5 chars.
+
+            var strBuffer = { <byte[1]>, "abc", <byte[3]>, 0 };  // will give 0x61, 0x62, 0x63, 0x00, 0x00, 0x00
+
+        You can also repeat string by using byte/word keywords.
+
+            var str = { <byte[2]>, "abc", <byte[1]>, 0 }; // will give 0x61, 0x62, 0x63, 0x61, 0x62, 0x63, 0x00
+            var str = { <byte[2]>, "abc", "w" };          // will give 0x61, 0x62, 0x63, 0x61, 0x62, 0x63, 0x77, 0x77
+
+
+------------------
+Suported operators
+------------------
+
+    1. Brief
+
+        SimpleC language is as simple as possible so there is very few operators available
+
+            =   Assing right side of the expression to the left side
+            []  Helps with access to values in array
+            &   Gets address of variable instead its value
+            *   Uses data stored inside variable as address to another memory location
+            
+    
+    2. Assign operator (=)
+
+        Assign operator stores value that is result of expression from the right side 
+        to the left side. Because SimpleC's variables have only one type (word) arrays
+        and normal integers are treated the same. This is different from C language where 
+        array variable name is pointer. In SimpleC langulage you can access first element 
+        of array by just using array variable name.
+
+            var a = 10;               // 0x000A
+            var b = -1;               // 0xFFFF
+            var arr1 = { 1, 2, 3 };   // 0x0001, 0x0002, 0x0003
+            var arr2 = { 4, 5, 6 };   // 0x0004, 0x0005, 0x0006
+
+            a = b;      // value of 'b' (0xFFFF) will be stored at 'a' (0x000A will be overwritten)
+            arr1 = a;   // value of 'a' (0xFFFF) will be stored at first element of array 'arr1' (0x0001 will be overwritten)
+            a = arr2;   // value of first element of array 'arr2' (0x0004) will be stored at 'a' (0xFFFF will be overwritten)
+            
+        Variable values after above three assignment will look like this.
+        
+            a:     4
+            b:    -1
+            arr1: -1, 2, 3
+            arr2: 4, 3, 6
+
+        Right side can be constant, other variable or function. Operators that 'gives' 
+        variables also is OK ('[]', '*', '&').
+
+            var a;
+            var b = 3;
+            var c = { 1, 2 };
+
+            a = 12;                     // OK
+            a = b;                      // OK
+            a = someFunc();             // OK
+            a = someFuncWithParam(b);   // OK
+
+            a = c[1];                  // OK, '[]' operator 'gives' variable value
+            c = &b;                    // OK, '&'  operator 'gives' address that is constant
+            a = *(c);                  // OK, '*' operator 'gives' variable by pointer
+
+        At the other hand left side can be only other variable. It's because you can't
+        assing anything to constant value. 
+
+            var a;
+            var b = 3;
+            var c = { 1, 2 };
+            var ptr;
+
+            ptr = &(c);                     // OK
+            c[1] = a;                       // OK, '[]' operator 'gives' variable value
+            *(c) = a;                       // OK, '*' operator 'gives' variable by pointer
+
+            &b = c;                         // ERROR, '&'  operator 'gives' address that is constant
+            12 = a;                         // ERROR, can't assing to number
+            someFunction() = a;             // ERROR, can't assign to function 
+            someFunctionWithParam(b) = a;   // ERROR, can't assign to function
+
+
+    3. Array element access operator ([])
+
+        Square brackets in SimpleC works like in C language. Number or variable value passed 
+        inside brackets adds offset to the address pointed by the variable name. Every variable 
+        is word that has 16 bits. It means that index inside brackets takes data every two bytes 
+        starting from variable name address. If you ommit bracket compiller automatically adds 
+        '[0]' under the hood.
+        
+            // global scope
+            var a = 0;                            // 0x0000
+            var b = -2;                           // 0xFFFE
+            var arr1 = { 0xAA, 0xBB, 0xCC };      // 0x00AA, 0x00BB, 0x00CC
+            var arr2 = { 0x1AA, 0x1BB, 0x1CC };   // 0x01AA, 0x01BB, 0x01CC
+            var tmp;
+
+            tmp = arr1[2];   // tmp value: 0x00CC
+            tmp = arr1[a];   // tmp value: 0x00AA
+            tmp = arr1;      // tmp value: 0x00AA  it's same as arr1[0] - first element value is returned
+            tmp = arr1[5];   // tmp value: 0x01CC  index outside arr1 range, it is the third value from 'arr2'
+
+            tmp = arr1[b];   // tmp value: 0x0000  'tmp' gets 'a' variable value because we move 2 words back in the memory
+            tmp = arr1[-1];  // tmp value: 0xFFFE  'tmp' gets 'b' variable value because we move 1 word back in the memory
+
+            arr1 = 3;        // overwrite first element of arr1, '0x00AA' will become '0x0003'
+            arr2[a] = 10;    // overwrite first element of arr2 (because 'a' equals 0), '0x01AA' will become '0x000A'
+
+        You can use only constant integers or clean variable name as array's index. You cannot 
+        use functions or variables with other operators like '&', '[]', '*'.
+
+            tmp = arr1[someFunction()];       // ERROR, can't use functions as index
+            tmp = arr1[&a];                   // ERROR, can't mix other opertors
+            tmp = arr1[*a];                   // ERROR, can't mix other opertors
+            tmp = arr1[a[0]];                 // ERROR, can't mix other opertors
+
+        Remember that there is not range test. If you go outside array range you can even read 
+        or overwrite machine code of your program! If you know what your're doing you can write 
+        self modifying code :)
+
+            line #1: var machineCode;
+            line #2: var tmp = 123;
+            line #3: machineCode = tmp[1]; 
+
+        Expression tmp[1] will read next memory location after variable declaration. In result 
+        in variable 'marchineCode' you will have first two bytes of machine code that implements 
+        line 3 :)
+
+
+    4. Address operator (&)
+
+        Address operator returns real memory location of the variable. You can grab this value
+        and store it in another variable to have some kind of pointer. It pretty similar to C 
+        language but in SimpleC there is no pointer type. You should track witch variables are 
+        pointers by your own.
+
+            // global scope
+                                           // [memAddress]: value
+            var a = 1;                     // [0x0000]: 0x0001;
+            var b = { 10, 11, 12 };        // [0x0002]: 0x000A; [0x0004]: 0x000B; [0x0006]: 0x000C;
+            var c = { <byte[1]>, -2, -1 }  // [0x0008]: 0xFE; [0x0009]: 0xFF;
+            var p;                         // [0x000A]: 0x0000
+
+            p = &(a);       // 'p' value: 0x0000
+            p = &(p);       // 'p' value: 0x000A - points to itself
+            p = &(b);       // 'p' value: 0x0002 - points to first element of the 'b' array
+            // ...
+
+        Variable that stores address is normal integer so you can for example add some offset
+        to 'move' pointer to another memory location.
+
+            // ...
+            p = &(b);
+            p = add(p, 6);  // 0x0002 + 0x6 = 0x0008 - p now points to first element of 'c' array (-2)
+
+            p = &(b);
+            p = add(p, 7);  // 0x0002 + 0x7 = 0x0009 - p now points to second element of 'c' array (-1)
+
+        In '&()' you can use only clean variable name. You cannot use functions, constant integers 
+        or variables with other operators like '&', '[]', '*'. You should always use '()' brackets.
+
+            p = &(b[2]);               // ERROR, can't mix other operators
+            p = &(2);                  // ERROR, can't get address to constant
+            p = &(someFunction());     // ERROR, can't use functions
+            p = &(&b);                 // ERROR, can't mix other operators
+            p = &(*b);                 // ERROR, can't mix other operators
+            p = &b;                    // ERROR, always use brackets '()'
+
+        Address operator cannot be used at the left side of assign operator. It's quite reasonable
+        because you can't assing any value to a number. 
+
+            var a;
+
+            32 = &(a);                 // ERROR, can't assing to number
+            &(a) = 32;                 // ERROR, can't assing to address 
+
+
+    5. Indirection operator (*)
+
+        With indirect operator you can access variable via address stored in other variable. The is
+        also posibility to add offset to address in single line of code.
+
+            var i = 2;              // [0x0000]: 0x0002
+            var a = { 128, 129 };   // [0x0002]: 0x0080, [0x0004]: 0x0081
+            var b = 2;              // [0x0006]: 0x0002
+            var ptr;                // [0x0008]: 0x0000
+            var test;               // [0x000A]: 0x0000
+
+            ptr = &(a);       // grab address of 'a'
+
+            test = *(ptr);      // 'test' is equal 128
+            test = *(ptr + i);  // 'test' is equal 129, 2 bytes of offset added
+            *(ptr + i) = 256;   // second element of array 'a' (129) will become 256
+            // ...
+
+        You can put any address to pointer variable. It means that you can access every memory 
+        location that you want. You can even read machine code of our own program. In below example 
+        address of 'test' was assigned manually to 'ptr' variable.
+
+            // ... 
+            ptr = 0x000A;       // load 'test' variable address
+            *(ptr) = 111;       // assing 111 to 'test' variable via pointer
+
+            i = 0;
+            *(ptr + i) = 111;   // assing 111 to 'test' variable via pointer too (with zero offset)
+
+
+        You might notice that there is only one place in SimpleC language where addition with '+' 
+        is used. It's because array access with offset is very often used in code. Without it
+        you need to manually change 'ptr' every time you need to access another element in array.
+        In aproach with '+' ptr will remain stationary. Idea of SimpleC was to create language
+        that is easy to create compillers for it and with syntax clean enough to write easy to 
+        read programs. Be aware that you can't use substraction with '-' sign. SimpleC is designed 
+        to be simple so there is as less language structures as possible :)
+
+            var tmp;
+            var a = { 1, 2 };
+            var ptr;
+            var i = 1;
+
+            ptr = &(a);
+            tmp = *(ptr + i);        // OK, addition with '+' is allowed
+            tmp = *(ptr - i);        // ERROR, substraction with '-' is not allowed
+            // ...
+
+        Of course you can add negative offset to get same result as '-' so you don't loose anything :)
+
+            // ...
+            i = -1;
+            tmp = *(ptr + i);        // OK
+
+        In '*()' you can use only clean variable name. You cannot use functions, constant integers 
+        or variables with other operators like '&', '[]', '*'. You should always use '()' brackets.
+
+            p = *(2);                  // ERROR, can't use contant, use temporary variable instead
+            p = *(b + 2);              // ERROR, can't use contant, all parameters should be variables
+            p = *(2 + b);              // ERROR, can't use contant, all parameters should be variables
+            p = *(32 + 3);             // ERROR, can't use contant, all parameters should be variables
+            p = *(b[2]);               // ERROR, can't mix other operators
+            p = *(someFunction());     // ERROR, can't use functions
+            p = *(&b);                 // ERROR, can't mix other operators
+            p = *(*b);                 // ERROR, can't mix other operators
+            p = *b;                    // ERROR, always use brackets '()'
+
+        You can use '*()' operator at both sides of the assign operator.
+
+
+---------
+Functions 
+---------
+
+    1. [ TODO ]
+        
+        Functions [ return singleval, main() ]
+
+
+-------------
+Miscellaneous
+-------------
+
+    1. Comments
+
+        Comments are place where you can put comment to your code, yeah! :) In SimpleC language
+        you can use both versions from C language - single line and multi line.
+
+            // this is single line comment
+
+            /*
+            this is
+            multi line
+            comment
+            */
+
+
+    2. Constans
+
+        Unfortunatelly in SimpleC there is only one variable type. The only way to create constant
+        is to define variable with initialization in global scope and never change its value. For
+        easier 'detection' of constans in your code use upper case letters and underscore ('_') 
+        instead space. With that pattern it whould be easier to find constans.
+
+            var ASTRONOMICAL_UNIT = 149597871;      // AU in km
+            var ASCII_a = 0x61;
+
+
+    3. Logical values
+
+        Logical value has two posibilities - true or false. In SimpleC like in many other languages
+        logical true is when at least one bit in integer is set. If all bit are equal to zero then
+        we have logical false.
+
+            var logicalTrue1 = 2;
+            var logicalTrue2 = -32;
+            var logicalTrue3 = 0x8000;
+            var logicalFalse1 = 0x0000;
+            var logicalFalse2 = 0;
+
+            if (logicalTrue1) {
+                // code inside if will be executed
+            }
+
+            if (logicalTrue2) {
+                // code inside if will be executed
+            }
+
+            while (logicalTrue3) {
+                // code inside while will be executed and if there 
+                // is no 'break' it will be forever loop
+            }
+
+            if (logicalFalse1) {
+                // code inside if will NOT be executed
+            }
+
+            while (logicalFalse2) {
+                // loop code will not be executed
+            }
+
+        In above code you can see 'if' and 'while' statemets. More information about it you will
+        find in separate section 'Flow controll' later in this doc.
+
+
+    4. Build-in functions, operators usage in SimpleC
+
+        SimpleC was designed to be as easy as possible so there is no operators like +, -, *, /, <, 
+        == and many others that exists in normal programing language. It's because it complicates
+        compiller and can be easly replaced by using only function calls.
+
+            a = add(a, c);        // a = b + c;
+            if (gte(a, 10)) {}    // if (a >= 10) {}
+            while (ne(c, 0)) {}   // while (c != 0) {}
+
+        With this approach we don't need to worry about all operator combinations. It leads to 
+        much simpler compiller code. That was the main goal to achevie for SimpleC. But wait, if we don't
+        have any operator even as simple as '+' then how we can even add two numbers? You're right, we 
+        need to have some way to tell compiller that we want to add. That's why SimpleC has three
+        build in functions with very basic operations that touches almost directly instruction set 
+        of underlying CPU.
+
+            result = __ASM_nand(a, b);       // binary NAND of 'a' and 'b'
+            result = __ASM_shift(v, left);   // binary SHIFT of 'v', << then ('left' != 0), >> then ('left' == 0)
+            result = __ASM_add(a, b);        // arithmetic add of 'a' and 'b'
+
+        Using those three functions you can implement any other operator - even division. If you don't 
+        believe check standard library that is shipped with SimpleC source code. For example let's see 
+        implementation of logical AND ('&' operator in C).
+
+            function bAnd(a, b)
+            {
+                var ab;
+
+                ab = __ASM_nand(a, b);
+                a = __ASM_nand(ab, ab);
+
+                return a;
+            }
+
+        As you probably remember NAND is 'functionally complete'. It means that you can build any other
+        bolean operator using only nand operator. In above example we build AND operator using two calls
+        to build-in '__ASM_nand' function. But you don't need to worry about implementation. All operators
+        already exists in standard library. All works on 16 bit signed integers.
+
+            :: SimpleC standard libary operators                       :: C language operators
+            add(a, b), sub(a, b), mul(a, b), div(a, b), mod(a, b)      +, -, *, /, %
+            inc(v), dec(v), neg(v)                                     v++, v--, -v
+            binAnd(a, b), binNot, binOr(a, b), binXor(a, b)            &, ~, |, ^
+            binSh(v, x), binXnor(a, b),                                'v << x' or 'v >> x', there is no binary XNOR in C
+            cmpE, cmpGT, cmpGTE, cmpLT, cmpLTE, cmpNE                  ==, >, >=, <, <=, !=
+            logicAnd, logicNot, logicOr, logicXnor, logicXor           &&, !, ||, there is no logic XNOR and XOR in C
+
+        You shouldn't use '__ASM_nand(a, b)', '__ASM_shift(v, left)' or '__ASM_add(a, b)' directly in your 
+        code because higher layer functions described above already exists in standard library. Main purpose 
+        of this section is to let you know that all computation is based only on those three functions.
+
+
+    5. How variables are stored inside memory
+
+        [ ENDIANNESS, Array access (2 bytes), demo of problems then accessing bytes in array ]
+
+
+    6. String support
+
+        [ string is normal array of numbers packet as two chars in word array ]
+
+
+    7. Signed integer support
+
+        [ tell about U2 code ]
+
+
+-------------
+Flow controll
+-------------
+
+    1. Conditional statement - if
+
+        If statement allows us to execute code when given condition is meet. It works pretty same 
+        as in C language. In the statement you can put single variable name or functions. You 
+        can't put variables with operators ('*', '&', '[]') or constant values. Important is that 
+        you should always use brackets even that there is only one line of code after if.
+
+            var a;
+            var b;
+
+            if (a) {         // OK
+                // ... 
+            }
+
+            if (a[2]) {      // ERROR, only clean variable name witout operators
+            }
+            if (*a) {        // ERROR, only clean variable name witout operators
+            }
+            if (&a) {        // ERROR, only clean variable name witout operators
+            }
+            if (1) {         // ERROR, can't use constans
+            }
+            if (a)           // ERROR, always use brackets
+                b = a;
+
+
+            if (someFunction(a, b)) {     // OK, function call
+            }
+
+        You can also use 'else' keyword to write code that will be executed when condition is not 
+        meet. Remember that you should also use brackets even with single line of code.
+
+            if (a) {              // OK
+                // ...
+            } else {
+                // ...
+            }
+
+            if (a) {              // ERROR, 'else' without brackets
+                // ...
+            } else 
+                b = a;
+
+            if (func(a, b)) {     // OK
+                // ...
+            } else {
+                b = a;
+            }
+            
+
+    2. While loop
+
+        In C language there is couple of loops - 'for', 'do while' and 'while'. In SimpleC there 
+        is only one type of loop - 'while'. You can use it to repeat some piece of code that is 
+        inside curly brackets. Loop works as long as condition is equal to logical true. Value is
+        logical true when at least one bit in integer number is '1'. As condition you can pass 
+        'clean' variable name without any operators, function call or a constant value. Remember
+        to always put brackets '{}'.
+        
+            var a;
+            
+            // loop #1
+            a = 2;
+            while (a) {                        // OK, clean variable name
+                a = sub(a, 1);                 // decrement 'a' by one
+            }
+
+            // loop #2
+            while (someFunction(a)) {          // OK, function call
+                // ...
+            }
+
+            // loop #3
+            while (1) {                        // OK, constant value
+                // ...
+            }
+
+            // ---
+
+            while (&(a)) {                     // ERROR, can't use operators
+            }
+            while (*(a)) {                     // ERROR, can't use operators
+            }
+            while (*(a + 1)) {                 // ERROR, can't use operators
+            }
+            while (a[2]) {                     // ERROR, can't use operators
+            }
+            while (3);                         // ERROR, always use brackets
+
+        In abowe examples loop #1 will repeat code inside brackets twice, loop #2 will work
+        as long as return value from 'someFunction' is true, loop #3 will work forever
+        because passed '1' is always true.
+        
+            var i;
+            
+            i = 0;
+            while (1) {              // always true - forever loop
+                if (gte(i, 10)) {    // i >= 10
+                    break; 
+                }
+
+                // ... code ...
+                
+                i = add(i, 1);       // increment 'i' by one
+            }
+            // # next line after break
+            
+        Above code use 'break' keyword. It can be used to immediatelly exit parent loop.
+        To simplify things there is no 'continue' keyword from C language. To skip code
+        in current iteration use ifs instead. Below you can find code snipets with equvalents 
+        for common code constructions from C language.
+
+            // C language - do while
+            do {
+                // ...
+            } while (conditionVariable);
+
+            // SimpleC
+            while (1) {
+                // ...
+                if (conditionVariable) {
+                    break;
+                }
+            }
+
+            // -------------------------------
+
+            // C language - for
+            for (int i = 0; i < 10; i++) {
+                // ...
+            }
+
+            // Simple C
+            var i;
+
+            i = 0;
+            while (lt(i, 10)) {
+                // ...
+                i = add(i, 1);
+            }
+
+            // -------------------------------
+
+            // C language - continue
+            while (conditionVariable) {
+                // ... #1
+                continue;
+                // ... #2
+            }
+
+            // SimpleC
+            fullIteration = 1;               // full iteration by default
+            while (conditionVariable) {
+                // ... #1
+                fullIteration = 0;           // use 'flag' variable to emulate continue :)
+                if (fullIteration) {
+                    // ... #2
+                }
+            }
+
+
+---------------
+SimpleC summary
+---------------
+
+    1. Variable declaration
+    
+        // global scope
+        var a;             // 0x0000
+        var b = 2;         // 0x0002
+        var c = { 2, -2 }; // 0x0002, 0xFFFE
+        var d = { <byte[1], 2, -2 }; // 0x02, 0xFE
+        var e = { -2, <byte[1]>, 3 };  // 0xFFFE, 0x03
+        var f = { 4, <byte[2]>, 2, 1 };   // 0x0004, 0x02, 0x02, 0x01, 0x01
+        var g = { 1, <byteReserve[2], 255 };  // 0x0001, 
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+-----------
+PORT ACCESS
+-----------
+
+    var portRead = 0xFFF0;
+    var portWrite = 0XFFE0;
+    var a;
+
+    *(portWrite) = 0x6162;          // $('*=', portWrite, 0x6162);
+    a = *(portRead)                 // a = $('*', portRead, 0);
+
+
+----------------------
+ASSEMBER CODE EXAMPLES
+----------------------
+
+    var someVar = 32;
+    var arr1 = { <byte[1]>, "test test", 0 };
+    arr1[1] = someVar;
+
+    someVar  : _word[1]_  32
+    arr1     : _byte[1]_  "test test", 0
+               imm reg00, someVar
+               ld reg00
+               imm reg01, arr1
+               imm reg02, 1
+               add reg01, reg01, reg02
+               st reg01
+
+
+
+    // address for var from global scope
+    var i;
+        imm reg01, i
+
+    // address for var from function scope
+    var i;     // rename to: someMethod_i_FFF1;
+        copy  reg01, regFP
+        add   reg01, reg01, 0xFFF1
+
+
+    // assembling preview :)
+    tmp = *(ptr + i);
+
+        imm  reg01, ptr              ; right side
+        ld   reg01
+        copy reg01, regMEM        
+        imm  reg02, i
+        ld   reg02
+        copy reg02, regMEM
+        add  reg01, reg01, reg02
+        ld   reg01
+        copy reg01, regMEM
+
+        imm  reg02, tmp              ; left side
+        copy regMEM, reg01
+        st   reg02
+    
+
+----------------
+ASSEMBLER MACROS
+----------------
+
+    push reg{{pushARG}}
+            copy  regMEM, reg{{pushARG}}
+            st    regSP
+            imm   reg{{pushB}}, 0xFFFF
+            add   regSP, regSP, reg{{pushB}}
+
+
+    pop reg{{popARG}}
+            imm   reg{{pushA}}, 0x0001
+            add   regSP, regSP, reg{{pushA}}
+            ld    regSP
+            copy  reg{{popARG}}, regMEM
+
+
+    call {{callRET}}, {{callARG}}
+            copy  reg{{callA}}, regPC
+            imm   reg{{callB}}, 0x{{????}}                 ; :: return offset byte amount ::
+            add   reg{{callA}}, reg{{callA}}, reg{{callB}}
+            push  reg{{callA}}
+            imm   regPC, {{callARG}}
+            ; :: return offset here ::
+            pop   {{callRET}}
+
+
+    ret reg{{retVALUE}}
+            pop   reg{{retADDR}}
+            push  reg{{retVALUE}}
+            imm   regPC, reg{{retADDR}}
+    
+
+--------------------
+SIMPLEC CODE EXAMPLE
+--------------------
+
+    var ASCII_NULL = 0x00;
+
+    var test = { <byte[1]>, "test", ASCII_NULL };
+    var testLength;
+
+    function strlen(s)
+    {
+        var i;
+        var c;
+
+        i = -1;
+        do {
+            c = *(s + i);
+            c = bAnd(0xFF, c);
+        } while (c);
+
+        return i;
+    }
+
+    testLength = strlen(&test);
+
+</pre>
+</body>
+</html>

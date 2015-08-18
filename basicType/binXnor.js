@@ -5,9 +5,8 @@ function bXnor(a, b)
     ab = __ASM_nand(a, b);
     aAb = __ASM_nand(a, ab);
     bAb = __ASM_nand(b, ab);
-
-    a = __ASM_nand(aAb, bAb);   // xor
-    a = __ASM_nand(a, a);       // xnor
+    a = __ASM_nand(aAb, bAb);
+    a = __ASM_nand(a, a);
 
     return a;
 }
