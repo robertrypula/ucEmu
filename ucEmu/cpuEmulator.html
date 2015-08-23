@@ -13,7 +13,7 @@
         -----------+----------------------+----+---------------------------------------+-----------------------------------------------
         ? cycles   | 0x0R 0xRR            | 00 | add     regOut, regIn0, regIn1        | regOut = regIn0 + regIn1
         ? cycles   | 0x1R 0xRR            | 01 | nand    regOut, regIn0, regIn1        | regOut = regIn0 nand regIn1
-        ? cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1>=0) ? (regIn0 > abs(regIn1))
+        ? cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1>=0) ? (regIn0 << regIn1) : (regIn0 >>> abs(regIn1))
         ? cycles   | 0x3_ 0xRR            | 03 | jnz     regIn0, regIn1                | if (regIn1!=0) jump to address from regIn0
         ? cycles   | 0x4R 0xR_            | 04 | copy    regOut, regIn0                | regOut = regIn0
         ? cycles   | 0x5R 0x__ 0xCC 0xCC  | 05 | imm     regOut, _constans16bit_       | regOut = _constans16bit_
@@ -21,7 +21,7 @@
         ? cycles   | 0x7_ 0xR_            | 07 | st      regIn0                        | MemoryAt[regIn0] = regMem
         -----------+----------------------+----+---------------------------------------+-----------------------------------------------
 
-        Alternative version of last three OPCODES. It can save lot of space in memory after program compilation.
+        Alternative version of last three INSTRUCTIONS. It can save lot of space in memory after program compilation.
 
         ...        | ...                  | .. | ...                                   | ...
         ? cycles   | 0x4R 0xCC 0xCC       | 05 | imm     regOut, _constant16bit_       | regOut = _constant16bit_
@@ -92,47 +92,48 @@
             FETCH_FIRST: 0x00,
             FETCH_SECOND: 0x01,
             ADD: 0x02,
-            NAND: 0x03
+            NAND: 0x03,
+            SH: 0x04
         };
 
-        this.OPCODES = {
+        this.INSTRUCTIONS = {
             ADD: {
-                code: 0,
+                opcode: 0,
                 name: 'add',
                 byteWidth: 2
             },
             NAND: {
-                code: 1,
+                opcode: 1,
                 name: 'nand',
                 byteWidth: 2
             },
             SH: {
-                code: 2,
+                opcode: 2,
                 name: 'sh',
                 byteWidth: 2
             },
             JNZ: {
-                code: 3,
+                opcode: 3,
                 name: 'jnz',
                 byteWidth: 2
             },
             COPY: {
-                code: 4,
+                opcode: 4,
                 name: 'copy',
                 byteWidth: 2
             },
             IMM: {
-                code: 5,
+                opcode: 5,
                 name: 'imm',
                 byteWidth: 4
             },
             LD: {
-                code: 6,
+                opcode: 6,
                 name: 'ld',
                 byteWidth: 2
             },
             ST: {
-                code: 7,
+                opcode: 7,
                 name: 'st',
                 byteWidth: 2
             }
@@ -140,7 +141,7 @@
             /*
                 ? cycles   | 0x0R 0xRR            | 00 | add     regOut, regIn0, regIn1        | regOut = regIn0 + regIn1
                 ? cycles   | 0x1R 0xRR            | 01 | nand    regOut, regIn0, regIn1        | regOut = regIn0 nand regIn1
-                ? cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1>=0) ? (regIn0 > abs(regIn1))
+                ? cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1>=0) ? (regIn0 << regIn1) : (regIn0 >>> abs(regIn1))
                 ? cycles   | 0x3_ 0xRR            | 03 | jnz     regIn0, regIn1                | if (regIn1!=0) jump to address from regIn0
                 ? cycles   | 0x4R 0xR_            | 04 | copy    regOut, regIn0                | regOut = regIn0
                 ? cycles   | 0x5R 0x__ 0xCC 0xCC  | 05 | imm     regOut, _constans16bit_       | regOut = _constans16bit_
@@ -345,14 +346,15 @@
                 memoryReadShifted = _this.inputs.memoryRead >>> ((4 - addressCol) * 8),
                 memoryFinal = memoryReadShifted | _this.registers.regMemory,
                 opCode = (memoryFinal & 0xF0000000) >>> (7 * 4),
-                opCodeDetails = getOpCodeDetails(opCode),
-                opCodeByteWidth = opCodeDetails ? opCodeDetails.byteWidth : 0,
-                regPCNext = _this.registers.regPC + opCodeByteWidth,
+                opInstructionDetails = getInstructionDetails(opCode),
+                instructionByteWidth = opInstructionDetails ? opInstructionDetails.byteWidth : 0,
+                regPCNext = _this.registers.regPC + instructionByteWidth,
                 regSeqNext = 0;
 
             switch (opCode) {
-                case _this.OPCODES.ADD.code: regSeqNext = _this.REG_SEQ.ADD; break;
-                case _this.OPCODES.NAND.code: regSeqNext = _this.REG_SEQ.NAND; break;
+                case _this.INSTRUCTIONS.ADD.opcode: regSeqNext = _this.REG_SEQ.ADD; break;
+                case _this.INSTRUCTIONS.NAND.opcode: regSeqNext = _this.REG_SEQ.NAND; break;
+                case _this.INSTRUCTIONS.SH.opcode: regSeqNext = _this.REG_SEQ.SH; break;
             }
 
             console.log('    addressRow = ' + dumpHex(addressRow));
@@ -361,8 +363,8 @@
             console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
             console.log('    memoryFinal = ' + dumpHex(memoryFinal));
             console.log('    opCode = ' + opCode);
-            console.log('    opCodeDetails = ', opCodeDetails);
-            console.log('    opCodeByteWidth = ' + opCodeByteWidth);
+            console.log('    opInstructionDetails = ', opInstructionDetails);
+            console.log('    instructionByteWidth = ' + instructionByteWidth);
             console.log('    regPCNext = ' + regPCNext);
             console.log('    regSeqNext = ' + regSeqNext);
 
@@ -371,15 +373,15 @@
             _this.registers.regSeq = regSeqNext;
 
             /*
-            0x00 0x00 0xaa 0xbb
-            0xcc 0xdd 0x00 0x00
+            RAM content:
+                0x00 0x00 0xaa 0xbb
+                0xcc 0xdd 0x00 0x00
 
-            first
-            0xaa 0xbb ____ ____     << aCol with zero fill
+            First sequence
+                0xaa 0xbb ____ ____     << aCol with zero fill
 
-            second
-
-            ____ ____ 0xcc 0xdd     >> 4-aCol width zero fill
+            Second sequence
+                ____ ____ 0xcc 0xdd     >> 4-aCol width zero fill
             */
         }
 
@@ -394,7 +396,7 @@
                 regIn1 = (_this.registers.regInstr & 0x000F0000) >>> (4 * 4),
                 regIn0Value = readRegister(regIn0),
                 regIn1Value = readRegister(regIn1),
-                regResult = (regIn1Value + regIn0Value) & 0xFFFF;
+                regResult = ((regIn1Value & 0xFFFF) + (regIn0Value & 0xFFFF)) & 0xFFFF;
 
             console.log('    addressRow = ' + dumpHex(addressRow));
             console.log('    addressCol = ' + dumpHex(addressCol));
@@ -421,7 +423,7 @@
                 regIn1 = (_this.registers.regInstr & 0x000F0000) >>> (4 * 4),
                 regIn0Value = readRegister(regIn0),
                 regIn1Value = readRegister(regIn1),
-                regResult = ~(regIn1Value & regIn0Value);
+                regResult = (~(regIn1Value & regIn0Value)) & 0xFFFF;
 
             console.log('    addressRow = ' + dumpHex(addressRow));
             console.log('    addressCol = ' + dumpHex(addressCol));
@@ -440,34 +442,62 @@
         function sequenceSh()
         {
             console.log('    :: sequenceSh');
+            var addressRow = _this.outputs.memoryAddress >>> 2,
+                addressCol = _this.outputs.memoryAddress & 3,
+                memoryReadShifted = _this.inputs.memoryRead << (addressCol * 8),
+                regOut = (_this.registers.regInstr & 0x0F000000) >>> (6 * 4),
+                regIn0 = (_this.registers.regInstr & 0x00F00000) >>> (5 * 4),
+                regIn1 = (_this.registers.regInstr & 0x000F0000) >>> (4 * 4),
+                regIn0Value = readRegister(regIn0),
+                regIn1Value = readRegister(regIn1),
+                regResult = regIn1Value & 0x8000 ? 
+                    (regIn0Value >>> (((~regIn1Value) + 1) & 0xFFFF)) & 0xFFFF :
+                    (regIn0Value << regIn1Value) & 0xFFFF
+                ;
+
+            console.log('    addressRow = ' + dumpHex(addressRow));
+            console.log('    addressCol = ' + dumpHex(addressCol));
+            console.log('    inputs.memoryRead = ' + dumpHex(_this.inputs.memoryRead));
+            console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
+            console.log('    regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
+            console.log('    regIn0Value = ' + dumpHex(regIn0Value));
+            console.log('    regIn1Value = ' + dumpHex(regIn1Value));
+            console.log('    result = ' + dumpHex(regResult) + ' (BIT SHIFT)');
+
+            _this.registers.regMemory = memoryReadShifted;
+            _this.registers.regSeq = _this.REG_SEQ.FETCH_SECOND;
+            saveRegister(regOut, regResult);
         }
 
-        function getOpCodeDetails(opcode) 
+        function getInstructionDetails(opcode) 
         {
             switch (opcode) {
-                case 0: return _this.OPCODES.ADD; break;
-                case 1: return _this.OPCODES.NAND; break;
-                case 2: return _this.OPCODES.SH; break;
-                case 3: return _this.OPCODES.JNZ; break;
-                case 4: return _this.OPCODES.COPY; break;
-                case 5: return _this.OPCODES.IMM; break;
-                case 6: return _this.OPCODES.LD; break;
-                case 7: return _this.OPCODES.ST; break;
+                case 0: return _this.INSTRUCTIONS.ADD; break;
+                case 1: return _this.INSTRUCTIONS.NAND; break;
+                case 2: return _this.INSTRUCTIONS.SH; break;
+                case 3: return _this.INSTRUCTIONS.JNZ; break;
+                case 4: return _this.INSTRUCTIONS.COPY; break;
+                case 5: return _this.INSTRUCTIONS.IMM; break;
+                case 6: return _this.INSTRUCTIONS.LD; break;
+                case 7: return _this.INSTRUCTIONS.ST; break;
             }
         }
 
         function readRegister(number) 
         {
+            var value = null
+
             switch (number) {
-                case 0: return _this.registers.reg00; break;
-                case 1: return _this.registers.reg01; break;
-                case 2: return _this.registers.reg02; break;
-                case 3: return _this.registers.reg03; break;
-                case 14: return _this.registers.regMA; break;
-                case 15: return _this.registers.regPC; break;
+                case 0: value = _this.registers.reg00; break;
+                case 1: value = _this.registers.reg01; break;
+                case 2: value = _this.registers.reg02; break;
+                case 3: value = _this.registers.reg03; break;
+                case 14: value = _this.registers.regMA; break;
+                case 15: value = _this.registers.regPC; break;
+                default: throw 'ReadRegister - Bad number: ' + number;
             }
 
-            throw 'ReadRegister - Bad number: ' + number;
+            return value & 0xFFFF;
         }
 
         function saveRegister(number, value) 
@@ -549,9 +579,9 @@
     };
 
     var memoryState = [
-        { row: 0x0000, data: [ 0xAB, 0xCD, 0xEF, 0x12 ] },
-        { row: 0x0001, data: [ 0x31, 0x56, 0x11, 0x22 ] },
-        { row: 0x0002, data: [ 0xAA, 0xFF, 0x00, 0xFF ] },
+        { row: 0x0000, data: [ 0xAB, 0xCD, 0xEF, 0x02 ] },
+        { row: 0x0001, data: [ 0x31, 0x56, 0x11, 0x21 ] },
+        { row: 0x0002, data: [ 0x23, 0xFF, 0x00, 0xFF ] },
         { row: 0x0003, data: [ 0xEE, 0x00, 0xFF, 0x00 ] }
     ];
     var cpu = new Cpu();
@@ -574,7 +604,9 @@
 
 
 
-    cpu.registers.regPC = 3;
+    cpu.registers.regPC = 7;
+    cpu.registers.reg02 = 0x7;
+    cpu.registers.reg03 = -1;
     globalUpdate();
     runCpu();
 
