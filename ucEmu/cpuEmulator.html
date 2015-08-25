@@ -407,10 +407,7 @@
         function sequencerExecuteAdd()
         {
             console.log('    :: sequencerExecuteAdd');
-            var addressRow = _this.outputs.memoryAddress >>> 2,
-                addressCol = _this.outputs.memoryAddress & 3,
-                memoryReadShifted = _this.inputs.memoryRead << (addressCol * 8),
-                regOut = (_this.registers.regInstruction & 0x0F000000) >>> (6 * 4),
+            var regOut = (_this.registers.regInstruction & 0x0F000000) >>> (6 * 4),
                 regIn0 = (_this.registers.regInstruction & 0x00F00000) >>> (5 * 4),
                 regIn1 = (_this.registers.regInstruction & 0x000F0000) >>> (4 * 4),
                 regIn0Value = readRegister(regIn0),
@@ -418,27 +415,19 @@
                 regResult = ((regIn1Value & 0xFFFF) + (regIn0Value & 0xFFFF)) & 0xFFFF
             ;
 
-            console.log('    addressRow = ' + dumpHex(addressRow));
-            console.log('    addressCol = ' + dumpHex(addressCol));
-            console.log('    inputs.memoryRead = ' + dumpHex(_this.inputs.memoryRead));
-            console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
             console.log('    regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
             console.log('    regIn0Value = ' + dumpHex(regIn0Value));
             console.log('    regIn1Value = ' + dumpHex(regIn1Value));
             console.log('    result = ' + dumpHex(regResult) + ' (sum)');
 
-            _this.registers.regMemory = memoryReadShifted;
-            _this.registers.regSequencer = _this.SEQUENCER_STATES.FETCH_SECOND_AND_DECODE;
+            _this.registers.regSequencer = _this.SEQUENCER_STATES.FETCH_FIRST;
             saveRegister(regOut, regResult);
         }
 
         function sequencerExecuteNand()
         {
             console.log('    :: sequencerExecuteNand');
-            var addressRow = _this.outputs.memoryAddress >>> 2,
-                addressCol = _this.outputs.memoryAddress & 3,
-                memoryReadShifted = _this.inputs.memoryRead << (addressCol * 8),
-                regOut = (_this.registers.regInstruction & 0x0F000000) >>> (6 * 4),
+            var regOut = (_this.registers.regInstruction & 0x0F000000) >>> (6 * 4),
                 regIn0 = (_this.registers.regInstruction & 0x00F00000) >>> (5 * 4),
                 regIn1 = (_this.registers.regInstruction & 0x000F0000) >>> (4 * 4),
                 regIn0Value = readRegister(regIn0),
@@ -446,27 +435,19 @@
                 regResult = (~(regIn1Value & regIn0Value)) & 0xFFFF
             ;
 
-            console.log('    addressRow = ' + dumpHex(addressRow));
-            console.log('    addressCol = ' + dumpHex(addressCol));
-            console.log('    inputs.memoryRead = ' + dumpHex(_this.inputs.memoryRead));
-            console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
             console.log('    regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
             console.log('    regIn0Value = ' + dumpHex(regIn0Value));
             console.log('    regIn1Value = ' + dumpHex(regIn1Value));
             console.log('    result = ' + dumpHex(regResult) + ' (NAND)');
 
-            _this.registers.regMemory = memoryReadShifted;
-            _this.registers.regSequencer = _this.SEQUENCER_STATES.FETCH_SECOND_AND_DECODE;
+            _this.registers.regSequencer = _this.SEQUENCER_STATES.FETCH_FIRST;
             saveRegister(regOut, regResult);
         }
 
         function sequencerExecuteSh()
         {
             console.log('    :: sequencerExecuteSh');
-            var addressRow = _this.outputs.memoryAddress >>> 2,
-                addressCol = _this.outputs.memoryAddress & 3,
-                memoryReadShifted = _this.inputs.memoryRead << (addressCol * 8),
-                regOut = (_this.registers.regInstruction & 0x0F000000) >>> (6 * 4),
+            var regOut = (_this.registers.regInstruction & 0x0F000000) >>> (6 * 4),
                 regIn0 = (_this.registers.regInstruction & 0x00F00000) >>> (5 * 4),
                 regIn1 = (_this.registers.regInstruction & 0x000F0000) >>> (4 * 4),
                 regIn0Value = readRegister(regIn0),
@@ -476,17 +457,12 @@
                     (regIn0Value << regIn1Value) & 0xFFFF
             ;
 
-            console.log('    addressRow = ' + dumpHex(addressRow));
-            console.log('    addressCol = ' + dumpHex(addressCol));
-            console.log('    inputs.memoryRead = ' + dumpHex(_this.inputs.memoryRead));
-            console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
             console.log('    regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
             console.log('    regIn0Value = ' + dumpHex(regIn0Value));
             console.log('    regIn1Value = ' + dumpHex(regIn1Value));
             console.log('    result = ' + dumpHex(regResult) + ' (BIT SHIFT)');
 
-            _this.registers.regMemory = memoryReadShifted;
-            _this.registers.regSequencer = _this.SEQUENCER_STATES.FETCH_SECOND_AND_DECODE;
+            _this.registers.regSequencer = _this.SEQUENCER_STATES.FETCH_FIRST;
             saveRegister(regOut, regResult);
         }
 
