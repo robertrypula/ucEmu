@@ -112,41 +112,57 @@
             ADD: {
                 opcode: 0,
                 name: 'add',
+                nameFull: 'Addition',
+                cycles: 0,
                 byteWidth: 2
             },
             NAND: {
                 opcode: 1,
                 name: 'nand',
+                nameFull: 'Bitwise NAND'
+                cycles: 0,
                 byteWidth: 2
             },
             SH: {
                 opcode: 2,
                 name: 'sh',
+                nameFull: "Logical bit shift",
+                cycles: 0,
                 byteWidth: 2
             },
             JNZ: {
                 opcode: 3,
                 name: 'jnz',
+                nameFull: "Jump if not zero"
+                cycles: 0,
                 byteWidth: 2
             },
             COPY: {
                 opcode: 4,
                 name: 'copy',
+                nameFull: "Copy",
+                cycles: 0,
                 byteWidth: 2
             },
             IMM: {
                 opcode: 5,
                 name: 'imm',
+                nameFull: "Immediate value"
+                cycles: 0,
                 byteWidth: 4
             },
             LD: {
                 opcode: 6,
                 name: 'ld',
+                nameFull: "Load",
+                cycles: 0,
                 byteWidth: 2
             },
             ST: {
                 opcode: 7,
                 name: 'st',
+                nameFull: "Store",
+                cycles: 0,
                 byteWidth: 2
             }
 
@@ -374,6 +390,8 @@
                 case _this.INSTRUCTIONS.NAND.opcode: regSequencerNext = _this.SEQUENCER_STATES.EXECUTE_NAND; break;
                 case _this.INSTRUCTIONS.SH.opcode: regSequencerNext = _this.SEQUENCER_STATES.EXECUTE_SH; break;
                 case _this.INSTRUCTIONS.JNZ.opcode: regSequencerNext = _this.SEQUENCER_STATES.EXECUTE_JNZ; break;
+                case _this.INSTRUCTIONS.COPY.opcode: regSequencerNext = _this.SEQUENCER_STATES.EXECUTE_COPY; break;
+                case _this.INSTRUCTIONS.IMM.opcode: regSequencerNext = _this.SEQUENCER_STATES.EXECUTE_IMM; break;
             }
 
             console.log('    addressRow = ' + dumpHex(addressRow));
