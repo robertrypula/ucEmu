@@ -171,7 +171,7 @@
         };
 
         this.outputs = {
-            memoryAddress: 0x0000,
+            memoryRowAddress: 0x0000,
             memoryWrite: 0x00000000,
             memoryWE: false,
 
@@ -204,10 +204,10 @@
             reg03: 0xFFFF & Math.random() * 0x10000,
                /* ..04-13.. */
             regMA: 0xFFFF & Math.random() * 0x10000,
-            regPC: 2, //0xFFFF & Math.random() * 0x10000,                    // TODO       fix output address to memoryRowAddress
+            regPC: 0xFFFF & Math.random() * 0x10000,
 
             // control registers
-            regSequencer: 1,//0xFF & Math.random() * 0x100,                  // TODO       fix output address to memoryRowAddress
+            regSequencer: 0xFF & Math.random() * 0x100,
             regInstruction: 0xFFFF & Math.random() * 0x10000,
 
             // input helper registers
@@ -312,17 +312,17 @@
 
         function updateOutputs()
         {
-            // memoryAddress
+            // memoryRowAddress
             switch (_this.registers.regSequencer) {
                 case _this.SEQUENCER_STATES.FETCH_FIRST:
-                    _this.outputs.memoryAddress = _this.registers.regPC;
+                    _this.outputs.memoryRowAddress = _this.registers.regPC >>> 2;
                     break;
                 case _this.SEQUENCER_STATES.FETCH_SECOND_AND_DECODE:
-                    _this.outputs.memoryAddress = _this.registers.regPC + 4;
+                    _this.outputs.memoryRowAddress = (_this.registers.regPC + 4) >>> 2;
                     break;
                 // TODO more 
                 default:
-                    _this.outputs.memoryAddress = 0x0000;            // floating bus - pulled down by resistors
+                    _this.outputs.memoryRowAddress = 0x0000;            // floating bus - pulled down by resistors
             }
 
             // memoryWrite
@@ -342,13 +342,11 @@
         function sequenceFetchFirst()
         {
             console.log('    :: sequenceFetchFirst');
-            var addressRow = _this.outputs.memoryAddress >>> 2,
-                addressCol = _this.outputs.memoryAddress & 3,
-                memoryReadShifted = _this.inputs.memoryRead << (addressCol * 8)
+            var memoryColumn = _this.registers.regPC & 3,
+                memoryReadShifted = _this.inputs.memoryRead << (memoryColumn * 8)
             ;
 
-            console.log('    addressRow = ' + dumpHex(addressRow));
-            console.log('    addressCol = ' + dumpHex(addressCol));
+            console.log('    memoryColumn = ' + dumpHex(memoryColumn));
             console.log('    inputs.memoryRead = ' + dumpHex(_this.inputs.memoryRead));
             console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
 
@@ -359,9 +357,8 @@
         function sequenceFetchSecondAndDecode()
         {
             console.log('    :: sequenceFetchSecondAndDecode');
-            var addressRow = _this.outputs.memoryAddress >>> 2,
-                addressCol = _this.outputs.memoryAddress & 3,
-                memoryReadShifted = _this.inputs.memoryRead >>> ((4 - addressCol) * 8),
+            var memoryColumn = _this.registers.regPC & 3,
+                memoryReadShifted = _this.inputs.memoryRead >>> ((4 - memoryColumn) * 8),
                 memoryFinal = memoryReadShifted | _this.registers.regMemory,
                 opCode = (memoryFinal & 0xF0000000) >>> (7 * 4),
                 instructionDetails = getInstructionDetails(opCode),
@@ -379,16 +376,15 @@
                 case _this.INSTRUCTIONS.IMM.opcode: regSequencerNext = _this.SEQUENCER_STATES.EXECUTE_IMM; break;
             }
 
-            console.log('    addressRow = ' + dumpHex(addressRow));
-            console.log('    addressCol = ' + dumpHex(addressCol));
+            console.log('    memoryColumn = ' + memoryColumn);
             console.log('    inputs.memoryRead = ' + dumpHex(_this.inputs.memoryRead));
             console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
             console.log('    memoryFinal = ' + dumpHex(memoryFinal));
             console.log('    opCode = ' + opCode);
             console.log('    instructionDetails = ', instructionDetails);
             console.log('    instructionByteWidth = ' + instructionByteWidth);
-            console.log('    regPCNext = ' + regPCNext);
-            console.log('    regSequencerNext = ' + regSequencerNext);
+            console.log('    regPCNext = ' + dumpHex(regPCNext));
+            console.log('    regSequencerNext = ' + dumpHex(regSequencerNext));
 
             _this.registers.regInstruction = memoryFinal;
             _this.registers.regPC = regPCNext;
@@ -399,10 +395,10 @@
                 0x00 0x00 0xaa 0xbb
                 0xcc 0xdd 0x00 0x00
 
-            First sequence
+            Fetch first
                 0xaa 0xbb ____ ____     << aCol with zero fill
 
-            Second sequence
+            Fetch second
                 ____ ____ 0xcc 0xdd     >> 4-aCol width zero fill
             */
         }
@@ -637,15 +633,12 @@
     ];
     var cpu = new Cpu();
     var staticRam = new StaticRam(
-        cpu.outputs.memoryAddress >>> 2, 
+        cpu.outputs.memoryRowAddress, 
         cpu.outputs.memoryWE, 
         cpu.outputs.memoryWrite
     );
     globalUpdate();
     cpuLog();
-    console.log("\n");
-    staticRam.log(0, 6);
-    console.log("\n");
 
     triggerCpuResetAndProgramStaticRam();
 
@@ -653,8 +646,8 @@
     cpu.registers.reg02 = 1;
     cpu.registers.reg03 = 8;
     globalUpdate();
-    runCpu();
 
+    runCpu();
 
     function triggerCpuResetAndProgramStaticRam()
     {
@@ -709,7 +702,7 @@
 
     function syncCpuWithStaticRam() 
     {
-        staticRam.setRow(cpu.outputs.memoryAddress >>> 2);
+        staticRam.setRow(cpu.outputs.memoryRowAddress);
         staticRam.setWriteEnable(cpu.outputs.memoryWE);
         staticRam.setDataIn(cpu.outputs.memoryWrite);
 
@@ -742,7 +735,7 @@
             'in.clock: ' + cpu.inputs.clock + ' | ' + 
             'in.memoryRead = ' + dumpHex(cpu.inputs.memoryRead) + ' | ' +
             'in.reset = ' + (cpu.inputs.reset ? "true" : "false") + '      ' +
-            'out.memoryAddress = ' + dumpHex(cpu.outputs.memoryAddress) + ' | ' +
+            'out.memoryRowAddress = ' + dumpHex(cpu.outputs.memoryRowAddress) + ' | ' +
             'out.memoryWrite = ' + dumpHex(cpu.outputs.memoryWrite) + ' | ' +
             'out.memoryWE = ' + (cpu.outputs.memoryWE ? "true" : "false") + '      ' +
             'regPC = ' + dumpHex(cpu.registers.regPC) + ' | ' +
