@@ -81,9 +81,6 @@
 */
 
 
-
-(function () {
-
     var Cpu = function () {
 
         var _this = this;
@@ -207,10 +204,10 @@
             reg03: 0xFFFF & Math.random() * 0x10000,
                /* ..04-13.. */
             regMA: 0xFFFF & Math.random() * 0x10000,
-            regPC: 0xFFFF & Math.random() * 0x10000,
+            regPC: 2, //0xFFFF & Math.random() * 0x10000,                    // TODO       fix output address to memoryRowAddress
 
             // control registers
-            regSequencer: 0xFF & Math.random() * 0x100,
+            regSequencer: 1,//0xFF & Math.random() * 0x100,                  // TODO       fix output address to memoryRowAddress
             regInstruction: 0xFFFF & Math.random() * 0x10000,
 
             // input helper registers
@@ -270,7 +267,7 @@
                     sequenceFetchFirst();
                     break;
                 case _this.SEQUENCER_STATES.FETCH_SECOND_AND_DECODE: 
-                    sequenceFetchSecond();
+                    sequenceFetchSecondAndDecode();
                     break;
                 case _this.SEQUENCER_STATES.EXECUTE_ADD: 
                     sequencerExecuteAdd();
@@ -359,9 +356,9 @@
             _this.registers.regSequencer = _this.SEQUENCER_STATES.FETCH_SECOND_AND_DECODE;
         }
 
-        function sequenceFetchSecond()
+        function sequenceFetchSecondAndDecode()
         {
-            console.log('    :: sequenceFetchSecond');
+            console.log('    :: sequenceFetchSecondAndDecode');
             var addressRow = _this.outputs.memoryAddress >>> 2,
                 addressCol = _this.outputs.memoryAddress & 3,
                 memoryReadShifted = _this.inputs.memoryRead >>> ((4 - addressCol) * 8),
@@ -639,24 +636,18 @@
         { row: 0x0003, data: [ 0xEE, 0x00, 0xFF, 0x00 ] }
     ];
     var cpu = new Cpu();
-    cpuLog();
     var staticRam = new StaticRam(
         cpu.outputs.memoryAddress >>> 2, 
         cpu.outputs.memoryWE, 
         cpu.outputs.memoryWrite
     );
-    cpuLog();
-    syncCpuWithStaticRam();
+    globalUpdate();
     cpuLog();
     console.log("\n");
+    staticRam.log(0, 6);
+    console.log("\n");
 
-
-    // console.log('clock: ' + cpu.inputs.clock + ' | ' + JSON.stringify(cpu.registers) + ' | ' + JSON.stringify(cpu.inputs));
-    triggerCpuResetAndProgramStaticRam();    
-    // console.log('clock: ' + cpu.inputs.clock + ' | ' + JSON.stringify(cpu.registers) + ' | ' + JSON.stringify(cpu.inputs));
-
-
-
+    triggerCpuResetAndProgramStaticRam();
 
     cpu.registers.regPC = 7;
     cpu.registers.reg02 = 1;
@@ -673,14 +664,11 @@
         clockHigh();
         clockLow();
 
-        programStaticRam(memoryState);
-        syncCpuWithStaticRam();
+        programStaticRamAndSync(memoryState);
 
         cpu.inputs.reset = false;
         clockHigh();
         clockLow();
-
-        syncCpuWithStaticRam();
 
         console.log(':: trigger RESET AND PROGRAM ENDS');
         console.log("\n\n");
@@ -700,7 +688,7 @@
         }
     }
 
-    function programStaticRam(memoryState)
+    function programStaticRamAndSync(memoryState)
     {
         staticRam.setWriteEnable(false);
         for (var i = 0; i < memoryState.length; i++) {
@@ -716,6 +704,7 @@
             staticRam.setWriteEnable(true);
             staticRam.setWriteEnable(false);
         }
+        syncCpuWithStaticRam();
     }
 
     function syncCpuWithStaticRam() 
@@ -752,10 +741,10 @@
         console.log(
             'in.clock: ' + cpu.inputs.clock + ' | ' + 
             'in.memoryRead = ' + dumpHex(cpu.inputs.memoryRead) + ' | ' +
-            'in.reset = ' + (cpu.inputs.reset ? "true" : "false") + ' |___| ' +
+            'in.reset = ' + (cpu.inputs.reset ? "true" : "false") + '      ' +
             'out.memoryAddress = ' + dumpHex(cpu.outputs.memoryAddress) + ' | ' +
             'out.memoryWrite = ' + dumpHex(cpu.outputs.memoryWrite) + ' | ' +
-            'out.memoryWE = ' + (cpu.outputs.memoryWE ? "true" : "false") + ' |___| ' +
+            'out.memoryWE = ' + (cpu.outputs.memoryWE ? "true" : "false") + '      ' +
             'regPC = ' + dumpHex(cpu.registers.regPC) + ' | ' +
             'regMem = ' + dumpHex(cpu.registers.regMemory) + ' | ' + 
             'regSequencer = ' + dumpHex(cpu.registers.regSequencer) + ' | ' + 
@@ -774,6 +763,5 @@
         (data & 0x000000FF).toString(16);
     }
 
-})();
 
 </script>
