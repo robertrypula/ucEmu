@@ -655,6 +655,19 @@
         function sequencerExecuteStFirst()
         {
             console.log('    :: sequencerExecuteStFirst');
+
+            /*
+            RAM content:
+                0x00 0x00 0xaa 0xbb
+                0xcc 0xdd 0x00 0x00
+
+            Fetch first
+                0x00 0x00 0xaa 0xbb     << aCol with zero fill
+
+            Fetch second
+                ____ ____ 0xcc 0xdd     >> 4-aCol width zero fill
+            */
+
         }
                     
         function sequencerExecuteStSecond()
@@ -810,9 +823,9 @@
         ? cycles   | 0x7_ 0xR_            | 07 | st      regIn0                        | MemoryAt[regIn0] = regMem
     */
     var memoryState = [
-        { row: 0x0000, data: [ 0x50, 0x00, 0x00, 0x07 ] },      // imm reg00, 7
-        { row: 0x0001, data: [ 0x60, 0x00, 0x00, 0x77 ] },      // ld  reg00        |   a:  <byte> 0      | b: <word> 0x7744
-        { row: 0x0002, data: [ 0x44, 0x98, 0x2b, 0xa9 ] },      // 
+        { row: 0x0000, data: [ 0x50, 0x00, 0x00, 0x0a ] },      // imm reg00, 0xa
+        { row: 0x0001, data: [ 0x5E, 0x00, 0x61, 0x62 ] },      // imm regMEM, 0x6162 
+        { row: 0x0002, data: [ 0x70, 0x00, 0x2b, 0xa9 ] },      // st  reg00
         { row: 0x0003, data: [ 0x00, 0x12, 0x23, 0x02 ] },      // 
         { row: 0x0004, data: [ 0x40, 0x30, 0x11, 0x03 ] },      // 
         { row: 0x0005, data: [ 0x51, 0x00, 0x00, 0x00 ] },      // 
