@@ -1,50 +1,61 @@
 var RegisterSet = function () {
-  var
-    self = this,
-    registers = {
-      // data registers
-      reg00: 0xFFFF & Math.random() * 0x10000,
-      reg01: 0xFFFF & Math.random() * 0x10000,
-      reg02: 0xFFFF & Math.random() * 0x10000,
-      reg03: 0xFFFF & Math.random() * 0x10000,
-      reg04: 0xFFFF & Math.random() * 0x10000,
-      reg05: 0xFFFF & Math.random() * 0x10000,
-      reg06: 0xFFFF & Math.random() * 0x10000,
-      reg07: 0xFFFF & Math.random() * 0x10000,
-      reg08: 0xFFFF & Math.random() * 0x10000,
-      reg09: 0xFFFF & Math.random() * 0x10000,
-      reg10: 0xFFFF & Math.random() * 0x10000,
-      reg11: 0xFFFF & Math.random() * 0x10000,
-      reg12: 0xFFFF & Math.random() * 0x10000,
-      reg13: 0xFFFF & Math.random() * 0x10000,
-      regMA: 0xFFFF & Math.random() * 0x10000,
-      regPC: 0xFFFF & Math.random() * 0x10000
+    var
+        REGISTERS_SIZE = 16,
+        MASK = 0xFFFF,
+        PROGRAM_COUNTER_INDEX = REGISTERS_SIZE - 1,
+        MEMORY_ACCESS_INDEX = REGISTERS_SIZE - 2,
+        self = this,
+        registers = []
+    ;
+
+    function construct()
+    {
+        for (var i = 0; i < REGISTERS_SIZE; i++) {
+            registers.push(
+                MASK & (Math.random() * (MASK + 1))
+            );
+        }
     }
-  ;
 
-  function construct()
-  {
+    function checkRange(number, method)
+    {
+        if (number < 0 || number >= REGISTERS_SIZE) {
+            throw 'RegisterSet.' + method + '() - bad register number: ' + number;
+        }
+    }
 
-  }
+    self.reset = function () {
+        for (var i = 0; i < REGISTERS_SIZE; i++) {
+            self.save(i, 0);
+        }
+    };
 
-  self.reset = function () {
-    registers.reg00 = 0x0000;
-    registers.reg01 = 0x0000;
-    registers.reg02 = 0x0000;
-    registers.reg03 = 0x0000;
-    registers.reg04 = 0x0000;
-    registers.reg05 = 0x0000;
-    registers.reg06 = 0x0000;
-    registers.reg07 = 0x0000;
-    registers.reg08 = 0x0000;
-    registers.reg09 = 0x0000;
-    registers.reg10 = 0x0000;
-    registers.reg11 = 0x0000;
-    registers.reg12 = 0x0000;
-    registers.reg13 = 0x0000;
-    registers.regMA = 0x0000;
-    registers.regPC = 0x0000;
-  };
+    self.getProgramCounter = function () {
+        return self.read(PROGRAM_COUNTER_INDEX);
+    };
 
-  construct();
+    self.getMemoryAccess = function () {
+        return self.read(MEMORY_ACCESS_INDEX);
+    };
+
+    self.setProgramCounter = function (value) {
+        self.save(PROGRAM_COUNTER_INDEX, value);
+    };
+
+    self.setMemoryAccess = function (value) {
+        self.save(MEMORY_ACCESS_INDEX, value);
+    };
+
+    self.read = function (number) {
+        checkRange(number, 'read');
+
+        return registers[number];
+    };
+
+    self.save = function (number, value) {
+        checkRange(number, 'save');
+        registers[number] = value & MASK;
+    };
+
+    construct();
 };

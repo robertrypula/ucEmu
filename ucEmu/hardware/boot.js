@@ -10,19 +10,19 @@
  */
 
 var memoryState = [
-  { row: 0x0000, data: [ 0x50, 0x00, 0x00, 0x0a ] },      // imm reg00, 0xa
-  { row: 0x0001, data: [ 0x5E, 0x00, 0x61, 0x62 ] },      // imm regMEM, 0x6162
-  { row: 0x0002, data: [ 0x70, 0x00, 0x2b, 0xa9 ] },      // st  reg00
-  { row: 0x0003, data: [ 0x00, 0x12, 0x23, 0x02 ] },      //
-  { row: 0x0004, data: [ 0x40, 0x30, 0x11, 0x03 ] },      //
-  { row: 0x0005, data: [ 0x51, 0x00, 0x00, 0x00 ] },      //
-  { row: 0x0006, data: [ 0x30, 0x11, 0x11, 0x03 ] }       //
+    {row: 0x0000, data: [0x50, 0x00, 0x00, 0x0a]},      // imm reg00, 0xa
+    {row: 0x0001, data: [0x5E, 0x00, 0x61, 0x62]},      // imm regMEM, 0x6162
+    {row: 0x0002, data: [0x70, 0x00, 0x2b, 0xa9]},      // st  reg00
+    {row: 0x0003, data: [0x00, 0x12, 0x23, 0x02]},      //
+    {row: 0x0004, data: [0x40, 0x30, 0x11, 0x03]},      //
+    {row: 0x0005, data: [0x51, 0x00, 0x00, 0x00]},      //
+    {row: 0x0006, data: [0x30, 0x11, 0x11, 0x03]}       //
 ];
 var cpu = new Cpu();
 var staticRam = new StaticRam(
-  cpu.outputs.memoryRowAddress,
-  cpu.outputs.memoryWE,
-  cpu.outputs.memoryWrite
+    cpu.outputs.memoryRowAddress,
+    cpu.outputs.memoryWE,
+    cpu.outputs.memoryWrite
 );
 globalUpdate();
 cpuLog();
@@ -36,138 +36,138 @@ runCpu();
 
 function triggerCpuResetAndProgramStaticRam()
 {
-  console.log(':: trigger RESET AND PROGRAM STARTS');
+    console.log(':: trigger RESET AND PROGRAM STARTS');
 
-  cpu.inputs.reset = true;
-  clockHigh();
-  clockLow();
+    cpu.inputs.reset = true;
+    clockHigh();
+    clockLow();
 
-  programStaticRamAndSync(memoryState);
+    programStaticRamAndSync(memoryState);
 
-  cpu.inputs.reset = false;
-  clockHigh();
-  clockLow();
+    cpu.inputs.reset = false;
+    clockHigh();
+    clockLow();
 
-  console.log(':: trigger RESET AND PROGRAM ENDS');
-  console.log("\n\n");
+    console.log(':: trigger RESET AND PROGRAM ENDS');
+    console.log("\n\n");
 }
 
 function runCpu()
 {
-  var clockTicks = 0;
+    var clockTicks = 0;
 
-  while (clockTicks < 10) {
-    clockHigh();
-    clockLow();
+    while (clockTicks < 10) {
+        clockHigh();
+        clockLow();
 
-    console.log('----> clockTicks ', clockTicks);
-    console.log("\n");
-    clockTicks++;
+        console.log('----> clockTicks ', clockTicks);
+        console.log("\n");
+        clockTicks++;
 
-    if (cpu.registers.regSequencer == cpu.SEQUENCER_STATES.FETCH_FIRST) {
-      console.log(
-        "------------------------------------------------------" +
-        "------------------------------------------------------" +
-        "\n\n"
-      );
+        if (cpu.registers.regSequencer == cpu.SEQUENCER_STATES.FETCH_FIRST) {
+            console.log(
+                "------------------------------------------------------" +
+                "------------------------------------------------------" +
+                "\n\n"
+            );
+        }
     }
-  }
 }
 
 function programStaticRamAndSync(memoryState)
 {
-  staticRam.setWriteEnable(false);
-  for (var i = 0; i < memoryState.length; i++) {
-    var ms = memoryState[i];
-
-    staticRam.setRow(ms.row);
-    staticRam.setDataIn(
-      0x1000000 * ms.data[0] +
-      0x10000 * ms.data[1] +
-      0x100 * ms.data[2] +
-      ms.data[3]
-    );
-    staticRam.setWriteEnable(true);
     staticRam.setWriteEnable(false);
-  }
-  syncCpuWithStaticRam();
+    for (var i = 0; i < memoryState.length; i++) {
+        var ms = memoryState[i];
+
+        staticRam.setRow(ms.row);
+        staticRam.setDataIn(
+            0x1000000 * ms.data[0] +
+            0x10000 * ms.data[1] +
+            0x100 * ms.data[2] +
+            ms.data[3]
+        );
+        staticRam.setWriteEnable(true);
+        staticRam.setWriteEnable(false);
+    }
+    syncCpuWithStaticRam();
 }
 
 function syncCpuWithStaticRam()
 {
-  staticRam.setRow(cpu.outputs.memoryRowAddress);
-  staticRam.setWriteEnable(cpu.outputs.memoryWE);
-  staticRam.setDataIn(cpu.outputs.memoryWrite);
+    staticRam.setRow(cpu.outputs.memoryRowAddress);
+    staticRam.setWriteEnable(cpu.outputs.memoryWE);
+    staticRam.setDataIn(cpu.outputs.memoryWrite);
 
-  cpu.inputs.memoryRead = staticRam.getDataOut();
+    cpu.inputs.memoryRead = staticRam.getDataOut();
 }
 
 function clockHigh()
 {
-  cpu.inputs.clock = true;
-  globalUpdate();
-  // cpuLog();
+    cpu.inputs.clock = true;
+    globalUpdate();
+    // cpuLog();
 }
 
 function clockLow()
 {
-  cpu.inputs.clock = false;
-  globalUpdate();
-  cpuLog();
+    cpu.inputs.clock = false;
+    globalUpdate();
+    cpuLog();
 }
 
 function globalUpdate()
 {
-  cpu.update();
-  syncCpuWithStaticRam();
+    cpu.update();
+    syncCpuWithStaticRam();
 }
 
 function cpuLog()
 {
-  console.log(
-    'in.clock: ' + cpu.inputs.clock + ' | ' +
-    'in.memoryRead = ' + dumpHex(cpu.inputs.memoryRead) + ' | ' +
-    'in.reset = ' + (cpu.inputs.reset ? "true" : "false") + '      ' +
-    'out.memoryRowAddress = ' + dumpHex(cpu.outputs.memoryRowAddress) + ' | ' +
-    'out.memoryWrite = ' + dumpHex(cpu.outputs.memoryWrite) + ' | ' +
-    'out.memoryWE = ' + (cpu.outputs.memoryWE ? "true" : "false") + '      ' +
-    'regMemory = ' + dumpHex(cpu.registers.regMemory) + ' | ' +
-    'regSequencer = ' + dumpHex(cpu.registers.regSequencer) + ' | ' +
-    'regInstruction = ' + dumpHex(cpu.registers.regInstruction) + ' | ' +
-    'regTimer = ' + dumpHex(cpu.registers.regTimer) + ' | ' +
-    'regReset = ' + (cpu.registers.regReset ? "true" : "false") + "\n" +
-    'reg00 = ' + dumpHex(cpu.registers.reg00) + ' | ' +
-    'reg01 = ' + dumpHex(cpu.registers.reg01) + ' | ' +
-    'reg02 = ' + dumpHex(cpu.registers.reg02) + ' | ' +
-    'reg03 = ' + dumpHex(cpu.registers.reg03) + ' | ' +
-    'reg04 = ' + dumpHex(cpu.registers.reg04) + ' | ' +
-    'reg05 = ' + dumpHex(cpu.registers.reg05) + ' | ' +
-    'reg06 = ' + dumpHex(cpu.registers.reg06) + ' | ' +
-    'reg07 = ' + dumpHex(cpu.registers.reg07) + ' | ' + "\n" +
-    'reg08 = ' + dumpHex(cpu.registers.reg08) + ' | ' +
-    'reg09 = ' + dumpHex(cpu.registers.reg09) + ' | ' +
-    'reg10 = ' + dumpHex(cpu.registers.reg10) + ' | ' +
-    'reg11 = ' + dumpHex(cpu.registers.reg11) + ' | ' +
-    'reg12 = ' + dumpHex(cpu.registers.reg12) + ' | ' +
-    'reg13 = ' + dumpHex(cpu.registers.reg13) + ' | ' +
-    'regMA = ' + dumpHex(cpu.registers.regMA) + ' | ' +
-    'regPC = ' + dumpHex(cpu.registers.regPC) + ' | '
-  );
+    console.log(
+        'in.clock: ' + cpu.inputs.clock + ' | ' +
+        'in.memoryRead = ' + dumpHex(cpu.inputs.memoryRead) + ' | ' +
+        'in.reset = ' + (cpu.inputs.reset ? "true" : "false") + '      ' +
+        'out.memoryRowAddress = ' + dumpHex(cpu.outputs.memoryRowAddress) + ' | ' +
+        'out.memoryWrite = ' + dumpHex(cpu.outputs.memoryWrite) + ' | ' +
+        'out.memoryWE = ' + (cpu.outputs.memoryWE ? "true" : "false") + '      ' +
+        'regMemory = ' + dumpHex(cpu.registers.regMemory) + ' | ' +
+        'regSequencer = ' + dumpHex(cpu.registers.regSequencer) + ' | ' +
+        'regInstruction = ' + dumpHex(cpu.registers.regInstruction) + ' | ' +
+        'regTimer = ' + dumpHex(cpu.registers.regTimer) + ' | ' +
+        'regReset = ' + (cpu.registers.regReset ? "true" : "false") + "\n" +
+        'reg00 = ' + dumpHex(cpu.registerSet.read(0)) + ' | ' +
+        'reg01 = ' + dumpHex(cpu.registerSet.read(1)) + ' | ' +
+        'reg02 = ' + dumpHex(cpu.registerSet.read(2)) + ' | ' +
+        'reg03 = ' + dumpHex(cpu.registerSet.read(3)) + ' | ' +
+        'reg04 = ' + dumpHex(cpu.registerSet.read(4)) + ' | ' +
+        'reg05 = ' + dumpHex(cpu.registerSet.read(5)) + ' | ' +
+        'reg06 = ' + dumpHex(cpu.registerSet.read(6)) + ' | ' +
+        'reg07 = ' + dumpHex(cpu.registerSet.read(7)) + ' | ' + "\n" +
+        'reg08 = ' + dumpHex(cpu.registerSet.read(8)) + ' | ' +
+        'reg09 = ' + dumpHex(cpu.registerSet.read(9)) + ' | ' +
+        'reg10 = ' + dumpHex(cpu.registerSet.read(10)) + ' | ' +
+        'reg11 = ' + dumpHex(cpu.registerSet.read(11)) + ' | ' +
+        'reg12 = ' + dumpHex(cpu.registerSet.read(12)) + ' | ' +
+        'reg13 = ' + dumpHex(cpu.registerSet.read(13)) + ' | ' +
+        'regMA = ' + dumpHex(cpu.registerSet.getMemoryAccess()) + ' | ' +
+        'regPC = ' + dumpHex(cpu.registerSet.getProgramCounter()) + ' | '
+    );
 }
 
 staticRam.log(0, 3);
 
 function dumpHex(data)
 {
-  var byte03 = ((data & 0xFF000000) >>> (6 * 4)).toString(16),
-    byte02 = ((data & 0x00FF0000) >>> (4 * 4)).toString(16),
-    byte01 = ((data & 0x0000FF00) >>> (2 * 4)).toString(16),
-    byte00 = (data & 0x000000FF).toString(16);
+    var byte03 = ((data & 0xFF000000) >>> (6 * 4)).toString(16),
+        byte02 = ((data & 0x00FF0000) >>> (4 * 4)).toString(16),
+        byte01 = ((data & 0x0000FF00) >>> (2 * 4)).toString(16),
+        byte00 = (data & 0x000000FF).toString(16);
 
-  byte03 = byte03.length === 1 ? '0' + byte03 : byte03;
-  byte02 = byte02.length === 1 ? '0' + byte02 : byte02;
-  byte01 = byte01.length === 1 ? '0' + byte01 : byte01;
-  byte00 = byte00.length === 1 ? '0' + byte00 : byte00;
+    byte03 = byte03.length === 1 ? '0' + byte03 : byte03;
+    byte02 = byte02.length === 1 ? '0' + byte02 : byte02;
+    byte01 = byte01.length === 1 ? '0' + byte01 : byte01;
+    byte00 = byte00.length === 1 ? '0' + byte00 : byte00;
 
-  return byte03 + ' ' + byte02 + ' ' + byte01 + ' ' + byte00;
+    return byte03 + ' ' + byte02 + ' ' + byte01 + ' ' + byte00;
 }
