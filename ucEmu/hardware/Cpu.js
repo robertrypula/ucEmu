@@ -83,27 +83,10 @@ var Cpu = function () {
 
     var self = this;
 
-    self.registerSet = new RegisterSet();
-
     self.core = {
-        instructionDecoder: new InstructionDecoder(self)
-    };
-
-    this.SEQUENCER_STATES = {
-        FETCH_FIRST: 0x00,
-        FETCH_SECOND_AND_DECODE: 0x01,
-        EXECUTE_ADD: 0x02,
-        EXECUTE_NAND: 0x03,
-        EXECUTE_SH: 0x04,
-        EXECUTE_JNZ: 0x05,
-        EXECUTE_COPY: 0x06,
-        EXECUTE_IMM: 0x07,
-        EXECUTE_LD_FIRST: 0x08,
-        EXECUTE_LD_SECOND: 0x09,
-        EXECUTE_ST_FIRST: 0x0a,
-        EXECUTE_ST_SECOND: 0x0b,
-        EXECUTE_ST_THIRD: 0x0c,
-        EXECUTE_ST_FOURTH: 0x0d
+        registerSet: new RegisterSet(),
+        instructionDecoder: new InstructionDecoder(),
+        sequencer: new Sequencer()
     };
 
     this.inputs = {
@@ -195,62 +178,14 @@ var Cpu = function () {
             return;
         }
 
-        sequencerDispatcher();
+        self.core.sequencer.dispatch(self.registers.regSequencer);
 
         self.registers.regTimer = self.registers.regTimer + 1;  // TODO increase timer - check it
     }
 
-    function sequencerDispatcher()
-    {
-        switch (self.registers.regSequencer) {
-            case self.SEQUENCER_STATES.FETCH_FIRST:
-                sequenceFetchFirst();
-                break;
-            case self.SEQUENCER_STATES.FETCH_SECOND_AND_DECODE:
-                sequenceFetchSecondAndDecode();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_ADD:
-                sequencerExecuteAdd();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_NAND:
-                sequencerExecuteNand();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_SH:
-                sequencerExecuteSh();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_JNZ:
-                sequencerExecuteJnz();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_COPY:
-                sequencerExecuteCopy();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_IMM:
-                sequencerExecuteImm();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_LD_FIRST:
-                sequencerExecuteLdFirst();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_LD_SECOND:
-                sequencerExecuteLdSecond();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_ST_FIRST:
-                sequencerExecuteStFirst();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_ST_SECOND:
-                sequencerExecuteStSecond();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_ST_THIRD:
-                sequencerExecuteStThird();
-                break;
-            case self.SEQUENCER_STATES.EXECUTE_ST_FOURTH:
-                sequencerExecuteStFourth();
-                break;
-        }
-    }
-
     function performRegistersReset()
     {
-        self.registerSet.reset();
+        self.core.registerSet.reset();
 
         self.registers.regSequencer = 0x00;
         self.registers.regInstruction = 0x0000;
@@ -275,20 +210,20 @@ var Cpu = function () {
             regIn0Value;
 
         switch (self.registers.regSequencer) {
-            case self.SEQUENCER_STATES.FETCH_FIRST:
-                result = self.registerSet.getProgramCounter() >>> 2;
+            case self.core.sequencer.STATES.FETCH_FIRST:
+                result = self.core.registerSet.getProgramCounter() >>> 2;
                 break;
-            case self.SEQUENCER_STATES.FETCH_SECOND_AND_DECODE:
-                result = (self.registerSet.getProgramCounter() >>> 2) + 1;
+            case self.core.sequencer.STATES.FETCH_SECOND_AND_DECODE:
+                result = (self.core.registerSet.getProgramCounter() >>> 2) + 1;
                 break;
-            case self.SEQUENCER_STATES.EXECUTE_LD_FIRST:
+            case self.core.sequencer.STATES.EXECUTE_LD_FIRST:
                 regIn0 = (self.registers.regInstruction & 0x00F00000) >>> (5 * 4);
-                regIn0Value = self.registerSet.read(regIn0);
+                regIn0Value = self.core.registerSet.read(regIn0);
                 result = regIn0Value >>> 2;
                 break;
-            case self.SEQUENCER_STATES.EXECUTE_LD_SECOND:
+            case self.core.sequencer.STATES.EXECUTE_LD_SECOND:
                 regIn0 = (self.registers.regInstruction & 0x00F00000) >>> (5 * 4);
-                regIn0Value = self.registerSet.read(regIn0);
+                regIn0Value = self.core.registerSet.read(regIn0);
                 result = (regIn0Value >>> 2) + 1;
                 break;
             // TODO implement ld/st instructions
@@ -326,7 +261,7 @@ var Cpu = function () {
     function sequenceFetchFirst()
     {
         console.log('    :: sequenceFetchFirst');
-        var memoryColumn = self.registerSet.getProgramCounter() & 3,
+        var memoryColumn = self.core.registerSet.getProgramCounter() & 3,
             memoryReadShifted = self.inputs.memoryRead << (memoryColumn * 8)
         ;
 
@@ -335,13 +270,13 @@ var Cpu = function () {
         console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
 
         self.registers.regMemory = memoryReadShifted;
-        self.registers.regSequencer = self.SEQUENCER_STATES.FETCH_SECOND_AND_DECODE;
+        self.registers.regSequencer = self.core.sequencer.STATES.FETCH_SECOND_AND_DECODE;
     }
 
     function sequenceFetchSecondAndDecode()
     {
         console.log('    :: sequenceFetchSecondAndDecode');
-        var memoryColumn = self.registerSet.getProgramCounter() & 3,
+        var memoryColumn = self.core.registerSet.getProgramCounter() & 3,
             shiftAmount = (4 - memoryColumn) * 8,
             memoryReadShifted = shiftAmount < 32 ?
                 self.inputs.memoryRead >>> shiftAmount :
@@ -350,20 +285,20 @@ var Cpu = function () {
             opCode = (memoryFinal & 0xF0000000) >>> (7 * 4),
             instruction = self.core.instructionDecoder.getInstruction(opCode),
             instructionByteWidth = instruction.byteWidth,
-            regPCNext = self.registerSet.getProgramCounter() + instructionByteWidth,
+            regPCNext = self.core.registerSet.getProgramCounter() + instructionByteWidth,
             regSequencerNext = 0,
             OPCODE = self.core.instructionDecoder.OPCODE
         ;
 
         switch (instruction.opcode) {
-            case OPCODE.ADD: regSequencerNext = self.SEQUENCER_STATES.EXECUTE_ADD; break;
-            case OPCODE.NAND: regSequencerNext = self.SEQUENCER_STATES.EXECUTE_NAND; break;
-            case OPCODE.SH: regSequencerNext = self.SEQUENCER_STATES.EXECUTE_SH; break;
-            case OPCODE.JNZ: regSequencerNext = self.SEQUENCER_STATES.EXECUTE_JNZ; break;
-            case OPCODE.COPY: regSequencerNext = self.SEQUENCER_STATES.EXECUTE_COPY; break;
-            case OPCODE.IMM: regSequencerNext = self.SEQUENCER_STATES.EXECUTE_IMM; break;
-            case OPCODE.LD: regSequencerNext = self.SEQUENCER_STATES.EXECUTE_LD_FIRST; break;
-            case OPCODE.ST: regSequencerNext = self.SEQUENCER_STATES.EXECUTE_ST_FIRST; break;
+            case OPCODE.ADD: regSequencerNext = self.core.sequencer.STATES.EXECUTE_ADD; break;
+            case OPCODE.NAND: regSequencerNext = self.core.sequencer.STATES.EXECUTE_NAND; break;
+            case OPCODE.SH: regSequencerNext = self.core.sequencer.STATES.EXECUTE_SH; break;
+            case OPCODE.JNZ: regSequencerNext = self.core.sequencer.STATES.EXECUTE_JNZ; break;
+            case OPCODE.COPY: regSequencerNext = self.core.sequencer.STATES.EXECUTE_COPY; break;
+            case OPCODE.IMM: regSequencerNext = self.core.sequencer.STATES.EXECUTE_IMM; break;
+            case OPCODE.LD: regSequencerNext = self.core.sequencer.STATES.EXECUTE_LD_FIRST; break;
+            case OPCODE.ST: regSequencerNext = self.core.sequencer.STATES.EXECUTE_ST_FIRST; break;
         }
 
         console.log('    memoryColumn = ' + memoryColumn);
@@ -378,7 +313,7 @@ var Cpu = function () {
         console.log('    regSequencerNext = ' + dumpHex(regSequencerNext));
 
         self.registers.regInstruction = memoryFinal;
-        self.registerSet.setProgramCounter(regPCNext);
+        self.core.registerSet.setProgramCounter(regPCNext);
         self.registers.regSequencer = regSequencerNext;
 
         /*
@@ -400,8 +335,8 @@ var Cpu = function () {
         var regOut = (self.registers.regInstruction & 0x0F000000) >>> (6 * 4),
             regIn0 = (self.registers.regInstruction & 0x00F00000) >>> (5 * 4),
             regIn1 = (self.registers.regInstruction & 0x000F0000) >>> (4 * 4),
-            regIn0Value = self.registerSet.read(regIn0),
-            regIn1Value = self.registerSet.read(regIn1),
+            regIn0Value = self.core.registerSet.read(regIn0),
+            regIn1Value = self.core.registerSet.read(regIn1),
             regResult = ((regIn1Value & 0xFFFF) + (regIn0Value & 0xFFFF)) & 0xFFFF
         ;
 
@@ -410,8 +345,8 @@ var Cpu = function () {
         console.log('    regIn1Value = ' + dumpHex(regIn1Value));
         console.log('    result = ' + dumpHex(regResult) + ' (sum)');
 
-        self.registers.regSequencer = self.SEQUENCER_STATES.FETCH_FIRST;
-        self.registerSet.save(regOut, regResult);
+        self.registers.regSequencer = self.core.sequencer.STATES.FETCH_FIRST;
+        self.core.registerSet.save(regOut, regResult);
     }
 
     function sequencerExecuteNand()
@@ -420,8 +355,8 @@ var Cpu = function () {
         var regOut = (self.registers.regInstruction & 0x0F000000) >>> (6 * 4),
             regIn0 = (self.registers.regInstruction & 0x00F00000) >>> (5 * 4),
             regIn1 = (self.registers.regInstruction & 0x000F0000) >>> (4 * 4),
-            regIn0Value = self.registerSet.read(regIn0),
-            regIn1Value = self.registerSet.read(regIn1),
+            regIn0Value = self.core.registerSet.read(regIn0),
+            regIn1Value = self.core.registerSet.read(regIn1),
             regResult = (~(regIn1Value & regIn0Value)) & 0xFFFF
         ;
 
@@ -430,8 +365,8 @@ var Cpu = function () {
         console.log('    regIn1Value = ' + dumpHex(regIn1Value));
         console.log('    result = ' + dumpHex(regResult) + ' (NAND)');
 
-        self.registers.regSequencer = self.SEQUENCER_STATES.FETCH_FIRST;
-        self.registerSet.save(regOut, regResult);
+        self.registers.regSequencer = self.core.sequencer.STATES.FETCH_FIRST;
+        self.core.registerSet.save(regOut, regResult);
     }
 
     function sequencerExecuteSh()
@@ -440,8 +375,8 @@ var Cpu = function () {
         var regOut = (self.registers.regInstruction & 0x0F000000) >>> (6 * 4),
             regIn0 = (self.registers.regInstruction & 0x00F00000) >>> (5 * 4),
             regIn1 = (self.registers.regInstruction & 0x000F0000) >>> (4 * 4),
-            regIn0Value = self.registerSet.read(regIn0),
-            regIn1Value = self.registerSet.read(regIn1),
+            regIn0Value = self.core.registerSet.read(regIn0),
+            regIn1Value = self.core.registerSet.read(regIn1),
             regIn1ValueAbs = regIn1Value & 0x8000 ?
                 ((~regIn1Value) + 1) & 0xFFFF :
                 regIn1Value,
@@ -456,8 +391,8 @@ var Cpu = function () {
         console.log('    regIn1ValueAbs = ' + dumpHex(regIn1ValueAbs));
         console.log('    result = ' + dumpHex(regResult) + ' (BIT SHIFT)');
 
-        self.registers.regSequencer = self.SEQUENCER_STATES.FETCH_FIRST;
-        self.registerSet.save(regOut, regResult);
+        self.registers.regSequencer = self.core.sequencer.STATES.FETCH_FIRST;
+        self.core.registerSet.save(regOut, regResult);
     }
 
     function sequencerExecuteJnz()
@@ -465,10 +400,10 @@ var Cpu = function () {
         console.log('    :: sequencerExecuteJnz');
         var regIn0 = (self.registers.regInstruction & 0x00F00000) >>> (5 * 4),
             regIn1 = (self.registers.regInstruction & 0x000F0000) >>> (4 * 4),
-            regIn0Value = self.registerSet.read(regIn0),
-            regIn1Value = self.registerSet.read(regIn1),
+            regIn0Value = self.core.registerSet.read(regIn0),
+            regIn1Value = self.core.registerSet.read(regIn1),
             notZeroFlag = regIn1Value !== 0,
-            regPCNext = notZeroFlag ? regIn0Value : self.registerSet.getProgramCounter()
+            regPCNext = notZeroFlag ? regIn0Value : self.core.registerSet.getProgramCounter()
         ;
 
         console.log('    regIn0, regIn1 <-> ' + regIn0 + ', ' + regIn1);
@@ -477,8 +412,8 @@ var Cpu = function () {
         console.log('    notZeroFlag = ' + (notZeroFlag ? "true (regIn1Value NOT EQUAL zero - jump)" : "false (regIn1Value EQUAL zero - no jump)"));
         console.log('    regPCNext = ' + dumpHex(regPCNext));
 
-        self.registers.regSequencer = self.SEQUENCER_STATES.FETCH_FIRST;
-        self.registerSet.setProgramCounter(regPCNext);
+        self.registers.regSequencer = self.core.sequencer.STATES.FETCH_FIRST;
+        self.core.registerSet.setProgramCounter(regPCNext);
     }
 
     function sequencerExecuteCopy()
@@ -486,14 +421,14 @@ var Cpu = function () {
         console.log('    :: sequencerExecuteCopy');
         var regOut = (self.registers.regInstruction & 0x0F000000) >>> (6 * 4),
             regIn0 = (self.registers.regInstruction & 0x00F00000) >>> (5 * 4),
-            regIn0Value = self.registerSet.read(regIn0)
+            regIn0Value = self.core.registerSet.read(regIn0)
         ;
 
         console.log('    regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
         console.log('    regIn0Value = ' + dumpHex(regIn0Value) + " (COPY, save regIn0Value at regOut)");
 
-        self.registers.regSequencer = self.SEQUENCER_STATES.FETCH_FIRST;
-        self.registerSet.save(regOut, regIn0Value);
+        self.registers.regSequencer = self.core.sequencer.STATES.FETCH_FIRST;
+        self.core.registerSet.save(regOut, regIn0Value);
     }
 
     function sequencerExecuteImm()
@@ -506,15 +441,15 @@ var Cpu = function () {
         console.log('    regOut = ' + regOut);
         console.log('    imm = ' + dumpHex(imm) + " (store immmediate value at regOut)");
 
-        self.registers.regSequencer = self.SEQUENCER_STATES.FETCH_FIRST;
-        self.registerSet.save(regOut, imm);
+        self.registers.regSequencer = self.core.sequencer.STATES.FETCH_FIRST;
+        self.core.registerSet.save(regOut, imm);
     }
 
     function sequencerExecuteLdFirst()
     {
         console.log('    :: sequencerExecuteLdFirst');
         var regIn0 = (self.registers.regInstruction & 0x00F00000) >>> (5 * 4),
-            regIn0Value = self.registerSet.read(regIn0),
+            regIn0Value = self.core.registerSet.read(regIn0),
             memoryColumn = regIn0Value & 3,
             memoryReadShifted = self.inputs.memoryRead << (memoryColumn * 8)
         ;
@@ -526,14 +461,14 @@ var Cpu = function () {
         console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
 
         self.registers.regMemory = memoryReadShifted;
-        self.registers.regSequencer = self.SEQUENCER_STATES.EXECUTE_LD_SECOND;
+        self.registers.regSequencer = self.core.sequencer.STATES.EXECUTE_LD_SECOND;
     }
 
     function sequencerExecuteLdSecond()
     {
         console.log('    :: sequencerExecuteLdSecond');
         var regIn0 = (self.registers.regInstruction & 0x00F00000) >>> (5 * 4),
-            regIn0Value = self.registerSet.read(regIn0),
+            regIn0Value = self.core.registerSet.read(regIn0),
             memoryColumn = regIn0Value & 3,
             shiftAmount = (4 - memoryColumn) * 8,
             memoryReadShifted = shiftAmount < 32 ?
@@ -550,8 +485,8 @@ var Cpu = function () {
         console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
         console.log('    regMANext = ' + dumpHex(regMANext));
 
-        self.registerSet.setMemoryAccess(regMANext);
-        self.registers.regSequencer = self.SEQUENCER_STATES.FETCH_FIRST;
+        self.core.registerSet.setMemoryAccess(regMANext);
+        self.registers.regSequencer = self.core.sequencer.STATES.FETCH_FIRST;
     }
 
     function sequencerExecuteStFirst()

@@ -136,22 +136,22 @@ function cpuLog()
         'regInstruction = ' + dumpHex(cpu.registers.regInstruction) + ' | ' +
         'regTimer = ' + dumpHex(cpu.registers.regTimer) + ' | ' +
         'regReset = ' + (cpu.registers.regReset ? "true" : "false") + "\n" +
-        'reg00 = ' + dumpHex(cpu.registerSet.read(0)) + ' | ' +
-        'reg01 = ' + dumpHex(cpu.registerSet.read(1)) + ' | ' +
-        'reg02 = ' + dumpHex(cpu.registerSet.read(2)) + ' | ' +
-        'reg03 = ' + dumpHex(cpu.registerSet.read(3)) + ' | ' +
-        'reg04 = ' + dumpHex(cpu.registerSet.read(4)) + ' | ' +
-        'reg05 = ' + dumpHex(cpu.registerSet.read(5)) + ' | ' +
-        'reg06 = ' + dumpHex(cpu.registerSet.read(6)) + ' | ' +
-        'reg07 = ' + dumpHex(cpu.registerSet.read(7)) + ' | ' + "\n" +
-        'reg08 = ' + dumpHex(cpu.registerSet.read(8)) + ' | ' +
-        'reg09 = ' + dumpHex(cpu.registerSet.read(9)) + ' | ' +
-        'reg10 = ' + dumpHex(cpu.registerSet.read(10)) + ' | ' +
-        'reg11 = ' + dumpHex(cpu.registerSet.read(11)) + ' | ' +
-        'reg12 = ' + dumpHex(cpu.registerSet.read(12)) + ' | ' +
-        'reg13 = ' + dumpHex(cpu.registerSet.read(13)) + ' | ' +
-        'regMA = ' + dumpHex(cpu.registerSet.getMemoryAccess()) + ' | ' +
-        'regPC = ' + dumpHex(cpu.registerSet.getProgramCounter()) + ' | '
+        'reg00 = ' + dumpHex(cpu.core.registerSet.read(0)) + ' | ' +
+        'reg01 = ' + dumpHex(cpu.core.registerSet.read(1)) + ' | ' +
+        'reg02 = ' + dumpHex(cpu.core.registerSet.read(2)) + ' | ' +
+        'reg03 = ' + dumpHex(cpu.core.registerSet.read(3)) + ' | ' +
+        'reg04 = ' + dumpHex(cpu.core.registerSet.read(4)) + ' | ' +
+        'reg05 = ' + dumpHex(cpu.core.registerSet.read(5)) + ' | ' +
+        'reg06 = ' + dumpHex(cpu.core.registerSet.read(6)) + ' | ' +
+        'reg07 = ' + dumpHex(cpu.core.registerSet.read(7)) + ' | ' + "\n" +
+        'reg08 = ' + dumpHex(cpu.core.registerSet.read(8)) + ' | ' +
+        'reg09 = ' + dumpHex(cpu.core.registerSet.read(9)) + ' | ' +
+        'reg10 = ' + dumpHex(cpu.core.registerSet.read(10)) + ' | ' +
+        'reg11 = ' + dumpHex(cpu.core.registerSet.read(11)) + ' | ' +
+        'reg12 = ' + dumpHex(cpu.core.registerSet.read(12)) + ' | ' +
+        'reg13 = ' + dumpHex(cpu.core.registerSet.read(13)) + ' | ' +
+        'regMA = ' + dumpHex(cpu.core.registerSet.getMemoryAccess()) + ' | ' +
+        'regPC = ' + dumpHex(cpu.core.registerSet.getProgramCounter()) + ' | '
     );
 }
 

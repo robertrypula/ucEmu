@@ -2,7 +2,7 @@ var InstructionDecoder = function () {
 
     var
         self = this,
-        INSTRUCTION_SET = []
+        instructionSet = []
     ;
 
     self.OPCODE = {
@@ -18,7 +18,7 @@ var InstructionDecoder = function () {
 
     function construct()
     {
-        INSTRUCTION_SET.push(
+        instructionSet.push(
             { opcode: self.OPCODE.ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
             { opcode: self.OPCODE.NAND, cycles: null, byteWidth: 2, name: 'nand', nameFull: 'Bitwise NAND' },
             { opcode: self.OPCODE.SH, cycles: null, byteWidth: 2, name: 'sh',  nameFull: "Logical bit shift" },
@@ -32,7 +32,7 @@ var InstructionDecoder = function () {
 
     function checkOpcode(opcode, method)
     {
-        if (opcode < 0 || opcode >= INSTRUCTION_SET.length) {
+        if (opcode < 0 || opcode >= instructionSet.length) {
             throw 'InstructionDecoder.' + method + '() - unknown opcode: ' + opcode;
         }
     }
@@ -40,7 +40,7 @@ var InstructionDecoder = function () {
     self.getInstruction = function (opcode) {
         checkOpcode(opcode, 'getInstruction');
 
-        return INSTRUCTION_SET[opcode];
+        return instructionSet[opcode];
     };
 
     construct();

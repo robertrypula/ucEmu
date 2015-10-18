@@ -12,7 +12,7 @@ var RegisterSet = function () {
     {
         for (var i = 0; i < REGISTERS_SIZE; i++) {
             registers.push(
-                MASK & (Math.random() * (MASK + 1))
+                MASK & (Math.random() * (MASK + 1))        // TODO move it to utilities service
             );
         }
     }
