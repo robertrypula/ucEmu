@@ -1,0 +1,5 @@
+[os + fileManager + compiller + programLoader + textEditor]
+[os data + stack] 
+[ram disk with all source code]
+[ space for loaded programs code ]
+[ space for loaded programs data + stack]
