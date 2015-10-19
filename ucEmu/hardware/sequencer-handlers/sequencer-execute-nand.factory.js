@@ -8,7 +8,7 @@ var SequencerExecuteNand = (function () {
         ;
 
         self.run = function () {
-            var regOut, regIn0, regIn1
+            var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
             
             checkCpu();

@@ -8,10 +8,13 @@ var Alu = (function () {
         ;
 
         self.add = function (a, b) {
+            checkCpu();
+
             return ((a & 0xFFFF) + (b & 0xFFFF)) & 0xFFFF;
         };
 
         self.sh = function (v, amountAbs, minusSign) {
+            checkCpu();
             if (amountAbs >= 32) {
                 return 0;
             }
@@ -20,6 +23,8 @@ var Alu = (function () {
         };
 
         self.nand = function (a, b) {
+            checkCpu();
+
             return (~(a & b)) & 0xFFFF;
         };
 

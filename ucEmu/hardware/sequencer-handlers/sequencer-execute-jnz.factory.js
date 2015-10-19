@@ -8,7 +8,7 @@ var SequencerExecuteJnz = (function () {
         ;
 
         self.run = function () {
-            var regIn0, regIn1, regIn0Value, regIn1Value
+            var regIn0, regIn1, regIn0Value, regIn1Value,
                 notZeroFlag, regPCNext;
 
             checkCpu();

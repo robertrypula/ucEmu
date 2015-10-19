@@ -23,7 +23,7 @@ var SequencerFetchSecondAndDecode = (function () {
             var memoryColumn, shiftAmount, memoryReadShifted, memoryFinal,
                 opCode, instruction, instructionByteWidth,
                 regPCNext, regSequencerNext,
-                OPCODE;
+                OPCODE, STATES;
 
             checkCpu();
             memoryColumn = cpu.core.registerSet.getProgramCounter() & 3;
@@ -36,16 +36,17 @@ var SequencerFetchSecondAndDecode = (function () {
             regPCNext = cpu.core.registerSet.getProgramCounter() + instructionByteWidth;
             regSequencerNext = 0;
             OPCODE = cpu.core.instructionDecoder.OPCODE;
+            STATES = cpu.core.sequencer.STATES;
 
             switch (instruction.opcode) {
-                case OPCODE.ADD: regSequencerNext = cpu.core.sequencer.STATES.EXECUTE_ADD; break;
-                case OPCODE.NAND: regSequencerNext = cpu.core.sequencer.STATES.EXECUTE_NAND; break;
-                case OPCODE.SH: regSequencerNext = cpu.core.sequencer.STATES.EXECUTE_SH; break;
-                case OPCODE.JNZ: regSequencerNext = cpu.core.sequencer.STATES.EXECUTE_JNZ; break;
-                case OPCODE.COPY: regSequencerNext = cpu.core.sequencer.STATES.EXECUTE_COPY; break;
-                case OPCODE.IMM: regSequencerNext = cpu.core.sequencer.STATES.EXECUTE_IMM; break;
-                case OPCODE.LD: regSequencerNext = cpu.core.sequencer.STATES.EXECUTE_LD_FIRST; break;
-                case OPCODE.ST: regSequencerNext = cpu.core.sequencer.STATES.EXECUTE_ST_FIRST; break;
+                case OPCODE.ADD: regSequencerNext = STATES.EXECUTE_ADD; break;
+                case OPCODE.NAND: regSequencerNext = STATES.EXECUTE_NAND; break;
+                case OPCODE.SH: regSequencerNext = STATES.EXECUTE_SH; break;
+                case OPCODE.JNZ: regSequencerNext = STATES.EXECUTE_JNZ; break;
+                case OPCODE.COPY: regSequencerNext = STATES.EXECUTE_COPY; break;
+                case OPCODE.IMM: regSequencerNext = STATES.EXECUTE_IMM; break;
+                case OPCODE.LD: regSequencerNext = STATES.EXECUTE_LD_FIRST; break;
+                case OPCODE.ST: regSequencerNext = STATES.EXECUTE_ST_FIRST; break;
             }
 
             console.log('    :: sequenceFetchSecondAndDecode');

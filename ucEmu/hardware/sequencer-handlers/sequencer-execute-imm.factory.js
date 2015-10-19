@@ -16,7 +16,7 @@ var SequencerExecuteImm = (function () {
 
             console.log('    :: sequencerExecuteImm');
             console.log('    regOut = ' + regOut);
-            console.log('    imm = ' + dumpHex(imm) + " (store immmediate value at regOut)");
+            console.log('    imm = ' + dumpHex(imm) + " (store immediate value at regOut)");
 
             cpu.registers.regSequencer = cpu.core.sequencer.STATES.FETCH_FIRST;
             cpu.core.registerSet.save(regOut, imm);

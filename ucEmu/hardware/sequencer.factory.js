@@ -36,8 +36,8 @@ var Sequencer = (function () {
                 { state: self.STATES.EXECUTE_JNZ, handler: new SequencerExecuteJnz() },
                 { state: self.STATES.EXECUTE_COPY, handler: new SequencerExecuteCopy() },
                 { state: self.STATES.EXECUTE_IMM, handler: new SequencerExecuteImm() },
-                { state: self.STATES.EXECUTE_LD_FIRST, handler: null },
-                { state: self.STATES.EXECUTE_LD_SECOND, handler: null },
+                { state: self.STATES.EXECUTE_LD_FIRST, handler: new SequencerExecuteLdFirst() },
+                { state: self.STATES.EXECUTE_LD_SECOND, handler: new SequencerExecuteLdSecond() },
                 { state: self.STATES.EXECUTE_ST_FIRST, handler: new SequencerExecuteStFirst() },
                 { state: self.STATES.EXECUTE_ST_SECOND, handler: new SequencerExecuteStSecond() },
                 { state: self.STATES.EXECUTE_ST_THIRD, handler: new SequencerExecuteStThird() },
@@ -68,7 +68,7 @@ var Sequencer = (function () {
             }
         }
 
-        self.dispatch = function () {
+        self.goToNextState = function () {
             var state;
 
             checkCpu();
@@ -79,6 +79,8 @@ var Sequencer = (function () {
             } else {
                 throw 'Sequencer handler for state ' + state + ' is not defined';
             }
+
+            self.registers.regTimer = (self.registers.regTimer + 1) & 0xFFFF;
         };
 
         self.setCpu = function (cpuSelf)

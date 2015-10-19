@@ -148,21 +148,19 @@ var Cpu = (function () {
 
         function clockHighToLow()
         {
-            var resetOccured = false;
+            var resetOccurred = false;
 
             if (self.registers.regReset) {
                 performRegistersReset();
-                resetOccured = true;
+                resetOccurred = true;
             }
 
             self.registers.regReset = self.inputs.reset;         // store current input
-            if (resetOccured) {
+            if (resetOccurred) {
                 return;
             }
 
-            self.core.sequencer.dispatch(self.registers.regSequencer);
-
-            self.registers.regTimer = self.registers.regTimer + 1;  // TODO increase timer - check it
+            self.core.sequencer.goToNextState();
         }
 
         function performRegistersReset()
@@ -199,16 +197,16 @@ var Cpu = (function () {
                     result = (self.core.registerSet.getProgramCounter() >>> 2) + 1;
                     break;
                 case self.core.sequencer.STATES.EXECUTE_LD_FIRST:
-                    regIn0 = (self.registers.regInstruction & 0x00F00000) >>> (5 * 4);
+                    regIn0 = self.core.instructionDecoder.getRegIn0();
                     regIn0Value = self.core.registerSet.read(regIn0);
                     result = regIn0Value >>> 2;
                     break;
                 case self.core.sequencer.STATES.EXECUTE_LD_SECOND:
-                    regIn0 = (self.registers.regInstruction & 0x00F00000) >>> (5 * 4);
+                    regIn0 = self.core.instructionDecoder.getRegIn0();
                     regIn0Value = self.core.registerSet.read(regIn0);
                     result = (regIn0Value >>> 2) + 1;
                     break;
-                // TODO implement ld/st instructions
+                // TODO implement st instructions
                 default:
                     result = 0x0000;            // floating bus - pulled down by resistors
             }
