@@ -7,7 +7,7 @@ var SequencerFetchFirst = (function () {
             cpu = null
         ;
 
-        self.run = function() {
+        self.run = function () {
             var memoryColumn, memoryReadShifted;
 
             checkCpu();

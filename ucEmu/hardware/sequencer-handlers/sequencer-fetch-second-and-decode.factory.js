@@ -19,7 +19,7 @@ var SequencerFetchSecondAndDecode = (function () {
             cpu = null
         ;
 
-        self.run = function() {
+        self.run = function () {
             var memoryColumn, shiftAmount, memoryReadShifted, memoryFinal,
                 opCode, instruction, instructionByteWidth,
                 regPCNext, regSequencerNext,

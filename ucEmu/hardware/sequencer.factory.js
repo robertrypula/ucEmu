@@ -30,12 +30,12 @@ var Sequencer = (function () {
             handlers.push(
                 { state: self.STATES.FETCH_FIRST, handler: new SequencerFetchFirst() },
                 { state: self.STATES.FETCH_SECOND_AND_DECODE, handler: new SequencerFetchSecondAndDecode() },
-                { state: self.STATES.EXECUTE_ADD, handler: null },
-                { state: self.STATES.EXECUTE_NAND, handler: null },
+                { state: self.STATES.EXECUTE_ADD, handler: new SequencerExecuteAdd() },
+                { state: self.STATES.EXECUTE_NAND, handler: new SequencerExecuteNand() },
                 { state: self.STATES.EXECUTE_SH, handler: null },
-                { state: self.STATES.EXECUTE_JNZ, handler: null },
+                { state: self.STATES.EXECUTE_JNZ, handler: new SequencerExecuteJnz() },
                 { state: self.STATES.EXECUTE_COPY, handler: null },
-                { state: self.STATES.EXECUTE_IMM, handler: null },
+                { state: self.STATES.EXECUTE_IMM, handler: new SequencerExecuteImm() },
                 { state: self.STATES.EXECUTE_LD_FIRST, handler: null },
                 { state: self.STATES.EXECUTE_LD_SECOND, handler: null },
                 { state: self.STATES.EXECUTE_ST_FIRST, handler: null },
@@ -49,7 +49,6 @@ var Sequencer = (function () {
         {
             for (var i = 0; i < handlers.length; i++) {
                 if (handlers[i].handler !== null) {
-                    console.log(i);
                     handlers[i].handler.setCpu(cpuSelf);
                 }
             }
