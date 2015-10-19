@@ -1,5 +1,11 @@
 [os + fileManager + compiller + programLoader + textEditor]
 [os data + stack] 
 [ram disk with all source code]
-[ space for loaded programs code ]
-[ space for loaded programs data + stack]
+[space for loaded programs code]
+[space for loaded programs data + stack]
+
+
+load system
+find file with os source, compile and save as bin file
+find sourxe with os replacer, compile and save as bin file
+run replacer - replacer will rewrite first block with system - RESTART
