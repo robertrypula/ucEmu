@@ -11,8 +11,8 @@ var SequencerExecuteCopy = (function () {
             var regOut, regIn0, regIn0Value;
 
             checkCpu();
-            regOut = (cpu.registers.regInstruction & 0x0F000000) >>> (6 * 4);
-            regIn0 = (cpu.registers.regInstruction & 0x00F00000) >>> (5 * 4);
+            regOut = cpu.core.instructionDecoder.getRegOut();
+            regIn0 = cpu.core.instructionDecoder.getRegIn0();
             regIn0Value = cpu.core.registerSet.read(regIn0);
 
             console.log('    :: sequencerExecuteCopy');

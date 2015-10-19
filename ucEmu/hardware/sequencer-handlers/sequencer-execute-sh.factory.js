@@ -12,19 +12,16 @@ var SequencerExecuteSh = (function () {
                 regIn0Value, regIn1Value, regIn1ValueAbs, regResult;
 
             checkCpu();
-            regOut = (cpu.registers.regInstruction & 0x0F000000) >>> (6 * 4);
-            regIn0 = (cpu.registers.regInstruction & 0x00F00000) >>> (5 * 4);
-            regIn1 = (cpu.registers.regInstruction & 0x000F0000) >>> (4 * 4);
+            regOut = cpu.core.instructionDecoder.getRegOut();
+            regIn0 = cpu.core.instructionDecoder.getRegIn0();
+            regIn1 = cpu.core.instructionDecoder.getRegIn1();
             regIn0Value = cpu.core.registerSet.read(regIn0);
             regIn1Value = cpu.core.registerSet.read(regIn1);
             regIn1ValueAbs = regIn1Value & 0x8000 
                 ? ((~regIn1Value) + 1) & 0xFFFF 
                 : regIn1Value
             ;
-            regResult = regIn1ValueAbs < 32 
-                ? (regIn1Value & 0x8000 ? regIn0Value >>> regIn1ValueAbs : regIn0Value << regIn1Value) & 0xFFFF 
-                : 0
-            ;
+            regResult = cpu.core.alu.sh(regIn0Value, regIn1ValueAbs, regIn1Value & 0x8000);
 
             console.log('    :: sequencerExecuteSh');
             console.log('    regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);

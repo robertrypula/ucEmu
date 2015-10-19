@@ -4,6 +4,7 @@ var InstructionDecoder = (function () {
     var InstructionDecoder = function () {
         var
             self = this,
+            cpu = null,
             instructionSet = []
         ;
 
@@ -39,11 +40,44 @@ var InstructionDecoder = (function () {
             }
         }
 
+        self.getRegOut = function () {
+            checkCpu();
+            return (cpu.registers.regInstruction & 0x0F000000) >>> (6 * 4);
+        }
+
+        self.getRegIn0 = function () {
+            checkCpu();
+            return (cpu.registers.regInstruction & 0x00F00000) >>> (5 * 4);
+        }
+
+        self.getRegIn1 = function () {
+            checkCpu();
+            return (cpu.registers.regInstruction & 0x000F0000) >>> (4 * 4);
+        }
+
+        self.getImm = function () {
+            checkCpu();
+            return cpu.registers.regInstruction & 0x0000FFFF;
+        }
+
         self.getInstruction = function (opcode) {
+            checkCpu();
             checkOpcode(opcode, 'getInstruction');
 
             return instructionSet[opcode];
         };
+
+        self.setCpu = function (cpuSelf)
+        {
+            cpu = cpuSelf;
+        };
+
+        function checkCpu()
+        {
+            if (cpu === null) {
+                throw 'Please attach cpu first';
+            }
+        }
 
         construct();
     };

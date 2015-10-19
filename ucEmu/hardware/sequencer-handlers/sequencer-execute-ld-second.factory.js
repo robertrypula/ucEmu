@@ -12,7 +12,7 @@ var SequencerExecuteLdSecond = (function () {
                 memoryReadShifted, regMANext;
             
             checkCpu();
-            regIn0 = (cpu.registers.regInstruction & 0x00F00000) >>> (5 * 4);
+            regIn0 = cpu.core.instructionDecoder.getRegIn0();
             regIn0Value = cpu.core.registerSet.read(regIn0);
             memoryColumn = regIn0Value & 3;
             shiftAmount = (4 - memoryColumn) * 8;

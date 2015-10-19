@@ -11,8 +11,8 @@ var SequencerExecuteImm = (function () {
             var regOut, imm;
 
             checkCpu();
-            regOut = (cpu.registers.regInstruction & 0x0F000000) >>> (6 * 4);
-            imm = cpu.registers.regInstruction & 0x0000FFFF;
+            regOut = cpu.core.instructionDecoder.getRegOut();
+            imm = cpu.core.instructionDecoder.getImm();
 
             console.log('    :: sequencerExecuteImm');
             console.log('    regOut = ' + regOut);

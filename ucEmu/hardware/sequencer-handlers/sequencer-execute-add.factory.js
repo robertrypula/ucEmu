@@ -12,12 +12,12 @@ var SequencerExecuteAdd = (function () {
                 regIn0Value, regIn1Value, regResult;
 
             checkCpu();
-            regOut = (cpu.registers.regInstruction & 0x0F000000) >>> (6 * 4);
-            regIn0 = (cpu.registers.regInstruction & 0x00F00000) >>> (5 * 4);
-            regIn1 = (cpu.registers.regInstruction & 0x000F0000) >>> (4 * 4);
+            regOut = cpu.core.instructionDecoder.getRegOut();
+            regIn0 = cpu.core.instructionDecoder.getRegIn0();
+            regIn1 = cpu.core.instructionDecoder.getRegIn1();
             regIn0Value = cpu.core.registerSet.read(regIn0);
             regIn1Value = cpu.core.registerSet.read(regIn1);
-            regResult = ((regIn1Value & 0xFFFF) + (regIn0Value & 0xFFFF)) & 0xFFFF;
+            regResult = cpu.core.alu.add(regIn0Value, regIn1Value);
 
             console.log('    :: sequencerExecuteAdd');
             console.log('    regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);

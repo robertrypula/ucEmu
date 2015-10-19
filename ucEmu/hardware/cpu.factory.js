@@ -84,7 +84,8 @@ var Cpu = (function () {
         self.core = {
             registerSet: new RegisterSet(),
             instructionDecoder: new InstructionDecoder(),
-            sequencer: new Sequencer()
+            sequencer: new Sequencer(),
+            alu: new Alu()
         };
 
         self.inputs = {
@@ -117,6 +118,8 @@ var Cpu = (function () {
 
         self.construct = function () {
             self.core.sequencer.setCpu(self);
+            self.core.instructionDecoder.setCpu(self);
+            self.core.alu.setCpu(self);
             self.update();
         };
 

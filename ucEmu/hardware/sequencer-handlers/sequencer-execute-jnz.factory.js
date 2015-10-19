@@ -12,8 +12,8 @@ var SequencerExecuteJnz = (function () {
                 notZeroFlag, regPCNext;
 
             checkCpu();
-            regIn0 = (cpu.registers.regInstruction & 0x00F00000) >>> (5 * 4);
-            regIn1 = (cpu.registers.regInstruction & 0x000F0000) >>> (4 * 4);
+            regIn0 = cpu.core.instructionDecoder.getRegIn0();
+            regIn1 = cpu.core.instructionDecoder.getRegIn1();
             regIn0Value = cpu.core.registerSet.read(regIn0);
             regIn1Value = cpu.core.registerSet.read(regIn1);
             notZeroFlag = regIn1Value !== 0;
