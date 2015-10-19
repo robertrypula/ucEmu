@@ -32,16 +32,16 @@ var Sequencer = (function () {
                 { state: self.STATES.FETCH_SECOND_AND_DECODE, handler: new SequencerFetchSecondAndDecode() },
                 { state: self.STATES.EXECUTE_ADD, handler: new SequencerExecuteAdd() },
                 { state: self.STATES.EXECUTE_NAND, handler: new SequencerExecuteNand() },
-                { state: self.STATES.EXECUTE_SH, handler: null },
+                { state: self.STATES.EXECUTE_SH, handler: new SequencerExecuteSh() },
                 { state: self.STATES.EXECUTE_JNZ, handler: new SequencerExecuteJnz() },
-                { state: self.STATES.EXECUTE_COPY, handler: null },
+                { state: self.STATES.EXECUTE_COPY, handler: new SequencerExecuteCopy() },
                 { state: self.STATES.EXECUTE_IMM, handler: new SequencerExecuteImm() },
                 { state: self.STATES.EXECUTE_LD_FIRST, handler: null },
                 { state: self.STATES.EXECUTE_LD_SECOND, handler: null },
-                { state: self.STATES.EXECUTE_ST_FIRST, handler: null },
-                { state: self.STATES.EXECUTE_ST_SECOND, handler: null },
-                { state: self.STATES.EXECUTE_ST_THIRD, handler: null },
-                { state: self.STATES.EXECUTE_ST_FOURTH, handler: null }
+                { state: self.STATES.EXECUTE_ST_FIRST, handler: new SequencerExecuteStFirst() },
+                { state: self.STATES.EXECUTE_ST_SECOND, handler: new SequencerExecuteStSecond() },
+                { state: self.STATES.EXECUTE_ST_THIRD, handler: new SequencerExecuteStThird() },
+                { state: self.STATES.EXECUTE_ST_FOURTH, handler: new SequencerExecuteStFourth() }
             );
         }
 
