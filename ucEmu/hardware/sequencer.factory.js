@@ -80,7 +80,7 @@ var Sequencer = (function () {
                 throw 'Sequencer handler for state ' + state + ' is not defined';
             }
 
-            self.registers.regTimer = (self.registers.regTimer + 1) & 0xFFFF;
+            cpu.registers.regTimer = (cpu.registers.regTimer + 1) & 0xFFFF;
         };
 
         self.setCpu = function (cpuSelf)
