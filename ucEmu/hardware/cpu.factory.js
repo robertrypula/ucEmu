@@ -89,32 +89,31 @@ var Cpu = (function () {
         };
 
         self.inputs = {
-            clock: false,
-            reset: false,
-            memoryRead: 0x00000000
+            clock: 0,
+            reset: 0,
+            memoryRead: 0
         };
 
         self.outputs = {
-            memoryRowAddress: 0x0000,
-            memoryWrite: 0x00000000,
-            memoryWE: false
+            memoryRowAddress: 0,
+            memoryWrite: 0,
+            memoryWE: 0
         };
 
         self.registers = {
             // control registers
-            regSequencer: 0xF & Math.random() * 0x10,
-            regInstruction: 0xFFFF & Math.random() * 0x10000,
+            regSequencer: BitUtils.random(4),
+            regInstruction: BitUtils.random(32),
 
             // input helper registers
-            regReset: Math.random() >= 0.5,
-            regMemory: 0xFFFFFFFF & Math.random() * 0x100000000,
+            regReset: BitUtils.random(1),
+            regMemory: BitUtils.random(32),
 
             // timer
-            regTimer: 0xFFFFFFFF & Math.random() * 0x100000000
+            regTimer: BitUtils.random(32)
         };
 
         var clockPrevious = null;
-
 
         self.construct = function () {
             self.core.sequencer.setCpu(self);
@@ -167,11 +166,11 @@ var Cpu = (function () {
         {
             self.core.registerSet.reset();
 
-            self.registers.regSequencer = 0x00;
-            self.registers.regInstruction = 0x0000;
+            self.registers.regSequencer = 0;
+            self.registers.regInstruction = 0;
 
-            self.registers.regMemory = 0x00000000;
-            self.registers.regTimer = 0x00000000;
+            self.registers.regMemory = 0;
+            self.registers.regTimer = 0;
 
             // !!! regReset register is excluded from reset !!!
         }
@@ -191,24 +190,24 @@ var Cpu = (function () {
 
             switch (self.registers.regSequencer) {
                 case self.core.sequencer.STATES.FETCH_FIRST:
-                    result = self.core.registerSet.getProgramCounter() >>> 2;
+                    result = BitUtils.shiftRight(self.core.registerSet.getProgramCounter(), 2);
                     break;
                 case self.core.sequencer.STATES.FETCH_SECOND_AND_DECODE:
-                    result = (self.core.registerSet.getProgramCounter() >>> 2) + 1;
+                    result = BitUtils.shiftRight(self.core.registerSet.getProgramCounter(), 2) + 1;
                     break;
                 case self.core.sequencer.STATES.EXECUTE_LD_FIRST:
                     regIn0 = self.core.instructionDecoder.getRegIn0();
                     regIn0Value = self.core.registerSet.read(regIn0);
-                    result = regIn0Value >>> 2;
+                    result = BitUtils.shiftRight(regIn0Value, 2);
                     break;
                 case self.core.sequencer.STATES.EXECUTE_LD_SECOND:
                     regIn0 = self.core.instructionDecoder.getRegIn0();
                     regIn0Value = self.core.registerSet.read(regIn0);
-                    result = (regIn0Value >>> 2) + 1;
+                    result = BitUtils.shiftRight(regIn0Value, 2); + 1;
                     break;
                 // TODO implement st instructions
                 default:
-                    result = 0x0000;            // floating bus - pulled down by resistors
+                    result = 0;            // floating bus - pulled down by resistors
             }
 
             self.outputs.memoryRowAddress = result;
@@ -220,7 +219,7 @@ var Cpu = (function () {
 
             switch (self.registers.regSequencer) {
                 default:
-                    result = 0x00000000;  // TODO implement st instruction
+                    result = 0;  // TODO implement st instruction
             }
 
             self.outputs.memoryWrite = result;
@@ -232,7 +231,7 @@ var Cpu = (function () {
 
             switch (self.registers.regSequencer) {
                 default:
-                    result = false;          // TODO implement st instruction
+                    result = 0;          // TODO implement st instruction
             }
 
             self.outputs.memoryWE = result;

@@ -8,7 +8,7 @@ var InstructionDecoder = (function () {
             instructionSet = []
         ;
 
-        self.OPCODE = {
+        self.OPCODES = {
             ADD: 0,
             NAND: 1,
             SH: 2,
@@ -22,14 +22,14 @@ var InstructionDecoder = (function () {
         function construct()
         {
             instructionSet.push(
-                { opcode: self.OPCODE.ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
-                { opcode: self.OPCODE.NAND, cycles: null, byteWidth: 2, name: 'nand', nameFull: 'Bitwise NAND' },
-                { opcode: self.OPCODE.SH, cycles: null, byteWidth: 2, name: 'sh',  nameFull: "Logical bit shift" },
-                { opcode: self.OPCODE.JNZ, cycles: null, byteWidth: 2, name: 'jnz', nameFull: "Jump if not zero" },
-                { opcode: self.OPCODE.COPY, cycles: null, byteWidth: 2, name: 'copy', nameFull: "Copy" },
-                { opcode: self.OPCODE.IMM, cycles: null, byteWidth: 4, name: 'imm', nameFull: "Immediate value" },
-                { opcode: self.OPCODE.LD, cycles: null, byteWidth: 2, name: 'ld', nameFull: "Load" },
-                { opcode: self.OPCODE.ST, cycles: null, byteWidth: 2, name: 'st', nameFull: "Store" }
+                { opcode: self.OPCODES.ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
+                { opcode: self.OPCODES.NAND, cycles: null, byteWidth: 2, name: 'nand', nameFull: 'Bitwise NAND' },
+                { opcode: self.OPCODES.SH, cycles: null, byteWidth: 2, name: 'sh',  nameFull: "Logical bit shift" },
+                { opcode: self.OPCODES.JNZ, cycles: null, byteWidth: 2, name: 'jnz', nameFull: "Jump if not zero" },
+                { opcode: self.OPCODES.COPY, cycles: null, byteWidth: 2, name: 'copy', nameFull: "Copy" },
+                { opcode: self.OPCODES.IMM, cycles: null, byteWidth: 4, name: 'imm', nameFull: "Immediate value" },
+                { opcode: self.OPCODES.LD, cycles: null, byteWidth: 2, name: 'ld', nameFull: "Load" },
+                { opcode: self.OPCODES.ST, cycles: null, byteWidth: 2, name: 'st', nameFull: "Store" }
             );
         }
 
@@ -38,6 +38,10 @@ var InstructionDecoder = (function () {
             if (opcode < 0 || opcode >= instructionSet.length) {
                 throw 'InstructionDecoder.' + method + '() - unknown opcode: ' + opcode;
             }
+        }
+
+        self.getOpcodePreview = function (computedRegInstruction) {
+            return (computedRegInstruction & 0xF0000000) >>> (7 * 4);
         }
 
         self.getRegOut = function () {

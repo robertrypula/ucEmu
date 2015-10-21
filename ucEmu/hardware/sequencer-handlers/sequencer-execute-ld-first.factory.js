@@ -14,13 +14,13 @@ var SequencerExecuteLdFirst = (function () {
             regIn0 = cpu.core.instructionDecoder.getRegIn0();
             regIn0Value = cpu.core.registerSet.read(regIn0);
             memoryColumn = regIn0Value & 3;
-            memoryReadShifted = self.inputs.memoryRead << (memoryColumn * 8);
+            memoryReadShifted = BitUtils.shiftLeft(cpu.inputs.memoryRead, (memoryColumn * 8));
 
             console.log('    :: sequencerExecuteLdFirst');
             console.log('    regIn0 = ' + regIn0);
             console.log('    regIn0Value = ' + dumpHex(regIn0Value));
             console.log('    memoryColumn = ' + dumpHex(memoryColumn));
-            console.log('    inputs.memoryRead = ' + dumpHex(self.inputs.memoryRead));
+            console.log('    inputs.memoryRead = ' + dumpHex(cpu.inputs.memoryRead));
             console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
 
             cpu.registers.regMemory = memoryReadShifted;

@@ -12,7 +12,7 @@ var SequencerFetchFirst = (function () {
 
             checkCpu();
             memoryColumn = cpu.core.registerSet.getProgramCounter() & 3;
-            memoryReadShifted = cpu.inputs.memoryRead << (memoryColumn * 8);
+            memoryReadShifted = BitUtils.shiftLeft(cpu.inputs.memoryRead, memoryColumn * 8);
 
             console.log('    :: sequenceFetchFirst');
             console.log('    memoryColumn = ' + dumpHex(memoryColumn));

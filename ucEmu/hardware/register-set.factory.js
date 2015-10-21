@@ -4,7 +4,6 @@ var RegisterSet = (function () {
     var RegisterSet = function () {
         var
             REGISTERS_SIZE = 16,
-            MASK = 0xFFFF,
             PROGRAM_COUNTER_INDEX = REGISTERS_SIZE - 1,
             MEMORY_ACCESS_INDEX = REGISTERS_SIZE - 2,
             self = this,
@@ -14,9 +13,7 @@ var RegisterSet = (function () {
         function construct()
         {
             for (var i = 0; i < REGISTERS_SIZE; i++) {
-                registers.push(
-                    MASK & (Math.random() * (MASK + 1))        // TODO move it to utilities service
-                );
+                registers.push(BitUtils.random(16));
             }
         }
 
@@ -57,7 +54,7 @@ var RegisterSet = (function () {
 
         self.save = function (number, value) {
             checkRange(number, 'save');
-            registers[number] = value & MASK;
+            registers[number] = BitUtils.mask(value, 16);
         };
 
         construct();

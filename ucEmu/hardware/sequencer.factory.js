@@ -56,7 +56,7 @@ var Sequencer = (function () {
 
         function checkState(state)
         {
-            if (state < 0 || state >= self.STATES.length) {
+            if (state < 0 || state >= handlers.length) {
                 throw 'Bad state: ' + state;
             }
         }
@@ -80,7 +80,7 @@ var Sequencer = (function () {
                 throw 'Sequencer handler for state ' + state + ' is not defined';
             }
 
-            cpu.registers.regTimer = (cpu.registers.regTimer + 1) & 0xFFFF;
+            cpu.registers.regTimer = BitUtils.mask(cpu.registers.regTimer + 1, 32);
         };
 
         self.setCpu = function (cpuSelf)

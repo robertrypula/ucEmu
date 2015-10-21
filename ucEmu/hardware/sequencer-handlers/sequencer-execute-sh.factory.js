@@ -30,7 +30,7 @@ var SequencerExecuteSh = (function () {
             console.log('    regIn1ValueAbs = ' + dumpHex(regIn1ValueAbs));
             console.log('    result = ' + dumpHex(regResult) + ' (BIT SHIFT)');
 
-            cpu.registers.regSequencer = cpu.registers.sequencer.STATES.FETCH_FIRST;
+            cpu.registers.regSequencer = cpu.core.sequencer.STATES.FETCH_FIRST;
             cpu.core.registerSet.save(regOut, regResult);
         };
 

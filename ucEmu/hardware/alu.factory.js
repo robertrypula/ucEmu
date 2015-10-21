@@ -9,23 +9,29 @@ var Alu = (function () {
 
         self.add = function (a, b) {
             checkCpu();
+            a = BitUtils.mask(a, 16);
+            b = BitUtils.mask(b, 16);
 
-            return ((a & 0xFFFF) + (b & 0xFFFF)) & 0xFFFF;
+            return BitUtils.mask(a + b, 16);
         };
 
         self.sh = function (v, amountAbs, minusSign) {
-            checkCpu();
-            if (amountAbs >= 32) {
-                return 0;
-            }
+            var shifted;
 
-            return (minusSign ? v >>> amountAbs : v << amountAbs) & 0xFFFF;        // TODO use asm-instruction ???
+            checkCpu();
+            v = BitUtils.mask(v, 16);
+            shifted = minusSign 
+                ? BitUtils.shiftRight(v, amountAbs) 
+                : BitUtils.shiftLeft(v, amountAbs)
+            ;
+
+            return BitUtils.mask(shifted, 16);
         };
 
         self.nand = function (a, b) {
             checkCpu();
 
-            return (~(a & b)) & 0xFFFF;
+            return BitUtils.mask(~(a & b), 16);
         };
 
         self.setCpu = function (cpuSelf)
