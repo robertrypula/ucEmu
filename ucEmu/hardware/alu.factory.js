@@ -1,24 +1,27 @@
 var Alu = (function () {
     'use strict';
 
-    var Alu = function () {
-        var
-            self = this,
-            cpu = null
-        ;
+    _Alu.$inject = [];
 
-        self.add = function (a, b) {
-            checkCpu();
+    function _Alu() {
+        var A;
+
+        A = function () {
+            this.cpu = null;
+        };
+
+        A.prototype.add = function (a, b) {
+            this.$$checkCpu();
             a = BitUtils.mask(a, BitUtils.BYTE_2);
             b = BitUtils.mask(b, BitUtils.BYTE_2);
 
             return BitUtils.mask(a + b, BitUtils.BYTE_2);
         };
 
-        self.sh = function (v, amountAbs, minusSign) {
+        A.prototype.sh = function (v, amountAbs, minusSign) {
             var shifted;
 
-            checkCpu();
+            this.$$checkCpu();
             v = BitUtils.mask(v, BitUtils.BYTE_2);
             shifted = minusSign 
                 ? BitUtils.shiftRight(v, amountAbs) 
@@ -28,25 +31,27 @@ var Alu = (function () {
             return BitUtils.mask(shifted, BitUtils.BYTE_2);
         };
 
-        self.nand = function (a, b) {
-            checkCpu();
+        A.prototype.nand = function (a, b) {
+            this.$$checkCpu();
 
             return BitUtils.mask(~(a & b), BitUtils.BYTE_2);
         };
 
-        self.setCpu = function (cpuSelf)
+        A.prototype.setCpu = function (cpu)
         {
-            cpu = cpuSelf;
+            this.cpu = cpu;
         };
 
-        function checkCpu()
+        A.prototype.$$checkCpu = function ()
         {
-            if (cpu === null) {
+            if (this.cpu === null) {
                 throw 'Please attach cpu first';
             }
-        }
-    };
+        };
 
-    return Alu;        // TODO change it do dependency injection
+        return A;
+    }
+
+    return _Alu();        // TODO change it do dependency injection
 
 })();
