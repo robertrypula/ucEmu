@@ -50,6 +50,12 @@ var BitUtils = (function () {
             ;
         }
 
+        function checkSign(size) {
+            if (size <= 0 || size > 32) {
+                throw 'Wrong bit size: ' + size;
+            }
+        }
+
         return {
             getMask: getMask,
             mask: mask,

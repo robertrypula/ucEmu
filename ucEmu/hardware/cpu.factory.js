@@ -75,6 +75,12 @@
 
 */
 
+
+/*
+
+
+ */
+
 var Cpu = (function () {
     'use strict';
 
@@ -203,7 +209,7 @@ var Cpu = (function () {
                 case self.core.sequencer.STATES.EXECUTE_LD_SECOND:
                     regIn0 = self.core.instructionDecoder.getRegIn0();
                     regIn0Value = self.core.registerSet.read(regIn0);
-                    result = BitUtils.shiftRight(regIn0Value, 2); + 1;
+                    result = BitUtils.shiftRight(regIn0Value, 2) + 1;
                     break;
                 // TODO implement st instructions
                 default:
@@ -243,3 +249,53 @@ var Cpu = (function () {
     return Cpu;       // TODO change it do dependency injection
 
 })();
+
+
+
+
+/*
+(function() {
+    'use strict';
+
+    angular
+        .module('dataModel')
+        .factory('ReservationBookAddOns', ReservationBookAddOns);
+
+
+    ReservationBookAddOns.$inject = [
+    ];
+
+
+    function ReservationBookAddOns() {
+        var ReservationBookAddOns;
+
+
+        ReservationBookAddOns = function() {
+            this._raw = {};                     // protel api response goes here
+        };
+
+        ReservationBookAddOns.prototype.getId = function() {
+            return (this._raw && this._raw.id) ? this._raw.id : 0;
+        };
+
+        ReservationBookAddOns.prototype.getName = function() {
+            return this._raw.desc;
+        };
+
+        ReservationBookAddOns.prototype.getAmount = function() {
+            return parseFloat(this._raw.amount.value);
+        };
+
+        ReservationBookAddOns.prototype.getAmountCurrency = function() {
+            return this._raw.amount.currency;
+        };
+
+        ReservationBookAddOns.prototype.getQuantity = function() {
+            return parseInt(this._raw.count, 10);
+        };
+
+        return ReservationBookAddOns;
+    }
+
+})();
+*/
