@@ -14,7 +14,7 @@ var SequencerExecuteLdFirst = (function () {
             regIn0 = cpu.core.instructionDecoder.getRegIn0();
             regIn0Value = cpu.core.registerSet.read(regIn0);
             memoryColumn = regIn0Value & 3;
-            memoryReadShifted = BitUtils.shiftLeft(cpu.inputs.memoryRead, (memoryColumn * 8));
+            memoryReadShifted = BitUtils.shiftLeft(cpu.inputs.memoryRead, memoryColumn * BitUtils.BYTE_1);
 
             console.log('    :: sequencerExecuteLdFirst');
             console.log('    regIn0 = ' + regIn0);

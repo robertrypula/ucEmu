@@ -40,23 +40,23 @@ var InstructionDecoder = (function () {
             }
         }
 
-        self.getOpcodePreview = function (computedRegInstruction) {
-            return (computedRegInstruction & 0xF0000000) >>> (7 * 4);
+        self.getOpcode = function () {
+            return BitUtils.shiftRight(cpu.registers.regInstruction & 0x70000000, BitUtils.BYTE_3 + BitUtils.BYTE_HALF);
         }
 
         self.getRegOut = function () {
             checkCpu();
-            return (cpu.registers.regInstruction & 0x0F000000) >>> (6 * 4);
+            return BitUtils.shiftRight(cpu.registers.regInstruction & 0x0F000000, BitUtils.BYTE_3);
         }
 
         self.getRegIn0 = function () {
             checkCpu();
-            return (cpu.registers.regInstruction & 0x00F00000) >>> (5 * 4);
+            return BitUtils.shiftRight(cpu.registers.regInstruction & 0x00F00000, BitUtils.BYTE_2 + BitUtils.BYTE_HALF);
         }
 
         self.getRegIn1 = function () {
             checkCpu();
-            return (cpu.registers.regInstruction & 0x000F0000) >>> (4 * 4);
+            return BitUtils.shiftRight(cpu.registers.regInstruction & 0x000F0000, BitUtils.BYTE_2);
         }
 
         self.getImm = function () {

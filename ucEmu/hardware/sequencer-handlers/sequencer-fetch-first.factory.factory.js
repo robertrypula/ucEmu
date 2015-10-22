@@ -12,7 +12,7 @@ var SequencerFetchFirst = (function () {
 
             checkCpu();
             memoryColumn = cpu.core.registerSet.getProgramCounter() & 3;
-            memoryReadShifted = BitUtils.shiftLeft(cpu.inputs.memoryRead, memoryColumn * 8);
+            memoryReadShifted = BitUtils.shiftLeft(cpu.inputs.memoryRead, memoryColumn * BitUtils.BYTE_1);
 
             console.log('    :: sequenceFetchFirst');
             console.log('    memoryColumn = ' + dumpHex(memoryColumn));
@@ -20,6 +20,7 @@ var SequencerFetchFirst = (function () {
             console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
 
             cpu.registers.regMemory = memoryReadShifted;
+            cpu.registers.regInstruction = memoryReadShifted;              // TODO check it, this may be redundant with regMemory
             cpu.registers.regSequencer = cpu.core.sequencer.STATES.FETCH_SECOND_AND_DECODE;
         };
 

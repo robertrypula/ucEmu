@@ -57,6 +57,13 @@ var BitUtils = (function () {
         }
 
         return {
+            BIT_1: 1,
+            BIT_2: 2,
+            BYTE_HALF: 4,
+            BYTE_1: 8,
+            BYTE_2: 16,
+            BYTE_3: 24,
+            BYTE_4: 32,
             getMask: getMask,
             mask: mask,
             random: random,

@@ -9,29 +9,29 @@ var Alu = (function () {
 
         self.add = function (a, b) {
             checkCpu();
-            a = BitUtils.mask(a, 16);
-            b = BitUtils.mask(b, 16);
+            a = BitUtils.mask(a, BitUtils.BYTE_2);
+            b = BitUtils.mask(b, BitUtils.BYTE_2);
 
-            return BitUtils.mask(a + b, 16);
+            return BitUtils.mask(a + b, BitUtils.BYTE_2);
         };
 
         self.sh = function (v, amountAbs, minusSign) {
             var shifted;
 
             checkCpu();
-            v = BitUtils.mask(v, 16);
+            v = BitUtils.mask(v, BitUtils.BYTE_2);
             shifted = minusSign 
                 ? BitUtils.shiftRight(v, amountAbs) 
                 : BitUtils.shiftLeft(v, amountAbs)
             ;
 
-            return BitUtils.mask(shifted, 16);
+            return BitUtils.mask(shifted, BitUtils.BYTE_2);
         };
 
         self.nand = function (a, b) {
             checkCpu();
 
-            return BitUtils.mask(~(a & b), 16);
+            return BitUtils.mask(~(a & b), BitUtils.BYTE_2);
         };
 
         self.setCpu = function (cpuSelf)

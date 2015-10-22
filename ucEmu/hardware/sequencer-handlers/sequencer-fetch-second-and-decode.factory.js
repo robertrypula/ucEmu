@@ -27,10 +27,10 @@ var SequencerFetchSecondAndDecode = (function () {
 
             checkCpu();
             memoryColumn = cpu.core.registerSet.getProgramCounter() & 3;
-            shiftAmount = (4 - memoryColumn) * 8;
+            shiftAmount = (4 - memoryColumn) * BitUtils.BYTE_1;
             memoryReadShifted = BitUtils.shiftRight(cpu.inputs.memoryRead, shiftAmount);
             memoryFinal = memoryReadShifted | cpu.registers.regMemory;
-            opCode = cpu.core.instructionDecoder.getOpcodePreview(memoryFinal);
+            opCode = cpu.core.instructionDecoder.getOpcode();
             instruction = cpu.core.instructionDecoder.getInstruction(opCode);
             instructionByteWidth = instruction.byteWidth;
             regPCNext = cpu.core.registerSet.getProgramCounter() + instructionByteWidth;

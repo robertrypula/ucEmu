@@ -108,15 +108,15 @@ var Cpu = (function () {
 
         self.registers = {
             // control registers
-            regSequencer: BitUtils.random(4),
-            regInstruction: BitUtils.random(32),
+            regSequencer: BitUtils.random(BitUtils.BYTE_HALF),
+            regInstruction: BitUtils.random(BitUtils.BYTE_4),
 
             // input helper registers
-            regReset: BitUtils.random(1),
-            regMemory: BitUtils.random(32),
+            regReset: BitUtils.random(BitUtils.BIT_1),
+            regMemory: BitUtils.random(BitUtils.BYTE_4),
 
             // timer
-            regTimer: BitUtils.random(32)
+            regTimer: BitUtils.random(BitUtils.BYTE_4)
         };
 
         var clockPrevious = null;
@@ -196,20 +196,20 @@ var Cpu = (function () {
 
             switch (self.registers.regSequencer) {
                 case self.core.sequencer.STATES.FETCH_FIRST:
-                    result = BitUtils.shiftRight(self.core.registerSet.getProgramCounter(), 2);
+                    result = BitUtils.shiftRight(self.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
                     break;
                 case self.core.sequencer.STATES.FETCH_SECOND_AND_DECODE:
-                    result = BitUtils.shiftRight(self.core.registerSet.getProgramCounter(), 2) + 1;
+                    result = BitUtils.shiftRight(self.core.registerSet.getProgramCounter(), BitUtils.BIT_2) + 1;
                     break;
                 case self.core.sequencer.STATES.EXECUTE_LD_FIRST:
                     regIn0 = self.core.instructionDecoder.getRegIn0();
                     regIn0Value = self.core.registerSet.read(regIn0);
-                    result = BitUtils.shiftRight(regIn0Value, 2);
+                    result = BitUtils.shiftRight(regIn0Value, BitUtils.BIT_2);
                     break;
                 case self.core.sequencer.STATES.EXECUTE_LD_SECOND:
                     regIn0 = self.core.instructionDecoder.getRegIn0();
                     regIn0Value = self.core.registerSet.read(regIn0);
-                    result = BitUtils.shiftRight(regIn0Value, 2) + 1;
+                    result = BitUtils.shiftRight(regIn0Value, BitUtils.BIT_2) + 1;
                     break;
                 // TODO implement st instructions
                 default:
@@ -249,53 +249,3 @@ var Cpu = (function () {
     return Cpu;       // TODO change it do dependency injection
 
 })();
-
-
-
-
-/*
-(function() {
-    'use strict';
-
-    angular
-        .module('dataModel')
-        .factory('ReservationBookAddOns', ReservationBookAddOns);
-
-
-    ReservationBookAddOns.$inject = [
-    ];
-
-
-    function ReservationBookAddOns() {
-        var ReservationBookAddOns;
-
-
-        ReservationBookAddOns = function() {
-            this._raw = {};                     // protel api response goes here
-        };
-
-        ReservationBookAddOns.prototype.getId = function() {
-            return (this._raw && this._raw.id) ? this._raw.id : 0;
-        };
-
-        ReservationBookAddOns.prototype.getName = function() {
-            return this._raw.desc;
-        };
-
-        ReservationBookAddOns.prototype.getAmount = function() {
-            return parseFloat(this._raw.amount.value);
-        };
-
-        ReservationBookAddOns.prototype.getAmountCurrency = function() {
-            return this._raw.amount.currency;
-        };
-
-        ReservationBookAddOns.prototype.getQuantity = function() {
-            return parseInt(this._raw.count, 10);
-        };
-
-        return ReservationBookAddOns;
-    }
-
-})();
-*/

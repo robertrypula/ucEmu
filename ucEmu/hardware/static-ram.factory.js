@@ -8,12 +8,13 @@ var StaticRam = (function () {
                 row: row,
                 writeEnable: writeEnable,
                 dataIn: dataIn
-            }
+            },
+            ROWS_COUNT = (64 * 1024) / 4
         ;
 
         self.log = function (startRow, stopRow) {
             startRow = startRow < 0 ? 0 : startRow;
-            for (var i = startRow; i < (64 * 1024) / 4; i++) {
+            for (var i = startRow; i < ROWS_COUNT; i++) {
                 if (i > stopRow) {
                     return;
                 }
@@ -30,17 +31,17 @@ var StaticRam = (function () {
         };
 
         self.setWriteEnable = function (writeEnable) {
-            inputs.writeEnable = writeEnable ? true : false;
+            inputs.writeEnable = writeEnable ? 1 : 0;
             update();
         };
 
         self.setRow = function (row) {
-            inputs.row = row & 0x3FFF;
+            inputs.row = BitUtils.mask(row, BitUtils.BYTE_2 - BitUtils.BIT_2);
             update();
         };
 
         self.setDataIn = function (dataIn) {
-            inputs.dataIn = dataIn & 0xFFFFFFFF;
+            inputs.dataIn = BitUtils.mask(dataIn, BitUtils.BYTE_4);
             update();
         };
 
@@ -53,8 +54,10 @@ var StaticRam = (function () {
 
         function construct()
         {
-            for (var i = 0; i < (64 * 1024) / 4; i++) {
-                data.push(0xFFFFFFFF & Math.random() * 0x100000000);
+            for (var i = 0; i < ROWS_COUNT; i++) {
+                data.push(
+                    BitUtils.random(BitUtils.BYTE_4)
+                );
             }
             update();
         }
