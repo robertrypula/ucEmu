@@ -4,3 +4,4 @@ ships - stara gra gdzie rzycalo die miny na plynace lodzie podwodbe
 tetris
 lab
 kula world
+gra gdzie zakreslalo sie terytorium i trzebabylo zamknac latajacych wrogow. bezpiecznym bylo sie tylko na swoim teryforium. gra byla u kuzynek
