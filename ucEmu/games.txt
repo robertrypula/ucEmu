@@ -5,3 +5,8 @@ tetris
 lab
 kula world
 gra gdzie zakreslalo sie terytorium i trzebabylo zamknac latajacych wrogow. bezpiecznym bylo sie tylko na swoim teryforium. gra byla u kuzynek
+
+red baron, atati latanie 3d
+bradley trainer, atari czolgi 3d
+
+space wars deluxe 3d
