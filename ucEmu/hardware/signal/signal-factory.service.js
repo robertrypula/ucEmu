@@ -3,7 +3,7 @@ var SignalFactory = (function () {
 
     _SignalFactory.$inject = [
         'DiOne',
-        'DiTwo',
+        'DiTwo'
     ];
 
     function _SignalFactory(DiOne, DiTwo) {

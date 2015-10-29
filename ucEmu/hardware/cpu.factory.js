@@ -84,131 +84,136 @@
 var Cpu = (function () {
     'use strict';
 
-    var Cpu = function () {
-        var self = this;
+    _Cpu.$inject = [];
 
-        self.core = {
-            registerSet: new RegisterSet(),
-            instructionDecoder: new InstructionDecoder(),
-            sequencer: new Sequencer(),
-            alu: new Alu()
+    function _Cpu() {
+        var C;
+
+        C = function () {
+            this.core = null;
+            this.inputs = null;
+            this.outputs = null;
+            this.registers = null;
+            this.$$clockPrevious = null;
+
+            this.initialize();
+            this.update();
         };
 
-        self.inputs = {
-            clock: 0,
-            reset: 0,
-            memoryRead: 0
+        C.prototype.initialize = function () {
+            this.core = {
+                registerSet: new RegisterSet(),
+                instructionDecoder: new InstructionDecoder(),
+                sequencer: new Sequencer(),
+                alu: new Alu()
+            };
+
+            this.inputs = {
+                clock: 0,
+                reset: 0,
+                memoryRead: 0
+            };
+
+            this.outputs = {
+                memoryRowAddress: 0,
+                memoryWrite: 0,
+                memoryWE: 0
+            };
+
+            this.registers = {
+                // control registers
+                regSequencer: BitUtils.random(BitUtils.BYTE_HALF),
+                regInstruction: BitUtils.random(BitUtils.BYTE_4),
+
+                // input helper registers
+                regReset: BitUtils.random(BitUtils.BIT_1),
+                regMemory: BitUtils.random(BitUtils.BYTE_4),
+
+                // timer
+                regTimer: BitUtils.random(BitUtils.BYTE_4)
+            };
+
+            this.core.sequencer.setCpu(this);
+            this.core.instructionDecoder.setCpu(this);
+            this.core.alu.setCpu(this);
         };
 
-        self.outputs = {
-            memoryRowAddress: 0,
-            memoryWrite: 0,
-            memoryWE: 0
-        };
+        C.prototype.update = function () {
 
-        self.registers = {
-            // control registers
-            regSequencer: BitUtils.random(BitUtils.BYTE_HALF),
-            regInstruction: BitUtils.random(BitUtils.BYTE_4),
-
-            // input helper registers
-            regReset: BitUtils.random(BitUtils.BIT_1),
-            regMemory: BitUtils.random(BitUtils.BYTE_4),
-
-            // timer
-            regTimer: BitUtils.random(BitUtils.BYTE_4)
-        };
-
-        var clockPrevious = null;
-
-        self.construct = function () {
-            self.core.sequencer.setCpu(self);
-            self.core.instructionDecoder.setCpu(self);
-            self.core.alu.setCpu(self);
-            self.update();
-        };
-
-        self.update = function () {
-
-            if (clockPrevious === null) {
-                clockPrevious = self.inputs.clock;
+            if (this.$$clockPrevious === null) {
+                this.$$clockPrevious = this.inputs.clock;
             }
 
-            if (clockPrevious !== self.inputs.clock) {
-                if (self.inputs.clock) {
-                    clockLowToHigh();
+            if (this.$$clockPrevious !== this.inputs.clock) {
+                if (this.inputs.clock) {
+                    this.$$clockLowToHigh();
                 } else {
-                    clockHighToLow();
+                    this.$$clockHighToLow();
                 }
-                clockPrevious = self.inputs.clock;
+                this.$$clockPrevious = this.inputs.clock;
             }
 
-            updateOutputs();
+            this.$$updateOutputs();
         };
 
-        function clockLowToHigh()
-        {
+        C.prototype.$$clockLowToHigh = function () {
             // nothing is happening here - data is passed internally inside master–slave D flip-flop registers
-        }
+        };
 
-        function clockHighToLow()
-        {
+        C.prototype.$$clockHighToLow = function () {
             var resetOccurred = false;
 
-            if (self.registers.regReset) {
-                performRegistersReset();
+            if (this.registers.regReset) {
+                this.$$performRegistersReset();
                 resetOccurred = true;
             }
 
-            self.registers.regReset = self.inputs.reset;         // store current input
+            this.registers.regReset = this.inputs.reset;         // store current input
             if (resetOccurred) {
                 return;
             }
 
-            self.core.sequencer.goToNextState();
-        }
+            this.core.sequencer.goToNextState();
+        };
 
-        function performRegistersReset()
-        {
-            self.core.registerSet.reset();
+        C.prototype.$$performRegistersReset = function () {
+            this.core.registerSet.reset();
 
-            self.registers.regSequencer = 0;
-            self.registers.regInstruction = 0;
+            this.registers.regSequencer = 0;
+            this.registers.regInstruction = 0;
 
-            self.registers.regMemory = 0;
-            self.registers.regTimer = 0;
+            this.registers.regMemory = 0;
+            this.registers.regTimer = 0;
 
             // !!! regReset register is excluded from reset !!!
-        }
+        };
 
-        function updateOutputs()
-        {
-            updateOutputMemoryRowAddress();
-            updateOutputMemoryWrite();
-            updateOutputMemoryWE();
-        }
+        C.prototype.$$updateOutputs = function () {
+            this.$$updateOutputMemoryRowAddress();
+            this.$$updateOutputMemoryWrite();
+            this.$$updateOutputMemoryWE();
+        };
 
-        function updateOutputMemoryRowAddress()
-        {
+        C.prototype.$$updateOutputMemoryRowAddress = function () {
             var result,
                 regIn0,
                 regIn0Value;
 
-            switch (self.registers.regSequencer) {
-                case self.core.sequencer.STATES.FETCH_FIRST:
-                    result = BitUtils.shiftRight(self.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
+            switch (this.registers.regSequencer) {
+                case this.core.sequencer.STATES.FETCH_FIRST:
+                    result = BitUtils.shiftRight(this.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
                     break;
-                case self.core.sequencer.STATES.FETCH_SECOND_AND_DECODE:
-                    result = BitUtils.shiftRight(self.core.registerSet.getProgramCounter(), BitUtils.BIT_2) + 1;
+                case this.core.sequencer.STATES.FETCH_SECOND_AND_DECODE:
+                    result = BitUtils.shiftRight(this.core.registerSet.getProgramCounter(), BitUtils.BIT_2) + 1;
                     break;
-                case self.core.sequencer.STATES.EXECUTE_LD_FIRST:
-                    regIn0 = self.core.instructionDecoder.getRegIn0();
-                    regIn0Value = self.core.registerSet.read(regIn0);
+                case this.core.sequencer.STATES.EXECUTE_LD_FIRST:
+                    regIn0 = this.core.instructionDecoder.getRegIn0();
+                    regIn0Value = this.core.registerSet.read(regIn0);
                     result = BitUtils.shiftRight(regIn0Value, BitUtils.BIT_2);
                     break;
-                case self.core.sequencer.STATES.EXECUTE_LD_SECOND:
-                    regIn0 = self.core.instructionDecoder.getRegIn0();
-                    regIn0Value = self.core.registerSet.read(regIn0);
+                case this.core.sequencer.STATES.EXECUTE_LD_SECOND:
+                    regIn0 = this.core.instructionDecoder.getRegIn0();
+                    regIn0Value = this.core.registerSet.read(regIn0);
                     result = BitUtils.shiftRight(regIn0Value, BitUtils.BIT_2) + 1;
                     break;
                 // TODO implement st instructions
@@ -216,36 +221,34 @@ var Cpu = (function () {
                     result = 0;            // floating bus - pulled down by resistors
             }
 
-            self.outputs.memoryRowAddress = result;
-        }
+            this.outputs.memoryRowAddress = result;
+        };
 
-        function updateOutputMemoryWrite()
-        {
+        C.prototype.$$updateOutputMemoryWrite = function () {
             var result;
 
-            switch (self.registers.regSequencer) {
+            switch (this.registers.regSequencer) {
                 default:
                     result = 0;  // TODO implement st instruction
             }
 
-            self.outputs.memoryWrite = result;
-        }
+            this.outputs.memoryWrite = result;
+        };
 
-        function updateOutputMemoryWE()
-        {
+        C.prototype.$$updateOutputMemoryWE = function () {
             var result;
 
-            switch (self.registers.regSequencer) {
+            switch (this.registers.regSequencer) {
                 default:
                     result = 0;          // TODO implement st instruction
             }
 
-            self.outputs.memoryWE = result;
-        }
+            this.outputs.memoryWE = result;
+        };
 
-        self.construct();
-    };
+        return C;
+    }
 
-    return Cpu;       // TODO change it do dependency injection
+    return _Cpu();       // TODO change it do dependency injection
 
 })();
