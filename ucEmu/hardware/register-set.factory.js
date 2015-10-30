@@ -1,65 +1,70 @@
 var RegisterSet = (function () {
     'use strict';
 
-    var RegisterSet = function () {
-        var
-            REGISTERS_SIZE = 16,
-            PROGRAM_COUNTER_INDEX = REGISTERS_SIZE - 1,
-            MEMORY_ACCESS_INDEX = REGISTERS_SIZE - 2,
-            self = this,
-            registers = []
-        ;
+    _RegisterSet.$inject = [];
 
-        function construct()
-        {
-            for (var i = 0; i < REGISTERS_SIZE; i++) {
-                registers.push(BitUtils.random(16));
+    function _RegisterSet() {
+        var RS;
+
+        RS = function () {
+            this.REGISTERS_SIZE = 16;
+            this.PROGRAM_COUNTER_INDEX = this.REGISTERS_SIZE - 1;
+            this.MEMORY_ACCESS_INDEX = this.REGISTERS_SIZE - 2;
+            this.registers = [];
+
+            this.$$initialize();
+        };
+
+        RS.prototype.$$initialize = function () {
+            for (var i = 0; i < this.REGISTERS_SIZE; i++) {
+                this.registers.push(
+                    BitUtils.random(BitUtils.BYTE_2)
+                );
             }
-        }
+        };
 
-        function checkRange(number, method)
-        {
-            if (number < 0 || number >= REGISTERS_SIZE) {
+        RS.prototype.$$checkRange = function(number, method) {
+            if (number < 0 || number >= this.REGISTERS_SIZE) {
                 throw 'RegisterSet.' + method + '() - bad register number: ' + number;
             }
-        }
+        };
 
-        self.reset = function () {
-            for (var i = 0; i < REGISTERS_SIZE; i++) {
-                self.save(i, 0);
+        RS.prototype.reset = function () {
+            for (var i = 0; i < this.REGISTERS_SIZE; i++) {
+                this.save(i, 0);
             }
         };
 
-        self.getProgramCounter = function () {
-            return self.read(PROGRAM_COUNTER_INDEX);
+        RS.prototype.getProgramCounter = function () {
+            return this.read(this.PROGRAM_COUNTER_INDEX);
         };
 
-        self.getMemoryAccess = function () {
-            return self.read(MEMORY_ACCESS_INDEX);
+        RS.prototype.getMemoryAccess = function () {
+            return this.read(this.MEMORY_ACCESS_INDEX);
         };
 
-        self.setProgramCounter = function (value) {
-            self.save(PROGRAM_COUNTER_INDEX, value);
+        RS.prototype.setProgramCounter = function (value) {
+            this.save(this.PROGRAM_COUNTER_INDEX, value);
         };
 
-        self.setMemoryAccess = function (value) {
-            self.save(MEMORY_ACCESS_INDEX, value);
+        RS.prototype.setMemoryAccess = function (value) {
+            this.save(this.MEMORY_ACCESS_INDEX, value);
         };
 
-        self.read = function (number) {
-            checkRange(number, 'read');
+        RS.prototype.read = function (number) {
+            this.$$checkRange(number, 'read');
 
-            return registers[number];
+            return this.registers[number];
         };
 
-        self.save = function (number, value) {
-            checkRange(number, 'save');
-            registers[number] = BitUtils.mask(value, 16);
+        RS.prototype.save = function (number, value) {
+            this.$$checkRange(number, 'save');
+            this.registers[number] = BitUtils.mask(value, BitUtils.BYTE_2);
         };
 
-        construct();
-    };
+        return RS;
+    }
 
-    return RegisterSet;       // TODO change it to DI
+    return _RegisterSet();       // TODO change it to DI
 
 })();

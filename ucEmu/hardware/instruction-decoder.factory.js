@@ -1,92 +1,101 @@
 var InstructionDecoder = (function () {
     'use strict';
 
-    var InstructionDecoder = function () {
-        var
-            self = this,
-            cpu = null,
-            instructionSet = []
-        ;
+    _InstructionDecoder.$inject = [];
 
-        self.OPCODES = {
-            ADD: 0,
-            NAND: 1,
-            SH: 2,
-            JNZ: 3,
-            COPY: 4,
-            IMM: 5,
-            LD: 6,
-            ST: 7
+    function _InstructionDecoder() {
+        var ID;
+
+        ID = function () {
+            this.OPCODES = null;
+            this.$$instructionSet = [];
+            this.$$cpu = null;
+
+            this.$$initialize();
         };
 
-        function construct()
-        {
-            instructionSet.push(
-                { opcode: self.OPCODES.ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
-                { opcode: self.OPCODES.NAND, cycles: null, byteWidth: 2, name: 'nand', nameFull: 'Bitwise NAND' },
-                { opcode: self.OPCODES.SH, cycles: null, byteWidth: 2, name: 'sh',  nameFull: "Logical bit shift" },
-                { opcode: self.OPCODES.JNZ, cycles: null, byteWidth: 2, name: 'jnz', nameFull: "Jump if not zero" },
-                { opcode: self.OPCODES.COPY, cycles: null, byteWidth: 2, name: 'copy', nameFull: "Copy" },
-                { opcode: self.OPCODES.IMM, cycles: null, byteWidth: 4, name: 'imm', nameFull: "Immediate value" },
-                { opcode: self.OPCODES.LD, cycles: null, byteWidth: 2, name: 'ld', nameFull: "Load" },
-                { opcode: self.OPCODES.ST, cycles: null, byteWidth: 2, name: 'st', nameFull: "Store" }
-            );
-        }
+        ID.prototype.$$initialize = function () {
+            this.$$initializeOpcode();
+            this.$$initializeInstructionSet();
+        };
 
-        function checkOpcode(opcode, method)
-        {
-            if (opcode < 0 || opcode >= instructionSet.length) {
+        ID.prototype.$$initializeOpcode = function () {
+            this.OPCODES = {
+                ADD: 0,
+                NAND: 1,
+                SH: 2,
+                JNZ: 3,
+                COPY: 4,
+                IMM: 5,
+                LD: 6,
+                ST: 7
+            };
+        };
+
+        ID.prototype.$$initializeInstructionSet = function () {
+            this.$$instructionSet.push(
+                { opcode: this.OPCODES.ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
+                { opcode: this.OPCODES.NAND, cycles: null, byteWidth: 2, name: 'nand', nameFull: 'Bitwise NAND' },
+                { opcode: this.OPCODES.SH, cycles: null, byteWidth: 2, name: 'sh',  nameFull: "Logical bit shift" },
+                { opcode: this.OPCODES.JNZ, cycles: null, byteWidth: 2, name: 'jnz', nameFull: "Jump if not zero" },
+                { opcode: this.OPCODES.COPY, cycles: null, byteWidth: 2, name: 'copy', nameFull: "Copy" },
+                { opcode: this.OPCODES.IMM, cycles: null, byteWidth: 4, name: 'imm', nameFull: "Immediate value" },
+                { opcode: this.OPCODES.LD, cycles: null, byteWidth: 2, name: 'ld', nameFull: "Load" },
+                { opcode: this.OPCODES.ST, cycles: null, byteWidth: 2, name: 'st', nameFull: "Store" }
+            );
+        };
+
+        ID.prototype.$$checkOpcode = function(opcode, method) {
+            if (opcode < 0 || opcode >= this.$$instructionSet.length) {
                 throw 'InstructionDecoder.' + method + '() - unknown opcode: ' + opcode;
             }
-        }
+        };
 
-        self.getOpcode = function () {
+        ID.prototype.getOpcode = function () {
             return BitUtils.shiftRight(cpu.registers.regInstruction & 0x70000000, BitUtils.BYTE_3 + BitUtils.BYTE_HALF);
-        }
+        };
 
-        self.getRegOut = function () {
-            checkCpu();
+        ID.prototype.getRegOut = function () {
+            this.$$checkCpu();
             return BitUtils.shiftRight(cpu.registers.regInstruction & 0x0F000000, BitUtils.BYTE_3);
-        }
+        };
 
-        self.getRegIn0 = function () {
-            checkCpu();
+        ID.prototype.getRegIn0 = function () {
+            this.$$checkCpu();
             return BitUtils.shiftRight(cpu.registers.regInstruction & 0x00F00000, BitUtils.BYTE_2 + BitUtils.BYTE_HALF);
-        }
+        };
 
-        self.getRegIn1 = function () {
-            checkCpu();
+        ID.prototype.getRegIn1 = function () {
+            this.$$checkCpu();
             return BitUtils.shiftRight(cpu.registers.regInstruction & 0x000F0000, BitUtils.BYTE_2);
-        }
+        };
 
-        self.getImm = function () {
-            checkCpu();
+        ID.prototype.getImm = function () {
+            this.$$checkCpu();
             return cpu.registers.regInstruction & 0x0000FFFF;
-        }
-
-        self.getInstruction = function (opcode) {
-            checkCpu();
-            checkOpcode(opcode, 'getInstruction');
-
-            return instructionSet[opcode];
         };
 
-        self.setCpu = function (cpuSelf)
-        {
-            cpu = cpuSelf;
+        ID.prototype.getInstruction = function (opcode) {
+            this.$$checkCpu();
+            this.$$checkOpcode(opcode, 'getInstruction');
+
+            return this.$$instructionSet[opcode];
         };
 
-        function checkCpu()
-        {
-            if (cpu === null) {
+        ID.prototype.setCpu = function (cpuSelf) {
+            this.$$cpu = cpuSelf;
+        };
+
+        ID.prototype.$$checkCpu = function() {
+            if (this.$$cpu === null) {
                 throw 'Please attach cpu first';
             }
-        }
+        };
 
-        construct();
-    };
+        return ID;
+    }
 
-    return InstructionDecoder;         // TODO change it to DI
+    return _InstructionDecoder();         // TODO change it to DI
 
 })();
 
