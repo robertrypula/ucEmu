@@ -7,7 +7,7 @@ var Alu = (function () {
         var A;
 
         A = function () {
-            this.cpu = null;
+            this.$$cpu = null;
         };
 
         A.prototype.add = function (a, b) {
@@ -37,14 +37,12 @@ var Alu = (function () {
             return BitUtils.mask(~(a & b), BitUtils.BYTE_2);
         };
 
-        A.prototype.setCpu = function (cpu)
-        {
-            this.cpu = cpu;
+        A.prototype.setCpu = function (cpu) {
+            this.$$cpu = cpu;
         };
 
-        A.prototype.$$checkCpu = function ()
-        {
-            if (this.cpu === null) {
+        A.prototype.$$checkCpu = function () {
+            if (this.$$cpu === null) {
                 throw 'Please attach cpu first';
             }
         };
