@@ -17,17 +17,12 @@ var SequencerExecuteSh = (function () {
             regIn1 = cpu.core.instructionDecoder.getRegIn1();
             regIn0Value = cpu.core.registerSet.read(regIn0);
             regIn1Value = cpu.core.registerSet.read(regIn1);
-            regIn1ValueAbs = regIn1Value & 0x8000 
-                ? ((~regIn1Value) + 1) & 0xFFFF 
-                : regIn1Value
-            ;
-            regResult = cpu.core.alu.sh(regIn0Value, regIn1ValueAbs, regIn1Value & 0x8000);
+            regResult = cpu.core.alu.sh(regIn0Value, regIn1Value);
 
             console.log('    :: sequencerExecuteSh');
             console.log('    regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
             console.log('    regIn0Value = ' + dumpHex(regIn0Value));
             console.log('    regIn1Value = ' + dumpHex(regIn1Value));
-            console.log('    regIn1ValueAbs = ' + dumpHex(regIn1ValueAbs));
             console.log('    result = ' + dumpHex(regResult) + ' (BIT SHIFT)');
 
             cpu.registers.regSequencer = cpu.core.sequencer.STATES.FETCH_FIRST;

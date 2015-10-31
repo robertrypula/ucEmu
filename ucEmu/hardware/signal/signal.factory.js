@@ -3,7 +3,7 @@ var Signal = (function () {
 
     _Signal.$inject = [
         'DiOne',
-        'DiTwo',
+        'DiTwo'
     ];
 
     function _Signal(DiOne, DiTwo) {

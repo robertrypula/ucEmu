@@ -18,14 +18,22 @@ var Alu = (function () {
             return BitUtils.mask(a + b, BitUtils.BYTE_2);
         };
 
-        A.prototype.sh = function (v, amountAbs, minusSign) {
-            var shifted;
+        A.prototype.sh = function (v, amount) {
+            var shifted, negative, amountAbsolute;
 
             this.$$checkCpu();
+
             v = BitUtils.mask(v, BitUtils.BYTE_2);
-            shifted = minusSign 
-                ? BitUtils.shiftRight(v, amountAbs) 
-                : BitUtils.shiftLeft(v, amountAbs)
+            amount = BitUtils.mask(amount, BitUtils.BYTE_2);
+
+            negative = BitUtils.maskOneBit(amount, BitUtils.BYTE_2);
+            amountAbsolute = negative
+                ? BitUtils.invertSignU2(amount, BitUtils.BYTE_2)
+                : amount
+            ;
+            shifted = negative
+                ? BitUtils.shiftRight(v, amountAbsolute)
+                : BitUtils.shiftLeft(v, amountAbsolute)
             ;
 
             return BitUtils.mask(shifted, BitUtils.BYTE_2);

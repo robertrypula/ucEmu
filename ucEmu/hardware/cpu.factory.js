@@ -96,11 +96,11 @@ var Cpu = (function () {
             this.registers = null;
             this.$$clockPrevious = null;
 
-            this.initialize();
+            this.$$initialize();
             this.update();
         };
 
-        C.prototype.initialize = function () {
+        C.prototype.$$initialize = function () {
             this.core = {
                 registerSet: new RegisterSet(),
                 instructionDecoder: new InstructionDecoder(),
