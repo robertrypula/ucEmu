@@ -1,70 +1,74 @@
 var StaticRam = (function () {
     'use strict';
 
-    var StaticRam = function (row, writeEnable, dataIn) {
-        var self = this,
-            data = [],
-            inputs = {
+    _StaticRam.$inject = [];
+
+    function _StaticRam() {
+        var SR;
+
+        SR = function (row, writeEnable, dataIn) {
+            this.data = [];
+            this.inputs = {
                 row: row,
                 writeEnable: writeEnable,
                 dataIn: dataIn
-            },
-            ROWS_COUNT = (64 * 1024) / 4
-        ;
+            };
+            this.ROWS_COUNT = (64 * 1024) / 4;
 
-        self.log = function (startRow, stopRow) {
+            this.$$initialize();
+        };
+
+        SR.prototype.log = function (startRow, stopRow) {
             startRow = startRow < 0 ? 0 : startRow;
-            for (var i = startRow; i < ROWS_COUNT; i++) {
+            for (var i = startRow; i < this.ROWS_COUNT; i++) {
                 if (i > stopRow) {
                     return;
                 }
                 console.log(
                     ' StaticRam:  ' +
                     i.toString(16) + ' | ' +
-                    dumpHex(data[i])
+                    dumpHex(this.data[i])
                 );
             }
         };
 
-        self.getDataOut = function () {
-            return data[inputs.row];
+        SR.prototype.getDataOut = function () {
+            return this.data[this.inputs.row];
         };
 
-        self.setWriteEnable = function (writeEnable) {
-            inputs.writeEnable = writeEnable ? 1 : 0;
-            update();
+        SR.prototype.setWriteEnable = function (writeEnable) {
+            this.inputs.writeEnable = writeEnable ? 1 : 0;
+            this.$$update();
         };
 
-        self.setRow = function (row) {
-            inputs.row = BitUtils.mask(row, BitUtils.BYTE_2 - BitUtils.BIT_2);
-            update();
+        SR.prototype.setRow = function (row) {
+            this.inputs.row = BitUtils.mask(row, BitUtils.BYTE_2 - BitUtils.BIT_2);
+            this.$$update();
         };
 
-        self.setDataIn = function (dataIn) {
-            inputs.dataIn = BitUtils.mask(dataIn, BitUtils.BYTE_4);
-            update();
+        SR.prototype.setDataIn = function (dataIn) {
+            this.inputs.dataIn = BitUtils.mask(dataIn, BitUtils.BYTE_4);
+            this.$$update();
         };
 
-        function update()
-        {
-            if (inputs.writeEnable) {
-                data[inputs.row] = inputs.dataIn;
+        SR.prototype.$$update = function () {
+            if (this.inputs.writeEnable) {
+                this.data[this.inputs.row] = this.inputs.dataIn;
             }
-        }
+        };
 
-        function construct()
-        {
-            for (var i = 0; i < ROWS_COUNT; i++) {
-                data.push(
+        SR.prototype.$$initialize = function () {
+            for (var i = 0; i < this.ROWS_COUNT; i++) {
+                this.data.push(
                     BitUtils.random(BitUtils.BYTE_4)
                 );
             }
-            update();
-        }
+            this.$$update();
+        };
 
-        construct();
-    };
+        return SR;
+    }
 
-    return StaticRam;       // TODO change it to DI
+    return _StaticRam();       // TODO change it to DI
 
 })();
