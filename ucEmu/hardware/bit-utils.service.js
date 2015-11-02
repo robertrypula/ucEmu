@@ -18,7 +18,7 @@ var BitUtils = (function () {
         }
 
         function getMaskOneBit(size) {
-            var mask = 0x80000000;   // 32 bits
+            var mask = 0x80000000;   // one at most left posision
 
             if (size <= 0 || size > 32) {
                 throw 'Wrong bit size: ' + size;
@@ -66,7 +66,36 @@ var BitUtils = (function () {
         }
 
         function invertSignU2(value, size) {
-            return this.mask((~value) + 1, size);
+            return mask((~value) + 1, size);
+        }
+
+        function hex(value, size) {
+            var byteHalfMask, txt = '';
+
+            value = mask(value, size);
+            for (var i = Math.ceil(size / 4) - 1; i >= 0; i--) {
+                byteHalfMask = 0xF << (i * 4);
+                txt += ((value & byteHalfMask) >>> (i * 4)).toString(16);
+
+                if (i % 2 === 0 && i != 0) {
+                    txt += ' ';
+                }
+            }
+
+            return txt;
+        }
+
+        function byteRowTo32bit(byteRow) {
+            if (byteRow.length !== 4) {
+                throw 'Byte row should always contain four bytes';
+            }
+
+            return (
+                mask(byteRow[0], 8) * 0x1000000 +
+                mask(byteRow[1], 8) * 0x10000 +
+                mask(byteRow[2], 8) * 0x100 +
+                mask(byteRow[3], 8)
+            );
         }
 
         return {
@@ -82,7 +111,9 @@ var BitUtils = (function () {
             random: random,
             shiftRight: shiftRight,
             shiftLeft: shiftLeft,
-            invertSignU2: invertSignU2
+            invertSignU2: invertSignU2,
+            hex: hex,
+            byteRowTo32bit: byteRowTo32bit
         };
     }
 
