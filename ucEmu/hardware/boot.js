@@ -81,12 +81,7 @@ function programStaticRamAndSync(memoryState)
         var ms = memoryState[i];
 
         staticRam.setRow(ms.row);
-        staticRam.setDataIn(
-            0x1000000 * ms.data[0] +
-            0x10000 * ms.data[1] +
-            0x100 * ms.data[2] +
-            ms.data[3]
-        );
+        staticRam.setDataIn(BitUtils.byteRowTo32bit(ms.data));
         staticRam.setWriteEnable(true);
         staticRam.setWriteEnable(false);
     }
@@ -124,34 +119,39 @@ function globalUpdate()
 
 function cpuLog()
 {
+    var rs = cpu.core.registerSet,
+        r = cpu.registers;
+
     console.log(
         'in.clock: ' + cpu.inputs.clock + ' | ' +
-        'in.memoryRead = ' + dumpHex(cpu.inputs.memoryRead) + ' | ' +
-        'in.reset = ' + (cpu.inputs.reset ? "true" : "false") + '      ' +
-        'out.memoryRowAddress = ' + dumpHex(cpu.outputs.memoryRowAddress) + ' | ' +
-        'out.memoryWrite = ' + dumpHex(cpu.outputs.memoryWrite) + ' | ' +
-        'out.memoryWE = ' + (cpu.outputs.memoryWE ? "true" : "false") + '      ' +
-        'regMemory = ' + dumpHex(cpu.registers.regMemory) + ' | ' +
-        'regSequencer = ' + dumpHex(cpu.registers.regSequencer) + ' | ' +
-        'regInstruction = ' + dumpHex(cpu.registers.regInstruction) + ' | ' +
-        'regTimer = ' + dumpHex(cpu.registers.regTimer) + ' | ' +
-        'regReset = ' + (cpu.registers.regReset ? "true" : "false") + "\n" +
-        'reg00 = ' + dumpHex(cpu.core.registerSet.read(0)) + ' | ' +
-        'reg01 = ' + dumpHex(cpu.core.registerSet.read(1)) + ' | ' +
-        'reg02 = ' + dumpHex(cpu.core.registerSet.read(2)) + ' | ' +
-        'reg03 = ' + dumpHex(cpu.core.registerSet.read(3)) + ' | ' +
-        'reg04 = ' + dumpHex(cpu.core.registerSet.read(4)) + ' | ' +
-        'reg05 = ' + dumpHex(cpu.core.registerSet.read(5)) + ' | ' +
-        'reg06 = ' + dumpHex(cpu.core.registerSet.read(6)) + ' | ' +
-        'reg07 = ' + dumpHex(cpu.core.registerSet.read(7)) + ' | ' + "\n" +
-        'reg08 = ' + dumpHex(cpu.core.registerSet.read(8)) + ' | ' +
-        'reg09 = ' + dumpHex(cpu.core.registerSet.read(9)) + ' | ' +
-        'reg10 = ' + dumpHex(cpu.core.registerSet.read(10)) + ' | ' +
-        'reg11 = ' + dumpHex(cpu.core.registerSet.read(11)) + ' | ' +
-        'reg12 = ' + dumpHex(cpu.core.registerSet.read(12)) + ' | ' +
-        'reg13 = ' + dumpHex(cpu.core.registerSet.read(13)) + ' | ' +
-        'regMA = ' + dumpHex(cpu.core.registerSet.getMemoryAccess()) + ' | ' +
-        'regPC = ' + dumpHex(cpu.core.registerSet.getProgramCounter()) + ' | '
+        'in.memoryRead = ' + BitUtils.hex(cpu.inputs.memoryRead, BitUtils.BYTE_4) + ' | ' +
+        'in.reset = ' + BitUtils.hex(cpu.inputs.reset, BitUtils.BIT_1) + '      ' +
+        'out.memoryRowAddress = ' + BitUtils.hex(cpu.outputs.memoryRowAddress, BitUtils.BYTE_4 - BitUtils.BIT_2) + ' | ' +
+        'out.memoryWrite = ' + BitUtils.hex(cpu.outputs.memoryWrite, BitUtils.BYTE_4) + ' | ' +
+        'out.memoryWE = ' + BitUtils.hex(cpu.outputs.memoryWE, BitUtils.BIT_1) + ' | ' + "\n" +
+        'regMemory = ' + BitUtils.hex(r.regMemory, BitUtils.BYTE_4) + ' | ' +
+        'regSequencer = ' + BitUtils.hex(r.regSequencer, BitUtils.BIT_4) + ' | ' +
+        'regInstruction = ' + BitUtils.hex(r.regInstruction, BitUtils.BYTE_4) + ' | ' +
+        'regTimer = ' + BitUtils.hex(r.regTimer, BitUtils.BYTE_4) + ' | ' +
+        'regReset = ' + BitUtils.hex(r.regReset, BitUtils.BIT_1) + "\n" +
+        'reg00 = ' + BitUtils.hex(rs.read(0), BitUtils.BYTE_2) + ' | ' +
+        'reg01 = ' + BitUtils.hex(rs.read(1), BitUtils.BYTE_2) + ' | ' +
+        'reg02 = ' + BitUtils.hex(rs.read(2), BitUtils.BYTE_2) + ' | ' +
+        'reg03 = ' + BitUtils.hex(rs.read(3), BitUtils.BYTE_2) + ' | ' +
+        'reg04 = ' + BitUtils.hex(rs.read(4), BitUtils.BYTE_2) + ' | ' +
+        'reg05 = ' + BitUtils.hex(rs.read(5), BitUtils.BYTE_2) + ' | ' +
+        'reg06 = ' + BitUtils.hex(rs.read(6), BitUtils.BYTE_2) + ' | ' +
+        'reg07 = ' + BitUtils.hex(rs.read(7), BitUtils.BYTE_2) + ' | ' + "\n" +
+        'reg08 = ' + BitUtils.hex(rs.read(8), BitUtils.BYTE_2) + ' | ' +
+        'reg09 = ' + BitUtils.hex(rs.read(9), BitUtils.BYTE_2) + ' | ' +
+        'reg10 = ' + BitUtils.hex(rs.read(10), BitUtils.BYTE_2) + ' | ' +
+        'reg11 = ' + BitUtils.hex(rs.read(11), BitUtils.BYTE_2) + ' | ' +
+        'reg12 = ' + BitUtils.hex(rs.read(12), BitUtils.BYTE_2) + ' | ' +
+        'reg13 = ' + BitUtils.hex(rs.read(13), BitUtils.BYTE_2) + ' | ' +
+        'regMA = ' + BitUtils.hex(rs.getMemoryAccess(), BitUtils.BYTE_2) + ' | ' +
+        'regPC = ' + BitUtils.hex(rs.getProgramCounter(), BitUtils.BYTE_2) + ' | '
+
+        
     );
 }
 

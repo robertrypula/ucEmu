@@ -26,8 +26,8 @@ var StaticRam = (function () {
                 }
                 console.log(
                     ' StaticRam:  ' +
-                    i.toString(16) + ' | ' +
-                    dumpHex(this.data[i])
+                    BitUtils.hex(i, BitUtils.BYTE_2) + ' | ' +
+                    BitUtils.hex(this.data[i], BitUtils.BYTE_4)
                 );
             }
         };
