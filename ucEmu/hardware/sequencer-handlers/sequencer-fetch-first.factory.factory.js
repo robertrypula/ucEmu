@@ -1,42 +1,37 @@
 var SequencerFetchFirst = (function () {
     'use strict';
 
-    var SequencerFetchFirst = function () {
-        var
-            self = this,
-            cpu = null
-        ;
+    _SequencerFetchFirst.$inject = [];
 
-        self.run = function () {
+    function _SequencerFetchFirst() {
+        var DFF;
+
+        DFF = function () {
+            AbstractSequencerHandler.apply(this, arguments);
+        };
+
+        DFF.prototype = Object.create(AbstractSequencerHandler.prototype);
+        DFF.prototype.constructor = DFF;
+
+        DFF.prototype.$$run = function () {
             var memoryColumn, memoryReadShifted;
 
-            checkCpu();
-            memoryColumn = cpu.core.registerSet.getProgramCounter() & 3;
-            memoryReadShifted = BitUtils.shiftLeft(cpu.inputs.memoryRead, memoryColumn * BitUtils.BYTE_1);
+            memoryColumn = BitUtils.mask(this.$$cpu.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
+            memoryReadShifted = BitUtils.shiftLeft(this.$$cpu.inputs.memoryRead, memoryColumn * BitUtils.BYTE_1);
 
             console.log('    :: sequenceFetchFirst');
             console.log('    memoryColumn = ' + dumpHex(memoryColumn));
-            console.log('    inputs.memoryRead = ' + dumpHex(cpu.inputs.memoryRead));
+            console.log('    inputs.memoryRead = ' + dumpHex(this.$$cpu.inputs.memoryRead));
             console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
 
-            cpu.registers.regMemory = memoryReadShifted;
-            cpu.registers.regInstruction = memoryReadShifted;              // TODO check it, this may be redundant with regMemory
-            cpu.registers.regSequencer = cpu.core.sequencer.STATES.FETCH_SECOND_AND_DECODE;
+            this.$$cpu.registers.regMemory = memoryReadShifted;
+            this.$$cpu.registers.regInstruction = memoryReadShifted;              // TODO check it, this may be redundant with regMemory
+            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_SECOND_AND_DECODE;
         };
 
-        self.setCpu = function (cpuSelf)
-        {
-            cpu = cpuSelf;
-        };
+        return DFF;
+    }
 
-        function checkCpu()
-        {
-            if (cpu === null) {
-                throw 'Please attach cpu first';
-            }
-        }
-    };
-
-    return SequencerFetchFirst;        // TODO change it do dependency injection
+    return _SequencerFetchFirst();        // TODO change it do dependency injection
 
 })();

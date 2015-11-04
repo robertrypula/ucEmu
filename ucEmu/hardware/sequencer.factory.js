@@ -7,12 +7,17 @@ var Sequencer = (function () {
         var S;
 
         S = function () {
+            CpuAware.apply(this, arguments);
+
             this.$$handlers = [];
-            this.$$cpu = null;
             this.STATES = null;
 
             this.$$initialize();
         };
+
+
+        S.prototype = Object.create(CpuAware.prototype);
+        S.prototype.constructor = S;
 
         S.prototype.$$initialize = function () {
             this.$$initializeState();
@@ -65,17 +70,16 @@ var Sequencer = (function () {
             }
         };
 
+        S.prototype.setCpu = function (cpu) {
+            CpuAware.prototype.setCpu.apply(this, arguments);
+            this.$$setCpuAtHandlers(cpu);
+        };
+
         S.prototype.$$checkState = function (state) {
             if (state < 0 || state >= this.$$handlers.length) {
                 throw 'Bad state: ' + state;
             }
-        }
-
-        S.prototype.$$checkCpu = function () {
-            if (this.$$cpu === null) {
-                throw 'Please attach cpu first';
-            }
-        }
+        };
 
         S.prototype.goToNextState = function () {
             var state;
@@ -90,11 +94,6 @@ var Sequencer = (function () {
             }
 
             this.$$cpu.registers.regTimer = BitUtils.mask(this.$$cpu.registers.regTimer + 1, BitUtils.BYTE_4);
-        };
-
-        S.prototype.setCpu = function (cpu) {
-            this.$$cpu = cpu;
-            this.$$setCpuAtHandlers(cpu);
         };
 
         return S;

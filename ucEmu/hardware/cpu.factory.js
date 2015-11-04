@@ -135,7 +135,6 @@ var Cpu = (function () {
 
             this.core.sequencer.setCpu(this);
             this.core.instructionDecoder.setCpu(this);
-            this.core.alu.setCpu(this);
         };
 
         C.prototype.update = function () {

@@ -7,12 +7,16 @@ var InstructionDecoder = (function () {
         var ID;
 
         ID = function () {
+            CpuAware.apply(this, arguments);
+
             this.OPCODES = null;
             this.$$instructionSet = [];
-            this.$$cpu = null;
-
+            
             this.$$initialize();
         };
+
+        ID.prototype = Object.create(CpuAware.prototype);
+        ID.prototype.constructor = ID;
 
         ID.prototype.$$initialize = function () {
             this.$$initializeOpcode();
@@ -52,27 +56,45 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.getOpcode = function () {
-            return BitUtils.shiftRight(cpu.registers.regInstruction & 0x70000000, BitUtils.BYTE_3 + BitUtils.BYTE_HALF);
+            this.$$checkCpu();
+
+            return BitUtils.shiftRight(
+                this.$$cpu.registers.regInstruction & 0x70000000, 
+                BitUtils.BYTE_3 + BitUtils.BYTE_HALF
+            );
         };
 
         ID.prototype.getRegOut = function () {
             this.$$checkCpu();
-            return BitUtils.shiftRight(cpu.registers.regInstruction & 0x0F000000, BitUtils.BYTE_3);
+
+            return BitUtils.shiftRight(
+                this.$$cpu.registers.regInstruction & 0x0F000000, 
+                BitUtils.BYTE_3
+            );
         };
 
         ID.prototype.getRegIn0 = function () {
             this.$$checkCpu();
-            return BitUtils.shiftRight(cpu.registers.regInstruction & 0x00F00000, BitUtils.BYTE_2 + BitUtils.BYTE_HALF);
+
+            return BitUtils.shiftRight(
+                this.$$cpu.registers.regInstruction & 0x00F00000, 
+                BitUtils.BYTE_2 + BitUtils.BYTE_HALF
+            );
         };
 
         ID.prototype.getRegIn1 = function () {
             this.$$checkCpu();
-            return BitUtils.shiftRight(cpu.registers.regInstruction & 0x000F0000, BitUtils.BYTE_2);
+
+            return BitUtils.shiftRight(
+                this.$$cpu.registers.regInstruction & 0x000F0000, 
+                BitUtils.BYTE_2
+            );
         };
 
         ID.prototype.getImm = function () {
             this.$$checkCpu();
-            return cpu.registers.regInstruction & 0x0000FFFF;
+            
+            return this.$$cpu.registers.regInstruction & 0x0000FFFF;
         };
 
         ID.prototype.getInstruction = function (opcode) {
@@ -80,16 +102,6 @@ var InstructionDecoder = (function () {
             this.$$checkOpcode(opcode, 'getInstruction');
 
             return this.$$instructionSet[opcode];
-        };
-
-        ID.prototype.setCpu = function (cpuSelf) {
-            this.$$cpu = cpuSelf;
-        };
-
-        ID.prototype.$$checkCpu = function() {
-            if (this.$$cpu === null) {
-                throw 'Please attach cpu first';
-            }
         };
 
         return ID;
