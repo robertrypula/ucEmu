@@ -32,7 +32,7 @@ var SequencerExecuteAdd = (function () {
 
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_FIRST;
             this.$$cpu.core.registerSet.save(regOut, regResult);
-        }
+        };
 
         return SEA;
     }

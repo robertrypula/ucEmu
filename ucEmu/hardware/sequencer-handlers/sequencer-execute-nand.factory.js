@@ -1,23 +1,28 @@
 var SequencerExecuteNand = (function () {
     'use strict';
 
-    var SequencerExecuteNand = function () {
-        var
-            self = this,
-            cpu = null
-        ;
+    _SequencerExecuteNand.$inject = [];
 
-        self.run = function () {
+    function _SequencerExecuteNand() {
+        var SEN;
+
+        SEN = function () {
+            AbstractSequencerHandler.apply(this, arguments);
+        };
+
+        SEN.prototype = Object.create(AbstractSequencerHandler.prototype);
+        SEN.prototype.constructor = SEN;
+
+        SEN.prototype.$$run = function () {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
-            
-            checkCpu();
-            regOut = cpu.core.instructionDecoder.getRegOut();
-            regIn0 = cpu.core.instructionDecoder.getRegIn0();
-            regIn1 = cpu.core.instructionDecoder.getRegIn1();
-            regIn0Value = cpu.core.registerSet.read(regIn0);
-            regIn1Value = cpu.core.registerSet.read(regIn1);
-            regResult = cpu.core.alu.nand(regIn0Value, regIn1Value);
+
+            regOut = this.$$cpu.core.instructionDecoder.getRegOut();
+            regIn0 = this.$$cpu.core.instructionDecoder.getRegIn0();
+            regIn1 = this.$$cpu.core.instructionDecoder.getRegIn1();
+            regIn0Value = this.$$cpu.core.registerSet.read(regIn0);
+            regIn1Value = this.$$cpu.core.registerSet.read(regIn1);
+            regResult = this.$$cpu.core.alu.nand(regIn0Value, regIn1Value);
 
             console.log('    :: sequencerExecuteNand');
             console.log('    regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
@@ -25,23 +30,13 @@ var SequencerExecuteNand = (function () {
             console.log('    regIn1Value = ' + dumpHex(regIn1Value));
             console.log('    result = ' + dumpHex(regResult) + ' (NAND)');
 
-            cpu.registers.regSequencer = cpu.core.sequencer.STATES.FETCH_FIRST;
-            cpu.core.registerSet.save(regOut, regResult);
+            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_FIRST;
+            this.$$cpu.core.registerSet.save(regOut, regResult);
         };
 
-        self.setCpu = function (cpuSelf)
-        {
-            cpu = cpuSelf;
-        };
+        return SEN;
+    }
 
-        function checkCpu()
-        {
-            if (cpu === null) {
-                throw 'Please attach cpu first';
-            }
-        }
-    };
-
-    return SequencerExecuteNand;        // TODO change it do dependency injection
+    return _SequencerExecuteNand();        // TODO change it do dependency injection
 
 })();

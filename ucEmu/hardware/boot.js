@@ -10,13 +10,13 @@
  */
 
 var memoryState = [
-    {row: 0x0000, data: [0x50, 0x00, 0x00, 0x0a]},      // imm reg00, 0xa
-    {row: 0x0001, data: [0x5E, 0x00, 0x61, 0x62]},      // imm regMEM, 0x6162
-    {row: 0x0002, data: [0x00, 0x00, 0x2b, 0xa9]},      // add  reg0, reg0, reg0
-    {row: 0x0003, data: [0x00, 0x12, 0x23, 0x02]},      //
-    {row: 0x0004, data: [0x40, 0x30, 0x11, 0x03]},      //
-    {row: 0x0005, data: [0x51, 0x00, 0x00, 0x00]},      //
-    {row: 0x0006, data: [0x30, 0x11, 0x11, 0x03]}       //
+    {row: 0x0000, data: [0x00, 0x00, 0x10, 0x00]},
+    {row: 0x0001, data: [0x20, 0x00, 0x30, 0x07]},
+    {row: 0x0002, data: [0x40, 0x00, 0x50, 0x00]},
+    {row: 0x0003, data: [0xff, 0xff, 0x60, 0x10]},
+    {row: 0x0004, data: [0x70, 0x10, 0xaa, 0xaa]},
+    {row: 0x0005, data: [0xaa, 0xaa, 0xaa, 0xaa]},
+    {row: 0x0006, data: [0xaa, 0xaa, 0xaa, 0xaa]}
 ];
 var cpu = new Cpu();
 var staticRam = new StaticRam(
@@ -56,7 +56,7 @@ function runCpu()
 {
     var clockTicks = 0;
 
-    while (clockTicks < 10) {
+    while (clockTicks < 28) {
         clockHigh();
         clockLow();
 
@@ -130,7 +130,7 @@ function cpuLog()
         'out.memoryWrite = ' + BitUtils.hex(cpu.outputs.memoryWrite, BitUtils.BYTE_4) + ' | ' +
         'out.memoryWE = ' + BitUtils.hex(cpu.outputs.memoryWE, BitUtils.BIT_1) + ' | ' + "\n" +
         'regMemory = ' + BitUtils.hex(r.regMemory, BitUtils.BYTE_4) + ' | ' +
-        'regSequencer = ' + BitUtils.hex(r.regSequencer, BitUtils.BIT_4) + ' | ' +
+        'regSequencer = ' + BitUtils.hex(r.regSequencer, BitUtils.BYTE_HALF) + ' | ' +
         'regInstruction = ' + BitUtils.hex(r.regInstruction, BitUtils.BYTE_4) + ' | ' +
         'regTimer = ' + BitUtils.hex(r.regTimer, BitUtils.BYTE_4) + ' | ' +
         'regReset = ' + BitUtils.hex(r.regReset, BitUtils.BIT_1) + "\n" +

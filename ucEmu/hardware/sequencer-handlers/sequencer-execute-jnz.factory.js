@@ -1,23 +1,28 @@
 var SequencerExecuteJnz = (function () {
     'use strict';
 
-    var SequencerExecuteJnz = function () {
-        var
-            self = this,
-            cpu = null
-        ;
+    _SequencerExecuteJnz.$inject = [];
 
-        self.run = function () {
+    function _SequencerExecuteJnz() {
+        var SEJ;
+
+        SEJ = function () {
+            AbstractSequencerHandler.apply(this, arguments);
+        };
+
+        SEJ.prototype = Object.create(AbstractSequencerHandler.prototype);
+        SEJ.prototype.constructor = SEJ;
+
+        SEJ.prototype.$$run = function () {
             var regIn0, regIn1, regIn0Value, regIn1Value,
                 notZeroFlag, regPCNext;
 
-            checkCpu();
-            regIn0 = cpu.core.instructionDecoder.getRegIn0();
-            regIn1 = cpu.core.instructionDecoder.getRegIn1();
-            regIn0Value = cpu.core.registerSet.read(regIn0);
-            regIn1Value = cpu.core.registerSet.read(regIn1);
+            regIn0 = this.$$cpu.core.instructionDecoder.getRegIn0();
+            regIn1 = this.$$cpu.core.instructionDecoder.getRegIn1();
+            regIn0Value = this.$$cpu.core.registerSet.read(regIn0);
+            regIn1Value = this.$$cpu.core.registerSet.read(regIn1);
             notZeroFlag = regIn1Value !== 0;
-            regPCNext = notZeroFlag ? regIn0Value : cpu.core.registerSet.getProgramCounter();
+            regPCNext = notZeroFlag ? regIn0Value : this.$$cpu.core.registerSet.getProgramCounter();
 
             console.log('    :: sequencerExecuteJnz');
             console.log('    regIn0, regIn1 <-> ' + regIn0 + ', ' + regIn1);
@@ -26,23 +31,13 @@ var SequencerExecuteJnz = (function () {
             console.log('    notZeroFlag = ' + (notZeroFlag ? "true (regIn1Value NOT EQUAL zero - jump)" : "false (regIn1Value EQUAL zero - no jump)"));
             console.log('    regPCNext = ' + dumpHex(regPCNext));
 
-            cpu.registers.regSequencer = cpu.core.sequencer.STATES.FETCH_FIRST;
-            cpu.core.registerSet.setProgramCounter(regPCNext);
+            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_FIRST;
+            this.$$cpu.core.registerSet.setProgramCounter(regPCNext);
         };
 
-        self.setCpu = function (cpuSelf)
-        {
-            cpu = cpuSelf;
-        };
+        return SEJ;
+    }
 
-        function checkCpu()
-        {
-            if (cpu === null) {
-                throw 'Please attach cpu first';
-            }
-        }
-    };
-
-    return SequencerExecuteJnz;        // TODO change it do dependency injection
+    return _SequencerExecuteJnz();        // TODO change it do dependency injection
 
 })();

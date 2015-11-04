@@ -62,6 +62,7 @@ var SequencerFetchSecondAndDecode = (function () {
             console.log('    memoryFinal = ' + dumpHex(memoryFinal));
             console.log('    opCode = ' + opCode);
             console.log('    instruction = ', instruction);
+            console.log('    instructionName = ', instruction.name + ', ' + instruction.nameFull);
             console.log('    instructionByteWidth = ' + instructionByteWidth);
             console.log('    regPCNext = ' + dumpHex(regPCNext));
             console.log('    regSequencerNext = ' + dumpHex(regSequencerNext));

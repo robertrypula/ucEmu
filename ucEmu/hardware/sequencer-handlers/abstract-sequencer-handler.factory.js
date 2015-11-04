@@ -16,7 +16,7 @@ var AbstractSequencerHandler = (function () {
         ASH.prototype.run = function () {
             this.$$checkCpu();
             this.$$run();               // polymorphic call TODO change name of method
-        }
+        };
 
         ASH.prototype.$$run = function () {
             throw 'Abstract method called!';
