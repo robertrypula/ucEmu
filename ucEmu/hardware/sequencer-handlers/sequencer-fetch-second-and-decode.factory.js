@@ -13,30 +13,35 @@ var SequencerFetchSecondAndDecode = (function () {
      ____ ____ 0xcc 0xdd     >> 4-aCol width zero fill
     */
 
-    var SequencerFetchSecondAndDecode = function () {
-        var
-            self = this,
-            cpu = null
-        ;
+    _SequencerFetchSecondAndDecode.$inject = [];
 
-        self.run = function () {
+    function _SequencerFetchSecondAndDecode() {
+        var SFSAD;
+
+        SFSAD = function () {
+            AbstractSequencerHandler.apply(this, arguments);
+        };
+
+        SFSAD.prototype = Object.create(AbstractSequencerHandler.prototype);
+        SFSAD.prototype.constructor = SFSAD;
+
+        SFSAD.prototype.$$run = function () {
             var memoryColumn, shiftAmount, memoryReadShifted, memoryFinal,
                 opCode, instruction, instructionByteWidth,
                 regPCNext, regSequencerNext,
                 OPCODES, STATES;
 
-            checkCpu();
-            memoryColumn = cpu.core.registerSet.getProgramCounter() & 3;
+            memoryColumn = BitUtils.mask(this.$$cpu.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
             shiftAmount = (4 - memoryColumn) * BitUtils.BYTE_1;
-            memoryReadShifted = BitUtils.shiftRight(cpu.inputs.memoryRead, shiftAmount);
-            memoryFinal = memoryReadShifted | cpu.registers.regMemory;
-            opCode = cpu.core.instructionDecoder.getOpcode();
-            instruction = cpu.core.instructionDecoder.getInstruction(opCode);
+            memoryReadShifted = BitUtils.shiftRight(this.$$cpu.inputs.memoryRead, shiftAmount);
+            memoryFinal = memoryReadShifted | this.$$cpu.registers.regMemory;
+            opCode = this.$$cpu.core.instructionDecoder.getOpcode();
+            instruction = this.$$cpu.core.instructionDecoder.getInstruction(opCode);
             instructionByteWidth = instruction.byteWidth;
-            regPCNext = cpu.core.registerSet.getProgramCounter() + instructionByteWidth;
+            regPCNext = this.$$cpu.core.registerSet.getProgramCounter() + instructionByteWidth;
             regSequencerNext = 0;
-            OPCODES = cpu.core.instructionDecoder.OPCODES;
-            STATES = cpu.core.sequencer.STATES;
+            OPCODES = this.$$cpu.core.instructionDecoder.OPCODES;
+            STATES = this.$$cpu.core.sequencer.STATES;
 
             switch (instruction.opcode) {
                 case OPCODES.ADD: regSequencerNext = STATES.EXECUTE_ADD; break;
@@ -51,7 +56,7 @@ var SequencerFetchSecondAndDecode = (function () {
 
             console.log('    :: sequenceFetchSecondAndDecode');
             console.log('    memoryColumn = ' + memoryColumn);
-            console.log('    inputs.memoryRead = ' + dumpHex(cpu.inputs.memoryRead));
+            console.log('    inputs.memoryRead = ' + dumpHex(this.$$cpu.inputs.memoryRead));
             console.log('    shiftAmount = ' + shiftAmount);
             console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
             console.log('    memoryFinal = ' + dumpHex(memoryFinal));
@@ -61,24 +66,14 @@ var SequencerFetchSecondAndDecode = (function () {
             console.log('    regPCNext = ' + dumpHex(regPCNext));
             console.log('    regSequencerNext = ' + dumpHex(regSequencerNext));
 
-            cpu.registers.regInstruction = memoryFinal;
-            cpu.core.registerSet.setProgramCounter(regPCNext);
-            cpu.registers.regSequencer = regSequencerNext;
-        };
-
-        self.setCpu = function (cpuSelf)
-        {
-            cpu = cpuSelf;
-        };
-
-        function checkCpu()
-        {
-            if (cpu === null) {
-                throw 'Please attach cpu first';
-            }
+            this.$$cpu.registers.regInstruction = memoryFinal;
+            this.$$cpu.core.registerSet.setProgramCounter(regPCNext);
+            this.$$cpu.registers.regSequencer = regSequencerNext;
         }
-    };
 
-    return SequencerFetchSecondAndDecode;        // TODO change it do dependency injection
+        return SFSAD;
+    }
+
+    return _SequencerFetchSecondAndDecode();        // TODO change it do dependency injection
 
 })();

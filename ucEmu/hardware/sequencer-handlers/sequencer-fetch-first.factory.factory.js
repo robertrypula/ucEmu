@@ -4,16 +4,16 @@ var SequencerFetchFirst = (function () {
     _SequencerFetchFirst.$inject = [];
 
     function _SequencerFetchFirst() {
-        var DFF;
+        var SFF;
 
-        DFF = function () {
+        SFF = function () {
             AbstractSequencerHandler.apply(this, arguments);
         };
 
-        DFF.prototype = Object.create(AbstractSequencerHandler.prototype);
-        DFF.prototype.constructor = DFF;
+        SFF.prototype = Object.create(AbstractSequencerHandler.prototype);
+        SFF.prototype.constructor = SFF;
 
-        DFF.prototype.$$run = function () {
+        SFF.prototype.$$run = function () {
             var memoryColumn, memoryReadShifted;
 
             memoryColumn = BitUtils.mask(this.$$cpu.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
@@ -29,7 +29,7 @@ var SequencerFetchFirst = (function () {
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_SECOND_AND_DECODE;
         };
 
-        return DFF;
+        return SFF;
     }
 
     return _SequencerFetchFirst();        // TODO change it do dependency injection
