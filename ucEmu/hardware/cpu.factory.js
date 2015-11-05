@@ -37,9 +37,10 @@
 
     Memory:
 
-        Address bus is 16 bits wide so CPU can access up to 65536 bytes (64 KB). Each memory transfer 16 bits wide so if you
-        address 0x0010 memory row you will get 0x0010 and 0x0011 byte inside register. Memory connected to CPU is 32 bits
-        wide so it contains 16384 rows 4 bytes each.
+        Addresses used in the code are 16 bits wide so CPU can access up to 65536 bytes (64 KB). Each memory transfer 16 bits wide 
+        so if you address 0x0010 memory row you will get 0x0010 and 0x0011 byte inside register. Memory connected to CPU is 32 bits
+        wide so it contains 16384 rows 4 bytes each. It means that we can reduce adress bus bits from 16 to 14. In total we will
+        still have 64KB of memory.
 
         0000: 00 00 00 00
         0004: 00 00 00 00
@@ -68,18 +69,12 @@
         2 bits power and ground          in - not nesesary in emulator
         1 bit clock                      in
         1 bit reset                      in
-        16 bits memory data in           in
-        16 bits memory address           out
-        16 bits memory data out          out
+        32 bits memory data in           in
+        14 bits memory address           out
+        32 bits memory data out          out
         1 bit memory WE                  out
 
 */
-
-
-/*
-
-
- */
 
 var Cpu = (function () {
     'use strict';
