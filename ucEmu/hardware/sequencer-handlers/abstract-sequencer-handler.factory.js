@@ -22,6 +22,18 @@ var AbstractSequencerHandler = (function () {
             throw 'Abstract method called!';
         };
 
+        ASH.prototype.$$updateOutputMemoryRowAddress = function () {
+            this.$$cpu.outputs.memoryRowAddress = 0;                       // floating bus - pulled down by resistors
+        };
+
+        ASH.prototype.$$updateOutputMemoryWrite = function () {
+            this.$$cpu.outputs.memoryWrite = 0;                            // floating bus - pulled down by resistors
+        };
+
+        ASH.prototype.$$updateOutputMemoryWE = function () {
+            this.$$cpu.outputs.memoryWE = 0;                               // floating bus - pulled down by resistors
+        };
+
         return ASH;
     }
 

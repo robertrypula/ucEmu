@@ -1,12 +1,22 @@
 /*
     TODO:
-        - move output computing to handlers (default value at abstract)
-        - remember to update outputs when cpu boots because we dont have faling edge at thus point
-        - move inputs at the top of the log, and header like 'Cpu state after blablba'
-        - remove dumpHex and use hex
-        - create MainBoard factory instead boot.js
-        - service for logging with verbose levels
-        - new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu)
+        Code refactor:
+            - [0.50h] move output computing to handlers (default value at abstract)
+            - [0.25h] remember to update outputs when cpu boots because we dont have faling edge at thus point
+            - [1.00h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu)
+            - [1.00h] remove dumpHex and use hex
+            - [1.00h] move inputs at the top of the log, and header like 'Cpu state after blablba'
+            - [1.00h] service for logging with verbose levels
+               total: 4.75h
+
+                :: fun starts here ::
+            - [2.00h] create MainBoard factory instead boot.js - first step only move existing functionality
+            - [2.00h] signal class?
+            - [x.xxh] module approach with update and input changed checking
+
+        Integrate IO with existing code for dot matrix and keyboard
+            - [x.xxh] MainBoard should expose programming interface and events when input/output was changed
+              ...
 
  */
 
