@@ -1,4 +1,15 @@
 /*
+    TODO:
+        - move output computing to handlers (default value at abstract)
+        - move inputs at the top of the log, and header like 'Cpu state after blablba'
+        - remove dumpHex and use hex
+        - create MainBoard factory instead boot.js
+        - service for logging with verbose levels
+        - new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu)
+
+ */
+
+/*
  ? cycles   | 0x0R 0xRR            | 00 | add     regOut, regIn0, regIn1        | regOut = regIn0 + regIn1
  ? cycles   | 0x1R 0xRR            | 01 | nand    regOut, regIn0, regIn1        | regOut = regIn0 nand regIn1
  ? cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1>=0) ? (regIn0 << regIn1) : (regIn0 >>> abs(regIn1))
