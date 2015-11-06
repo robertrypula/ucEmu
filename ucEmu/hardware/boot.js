@@ -1,6 +1,7 @@
 /*
     TODO:
         - move output computing to handlers (default value at abstract)
+        - remember to update outputs when cpu boots because we dont have faling edge at thus point
         - move inputs at the top of the log, and header like 'Cpu state after blablba'
         - remove dumpHex and use hex
         - create MainBoard factory instead boot.js
