@@ -50,9 +50,13 @@ var SequencerExecuteStFirst = (function () {
 
     function _SequencerExecuteStFirst() {
         var SESF;
-        
+
         SESF = function () {
+            AbstractSequencerHandler.apply(this, arguments);
         };
+
+        SESF.prototype = Object.create(AbstractSequencerHandler.prototype);
+        SESF.prototype.constructor = SESF;
 
         SESF.prototype.$$run = function () {
 
@@ -60,7 +64,7 @@ var SequencerExecuteStFirst = (function () {
         };
 
         return SESF;
-    };
+    }
 
     return _SequencerExecuteStFirst();        // TODO change it do dependency injection
 

@@ -1,32 +1,26 @@
 var SequencerExecuteStThird = (function () {
     'use strict';
 
-    var SequencerExecuteStThird = function () {
-        var
-            self = this,
-            cpu = null
-        ;
+    _SequencerExecuteStFirst.$inject = [];
 
-        self.run = function () {
-          
-            checkCpu();
+    function _SequencerExecuteStFirst() {
+        var SESF;
 
-            console.log('    :: sequencerExecuteStThird');
+        SESF = function () {
+            AbstractSequencerHandler.apply(this, arguments);
         };
 
-        self.setCpu = function (cpuSelf)
-        {
-            cpu = cpuSelf;
+        SESF.prototype = Object.create(AbstractSequencerHandler.prototype);
+        SESF.prototype.constructor = SESF;
+
+        SESF.prototype.$$run = function () {
+
+            console.log('    :: sequencerExecuteStFirst');
         };
 
-        function checkCpu()
-        {
-            if (cpu === null) {
-                throw 'Please attach cpu first';
-            }
-        }
-    };
+        return SESF;
+    }
 
-    return SequencerExecuteStThird;        // TODO change it do dependency injection
+    return _SequencerExecuteStFirst();        // TODO change it do dependency injection
 
 })();
