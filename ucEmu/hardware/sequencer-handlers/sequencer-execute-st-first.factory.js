@@ -45,33 +45,23 @@ var SequencerExecuteStFirst = (function () {
     data hold (WE == false)
 
     */
+    
+    _SequencerExecuteStFirst.$inject = [];
 
-    var SequencerExecuteStFirst = function () {
-        var
-            self = this,
-            cpu = null
-        ;
+    function _SequencerExecuteStFirst() {
+        var SESF;
+        
+        SESF = function () {
+        };
 
-        self.run = function () {
-          
-            checkCpu();
+        SESF.prototype.$$run = function () {
 
             console.log('    :: sequencerExecuteStFirst');
         };
 
-        self.setCpu = function (cpuSelf)
-        {
-            cpu = cpuSelf;
-        };
-
-        function checkCpu()
-        {
-            if (cpu === null) {
-                throw 'Please attach cpu first';
-            }
-        }
+        return SESF;
     };
 
-    return SequencerExecuteStFirst;        // TODO change it do dependency injection
+    return _SequencerExecuteStFirst();        // TODO change it do dependency injection
 
 })();
