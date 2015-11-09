@@ -1,26 +1,26 @@
 var SequencerExecuteStThird = (function () {
     'use strict';
 
-    _SequencerExecuteStFirst.$inject = [];
+    _SequencerExecuteStThird.$inject = [];
 
-    function _SequencerExecuteStFirst() {
-        var SESF;
+    function _SequencerExecuteStThird() {
+        var SEST;
 
-        SESF = function () {
+        SEST = function () {
             AbstractSequencerHandler.apply(this, arguments);
         };
 
-        SESF.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SESF.prototype.constructor = SESF;
+        SEST.prototype = Object.create(AbstractSequencerHandler.prototype);
+        SEST.prototype.constructor = SEST;
 
-        SESF.prototype.$$run = function () {
+        SEST.prototype.$$run = function () {
 
-            console.log('    :: sequencerExecuteStFirst');
+            console.log('    :: sequencerExecuteStThird');
         };
 
-        return SESF;
+        return SEST;
     }
 
-    return _SequencerExecuteStFirst();        // TODO change it do dependency injection
+    return _SequencerExecuteStThird();        // TODO change it do dependency injection
 
 })();

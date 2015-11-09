@@ -1,9 +1,9 @@
 var SequencerExecuteStFourth = (function () {
     'use strict';
 
-    _SequencerExecuteStFirst.$inject = [];
+    _SequencerExecuteStFourth.$inject = [];
 
-    function _SequencerExecuteStFirst() {
+    function _SequencerExecuteStFourth() {
         var SESF;
 
         SESF = function () {
@@ -15,12 +15,12 @@ var SequencerExecuteStFourth = (function () {
 
         SESF.prototype.$$run = function () {
 
-            console.log('    :: sequencerExecuteStFirst');
+            console.log('    :: sequencerExecuteStFourth');
         };
 
         return SESF;
     }
 
-    return _SequencerExecuteStFirst();        // TODO change it do dependency injection
+    return _SequencerExecuteStFourth();        // TODO change it do dependency injection
 
 })();
