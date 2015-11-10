@@ -147,7 +147,7 @@ var Cpu = (function () {
                 this.$$clockPrevious = this.inputs.clock;
             }
 
-            this.$$updateOutputs();
+            this.core.sequencer.updateOutput();
         };
 
         C.prototype.$$clockLowToHigh = function () {
@@ -180,64 +180,6 @@ var Cpu = (function () {
             this.registers.regTimer = 0;
 
             // !!! regReset register is excluded from reset !!!
-        };
-
-        C.prototype.$$updateOutputs = function () {
-            this.$$updateOutputMemoryRowAddress();
-            this.$$updateOutputMemoryWrite();
-            this.$$updateOutputMemoryWE();
-        };
-
-        C.prototype.$$updateOutputMemoryRowAddress = function () {
-            var result,
-                regIn0,
-                regIn0Value;
-
-            switch (this.registers.regSequencer) {
-                case this.core.sequencer.STATES.FETCH_FIRST:
-                    result = BitUtils.shiftRight(this.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
-                    break;
-                case this.core.sequencer.STATES.FETCH_SECOND_AND_DECODE:
-                    result = BitUtils.shiftRight(this.core.registerSet.getProgramCounter(), BitUtils.BIT_2) + 1;
-                    break;
-                case this.core.sequencer.STATES.EXECUTE_LD_FIRST:
-                    regIn0 = this.core.instructionDecoder.getRegIn0();
-                    regIn0Value = this.core.registerSet.read(regIn0);
-                    result = BitUtils.shiftRight(regIn0Value, BitUtils.BIT_2);
-                    break;
-                case this.core.sequencer.STATES.EXECUTE_LD_SECOND:
-                    regIn0 = this.core.instructionDecoder.getRegIn0();
-                    regIn0Value = this.core.registerSet.read(regIn0);
-                    result = BitUtils.shiftRight(regIn0Value, BitUtils.BIT_2) + 1;
-                    break;
-                // TODO implement st instructions
-                default:
-                    result = 0;            // floating bus - pulled down by resistors
-            }
-
-            this.outputs.memoryRowAddress = result;
-        };
-
-        C.prototype.$$updateOutputMemoryWrite = function () {
-            var result;
-
-            switch (this.registers.regSequencer) {
-                default:
-                    result = 0;  // TODO implement st instruction
-            }
-
-            this.outputs.memoryWrite = result;
-        };
-
-        C.prototype.$$updateOutputMemoryWE = function () {
-            var result;
-
-            switch (this.registers.regSequencer) {
-                default:
-                    result = 0;          // TODO implement st instruction
-            }
-
-            this.outputs.memoryWE = result;
         };
 
         return C;

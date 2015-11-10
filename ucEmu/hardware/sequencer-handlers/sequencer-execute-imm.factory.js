@@ -13,7 +13,7 @@ var SequencerExecuteImm = (function () {
         SEI.prototype = Object.create(AbstractSequencerHandler.prototype);
         SEI.prototype.constructor = SEI;
 
-        SEI.prototype.$$run = function () {
+        SEI.prototype.$$goToNextState = function () {
             var regOut, imm;
 
             regOut = this.$$cpu.core.instructionDecoder.getRegOut();

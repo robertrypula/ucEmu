@@ -13,7 +13,7 @@ var SequencerExecuteStFourth = (function () {
         SESF.prototype = Object.create(AbstractSequencerHandler.prototype);
         SESF.prototype.constructor = SESF;
 
-        SESF.prototype.$$run = function () {
+        SESF.prototype.$$goToNextState = function () {
 
             console.log('    :: sequencerExecuteStFourth');
         };

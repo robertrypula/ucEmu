@@ -13,7 +13,7 @@ var SequencerFetchFirst = (function () {
         SFF.prototype = Object.create(AbstractSequencerHandler.prototype);
         SFF.prototype.constructor = SFF;
 
-        SFF.prototype.$$run = function () {
+        SFF.prototype.$$goToNextState = function () {
             var memoryColumn, memoryReadShifted;
 
             memoryColumn = BitUtils.mask(this.$$cpu.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
@@ -27,6 +27,10 @@ var SequencerFetchFirst = (function () {
             this.$$cpu.registers.regMemory = memoryReadShifted;
             this.$$cpu.registers.regInstruction = memoryReadShifted;              // TODO check it, this may be redundant with regMemory
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_SECOND_AND_DECODE;
+        };
+
+        SFF.prototype.$$updateOutputMemoryRowAddress = function () {
+            this.$$cpu.outputs.memoryRowAddress = BitUtils.shiftRight(this.$$cpu.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
         };
 
         return SFF;

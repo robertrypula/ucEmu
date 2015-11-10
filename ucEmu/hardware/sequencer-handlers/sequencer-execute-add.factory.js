@@ -13,7 +13,7 @@ var SequencerExecuteAdd = (function () {
         SEA.prototype = Object.create(AbstractSequencerHandler.prototype);
         SEA.prototype.constructor = SEA;
 
-        SEA.prototype.$$run = function () {
+        SEA.prototype.$$goToNextState = function () {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 

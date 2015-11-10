@@ -13,7 +13,7 @@ var SequencerExecuteCopy = (function () {
         SEC.prototype = Object.create(AbstractSequencerHandler.prototype);
         SEC.prototype.constructor = SEC;
 
-        SEC.prototype.$$run = function () {
+        SEC.prototype.$$goToNextState = function () {
             var regOut, regIn0, regIn0Value;
 
             regOut = this.$$cpu.core.instructionDecoder.getRegOut();

@@ -1,8 +1,8 @@
 /*
     TODO:
         Code refactor:
-            - [0.50h] move output computing to handlers (default value at abstract)
-            - [0.25h] remember to update outputs when cpu boots because we dont have faling edge at thus point
+            + [0.50h] move output computing to handlers (default value at abstract)
+            + [0.25h] remember to update outputs when cpu boots because we dont have faling edge at thus point
             - [1.00h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu)
             - [1.00h] remove dumpHex and use hex
             - [1.00h] move inputs at the top of the log, and header like 'Cpu state after blablba'

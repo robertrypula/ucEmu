@@ -13,12 +13,19 @@ var AbstractSequencerHandler = (function () {
         ASH.prototype = Object.create(CpuAware.prototype);
         ASH.prototype.constructor = ASH;
 
-        ASH.prototype.run = function () {
+        ASH.prototype.goToNextState = function () {
             this.$$checkCpu();
-            this.$$run();               // polymorphic call TODO change name of method
+            this.$$goToNextState();               // polymorphic call TODO change name of method
         };
 
-        ASH.prototype.$$run = function () {
+        ASH.prototype.updateOutput = function () {
+            this.$$checkCpu();
+            this.$$updateOutputMemoryRowAddress();
+            this.$$updateOutputMemoryWrite();
+            this.$$updateOutputMemoryWE();
+        };
+
+        ASH.prototype.$$goToNextState = function () {
             throw 'Abstract method called!';
         };
 

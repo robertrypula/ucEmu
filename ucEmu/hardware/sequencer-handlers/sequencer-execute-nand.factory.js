@@ -13,7 +13,7 @@ var SequencerExecuteNand = (function () {
         SEN.prototype = Object.create(AbstractSequencerHandler.prototype);
         SEN.prototype.constructor = SEN;
 
-        SEN.prototype.$$run = function () {
+        SEN.prototype.$$goToNextState = function () {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 

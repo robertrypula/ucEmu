@@ -25,7 +25,7 @@ var SequencerFetchSecondAndDecode = (function () {
         SFSAD.prototype = Object.create(AbstractSequencerHandler.prototype);
         SFSAD.prototype.constructor = SFSAD;
 
-        SFSAD.prototype.$$run = function () {
+        SFSAD.prototype.$$goToNextState = function () {
             var memoryColumn, shiftAmount, memoryReadShifted, memoryFinal,
                 opCode, instruction, instructionByteWidth,
                 regPCNext, regSequencerNext,
@@ -70,7 +70,12 @@ var SequencerFetchSecondAndDecode = (function () {
             this.$$cpu.registers.regInstruction = memoryFinal;
             this.$$cpu.core.registerSet.setProgramCounter(regPCNext);
             this.$$cpu.registers.regSequencer = regSequencerNext;
-        }
+        };
+
+
+        SFSAD.prototype.$$updateOutputMemoryRowAddress = function () {
+            this.$$cpu.outputs.memoryRowAddress = BitUtils.shiftRight(this.$$cpu.core.registerSet.getProgramCounter(), BitUtils.BIT_2) + 1;
+        };
 
         return SFSAD;
     }

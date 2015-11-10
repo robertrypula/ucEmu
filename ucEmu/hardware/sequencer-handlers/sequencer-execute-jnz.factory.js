@@ -13,7 +13,7 @@ var SequencerExecuteJnz = (function () {
         SEJ.prototype = Object.create(AbstractSequencerHandler.prototype);
         SEJ.prototype.constructor = SEJ;
 
-        SEJ.prototype.$$run = function () {
+        SEJ.prototype.$$goToNextState = function () {
             var regIn0, regIn1, regIn0Value, regIn1Value,
                 notZeroFlag, regPCNext;
 

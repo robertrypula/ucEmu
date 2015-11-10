@@ -13,7 +13,7 @@ var SequencerExecuteSh = (function () {
         SES.prototype = Object.create(AbstractSequencerHandler.prototype);
         SES.prototype.constructor = SES;
 
-        SES.prototype.$$run = function () {
+        SES.prototype.$$goToNextState = function () {
             var regOut, regIn0, regIn1, 
                 regIn0Value, regIn1Value, regResult;
 

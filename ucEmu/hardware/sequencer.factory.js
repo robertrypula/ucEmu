@@ -70,30 +70,39 @@ var Sequencer = (function () {
             }
         };
 
-        S.prototype.setCpu = function (cpu) {
-            CpuAware.prototype.setCpu.apply(this, arguments);
-            this.$$setCpuAtHandlers(cpu);
-        };
-
         S.prototype.$$checkState = function (state) {
             if (state < 0 || state >= this.$$handlers.length) {
                 throw 'Bad state: ' + state;
             }
         };
 
-        S.prototype.goToNextState = function () {
+        S.prototype.$$getHandler = function () {
             var state;
 
-            this.$$checkCpu();
             state = this.$$cpu.registers.regSequencer;
             this.$$checkState(state);
             if (this.$$handlers[state].handler !== null) {
-                this.$$handlers[state].handler.run();
-            } else {
-                throw 'Sequencer handler for state ' + state + ' is not defined';
+                return this.$$handlers[state].handler;
             }
 
+            throw 'Sequencer handler for state ' + state + ' is not defined';
+        };
+
+        S.prototype.setCpu = function (cpu) {
+            CpuAware.prototype.setCpu.apply(this, arguments);
+            this.$$setCpuAtHandlers(cpu);
+        };
+
+        S.prototype.goToNextState = function () {
+            this.$$checkCpu();
+            this.$$getHandler().goToNextState();
+
             this.$$cpu.registers.regTimer = BitUtils.mask(this.$$cpu.registers.regTimer + 1, BitUtils.BYTE_4);
+        };
+
+        S.prototype.updateOutput = function () {
+            this.$$checkCpu();
+            this.$$getHandler().updateOutput();
         };
 
         return S;

@@ -13,7 +13,7 @@ var SequencerExecuteLdSecond = (function () {
         SELS.prototype = Object.create(AbstractSequencerHandler.prototype);
         SELS.prototype.constructor = SELS;
 
-        SELS.prototype.$$run = function () {
+        SELS.prototype.$$goToNextState = function () {
             var regIn0, regIn0Value, memoryColumn, shiftAmount,
                 memoryReadShifted, regMANext;
             
@@ -35,6 +35,15 @@ var SequencerExecuteLdSecond = (function () {
 
             this.$$cpu.core.registerSet.setMemoryAccess(regMANext);
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_FIRST;
+        };
+
+        SELS.prototype.$$updateOutputMemoryRowAddress = function () {
+            var regIn0, regIn0Value;
+
+            regIn0 = this.$$cpu.core.instructionDecoder.getRegIn0();
+            regIn0Value = this.$$cpu.core.registerSet.read(regIn0);
+
+            this.$$cpu.outputs.memoryRowAddress = BitUtils.shiftRight(regIn0Value, BitUtils.BIT_2) + 1;
         };
 
         return SELS;

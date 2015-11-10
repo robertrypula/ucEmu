@@ -13,7 +13,7 @@ var SequencerExecuteStThird = (function () {
         SEST.prototype = Object.create(AbstractSequencerHandler.prototype);
         SEST.prototype.constructor = SEST;
 
-        SEST.prototype.$$run = function () {
+        SEST.prototype.$$goToNextState = function () {
 
             console.log('    :: sequencerExecuteStThird');
         };

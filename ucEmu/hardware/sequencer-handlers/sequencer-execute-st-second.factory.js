@@ -13,7 +13,7 @@ var SequencerExecuteStSecond = (function () {
         SESS.prototype = Object.create(AbstractSequencerHandler.prototype);
         SESS.prototype.constructor = SESS;
 
-        SESS.prototype.$$run = function () {
+        SESS.prototype.$$goToNextState = function () {
 
             console.log('    :: sequencerExecuteStSecond');
         };
