@@ -20,9 +20,9 @@ var SequencerFetchFirst = (function () {
             memoryReadShifted = BitUtils.shiftLeft(this.$$cpu.inputs.memoryRead, memoryColumn * BitUtils.BYTE_1);
 
             console.log('    :: sequenceFetchFirst');
-            console.log('    memoryColumn = ' + dumpHex(memoryColumn));
-            console.log('    inputs.memoryRead = ' + dumpHex(this.$$cpu.inputs.memoryRead));
-            console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
+            console.log('    memoryColumn = ' + BitUtils.hex(memoryColumn, BitUtils.BIT_2));
+            console.log('    inputs.memoryRead = ' + BitUtils.hex(this.$$cpu.inputs.memoryRead, BitUtils.BYTE_4));
+            console.log('    memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
 
             this.$$cpu.registers.regMemory = memoryReadShifted;
             this.$$cpu.registers.regInstruction = memoryReadShifted;              // TODO check it, this may be redundant with regMemory
