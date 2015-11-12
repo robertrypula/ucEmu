@@ -38,7 +38,7 @@ var SequencerFetchSecondAndDecode = (function () {
             opCode = this.$$cpu.core.instructionDecoder.getOpcode();
             instruction = this.$$cpu.core.instructionDecoder.getInstruction(opCode);
             instructionByteWidth = instruction.byteWidth;
-            regPCNext = this.$$cpu.core.registerSet.getProgramCounter() + instructionByteWidth;
+            regPCNext = BitUtils.mask(this.$$cpu.core.registerSet.getProgramCounter() + instructionByteWidth, BitUtils.BYTE_2);
             regSequencerNext = 0;
             OPCODES = this.$$cpu.core.instructionDecoder.OPCODES;
             STATES = this.$$cpu.core.sequencer.STATES;
@@ -56,16 +56,16 @@ var SequencerFetchSecondAndDecode = (function () {
 
             console.log('    :: sequenceFetchSecondAndDecode');
             console.log('    memoryColumn = ' + memoryColumn);
-            console.log('    inputs.memoryRead = ' + dumpHex(this.$$cpu.inputs.memoryRead));
+            console.log('    inputs.memoryRead = ' + BitUtils.hex(this.$$cpu.inputs.memoryRead, BitUtils.BYTE_4));
             console.log('    shiftAmount = ' + shiftAmount);
-            console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
-            console.log('    memoryFinal = ' + dumpHex(memoryFinal));
+            console.log('    memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
+            console.log('    memoryFinal = ' + BitUtils.hex(memoryFinal, BitUtils.BYTE_4));
             console.log('    opCode = ' + opCode);
             console.log('    instruction = ', instruction);
             console.log('    instructionName = ', instruction.name + ', ' + instruction.nameFull);
             console.log('    instructionByteWidth = ' + instructionByteWidth);
-            console.log('    regPCNext = ' + dumpHex(regPCNext));
-            console.log('    regSequencerNext = ' + dumpHex(regSequencerNext));
+            console.log('    regPCNext = ' + BitUtils.hex(regPCNext, BitUtils.BYTE_2));
+            console.log('    regSequencerNext = ' + BitUtils.hex(regSequencerNext, BitUtils.BYTE_HALF));
 
             this.$$cpu.registers.regInstruction = memoryFinal;
             this.$$cpu.core.registerSet.setProgramCounter(regPCNext);

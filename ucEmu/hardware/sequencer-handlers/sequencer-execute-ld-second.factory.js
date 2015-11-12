@@ -26,12 +26,12 @@ var SequencerExecuteLdSecond = (function () {
 
             console.log('    :: sequencerExecuteLdSecond');
             console.log('    regIn0 = ' + regIn0);
-            console.log('    regIn0Value = ' + dumpHex(regIn0Value));
+            console.log('    regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2));
             console.log('    memoryColumn = ' + memoryColumn);
-            console.log('    inputs.memoryRead = ' + dumpHex(this.$$cpu.inputs.memoryRead));
+            console.log('    inputs.memoryRead = ' + BitUtils.hex(this.$$cpu.inputs.memoryRead, BitUtils.BYTE_4));
             console.log('    shiftAmount = ' + shiftAmount);
-            console.log('    memoryReadShifted = ' + dumpHex(memoryReadShifted));
-            console.log('    regMANext = ' + dumpHex(regMANext));
+            console.log('    memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
+            console.log('    regMANext = ' + BitUtils.hex(regMANext, BitUtils.BYTE_2));
 
             this.$$cpu.core.registerSet.setMemoryAccess(regMANext);
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_FIRST;

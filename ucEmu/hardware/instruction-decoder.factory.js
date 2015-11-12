@@ -107,7 +107,6 @@ var InstructionDecoder = (function () {
         return ID;
     }
 
-    return _InstructionDecoder();         // TODO change it to DI
-
+    return _InstructionDecoder();         // TODO change it do dependency injection
 })();
 

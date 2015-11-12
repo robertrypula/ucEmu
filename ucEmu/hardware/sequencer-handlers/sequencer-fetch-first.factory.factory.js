@@ -20,7 +20,7 @@ var SequencerFetchFirst = (function () {
             memoryReadShifted = BitUtils.shiftLeft(this.$$cpu.inputs.memoryRead, memoryColumn * BitUtils.BYTE_1);
 
             console.log('    :: sequenceFetchFirst');
-            console.log('    memoryColumn = ' + BitUtils.hex(memoryColumn, BitUtils.BIT_2));
+            console.log('    memoryColumn = ' + memoryColumn);
             console.log('    inputs.memoryRead = ' + BitUtils.hex(this.$$cpu.inputs.memoryRead, BitUtils.BYTE_4));
             console.log('    memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
 

@@ -20,7 +20,7 @@ var Signal = (function () {
         return C;
     };
 
-    return _Signal();       // TODO change it to DI
+    return _Signal();       // TODO change it do dependency injection
 
 })();
 

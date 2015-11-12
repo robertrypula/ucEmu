@@ -3,8 +3,8 @@
         Code refactor:
             + [0.50h] move output computing to handlers (default value at abstract)
             + [0.25h] remember to update outputs when cpu boots because we dont have faling edge at thus point
-            - [1.00h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu)
-            - [1.00h] remove dumpHex and use hex
+            + [1.00h] remove dumpHex and use hex
+            - [1.00h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
             - [1.00h] move inputs at the top of the log, and header like 'Cpu state after blablba'
             - [1.00h] service for logging with verbose levels
                total: 4.75h
@@ -178,18 +178,3 @@ function cpuLog()
 }
 
 staticRam.log(0, 3);
-
-function dumpHex(data)
-{
-    var byte03 = ((data & 0xFF000000) >>> (6 * 4)).toString(16),
-        byte02 = ((data & 0x00FF0000) >>> (4 * 4)).toString(16),
-        byte01 = ((data & 0x0000FF00) >>> (2 * 4)).toString(16),
-        byte00 = (data & 0x000000FF).toString(16);
-
-    byte03 = byte03.length === 1 ? '0' + byte03 : byte03;
-    byte02 = byte02.length === 1 ? '0' + byte02 : byte02;
-    byte01 = byte01.length === 1 ? '0' + byte01 : byte01;
-    byte00 = byte00.length === 1 ? '0' + byte00 : byte00;
-
-    return byte03 + ' ' + byte02 + ' ' + byte01 + ' ' + byte00;
-}

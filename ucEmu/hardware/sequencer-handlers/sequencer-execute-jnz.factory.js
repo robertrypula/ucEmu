@@ -26,10 +26,10 @@ var SequencerExecuteJnz = (function () {
 
             console.log('    :: sequencerExecuteJnz');
             console.log('    regIn0, regIn1 <-> ' + regIn0 + ', ' + regIn1);
-            console.log('    regIn0Value = ' + dumpHex(regIn0Value));
-            console.log('    regIn1Value = ' + dumpHex(regIn1Value));
+            console.log('    regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2));
+            console.log('    regIn1Value = ' + BitUtils.hex(regIn1Value, BitUtils.BYTE_2));
             console.log('    notZeroFlag = ' + (notZeroFlag ? "true (regIn1Value NOT EQUAL zero - jump)" : "false (regIn1Value EQUAL zero - no jump)"));
-            console.log('    regPCNext = ' + dumpHex(regPCNext));
+            console.log('    regPCNext = ' + BitUtils.hex(regPCNext, BitUtils.BYTE_2));
 
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_FIRST;
             this.$$cpu.core.registerSet.setProgramCounter(regPCNext);

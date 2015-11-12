@@ -26,9 +26,9 @@ var SequencerExecuteSh = (function () {
 
             console.log('    :: sequencerExecuteSh');
             console.log('    regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
-            console.log('    regIn0Value = ' + dumpHex(regIn0Value));
-            console.log('    regIn1Value = ' + dumpHex(regIn1Value));
-            console.log('    result = ' + dumpHex(regResult) + ' (BIT SHIFT)');
+            console.log('    regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2));
+            console.log('    regIn1Value = ' + BitUtils.hex(regIn1Value, BitUtils.BYTE_2));
+            console.log('    result = ' + BitUtils.hex(regResult, BitUtils.BYTE_2) + ' (BIT SHIFT)');
 
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_FIRST;
             this.$$cpu.core.registerSet.save(regOut, regResult);
