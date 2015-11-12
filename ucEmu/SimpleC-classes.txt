@@ -1,0 +1,45 @@
+var Point = function (x, y) {
+    this.x = x;
+    this.y = y;
+}
+
+Point.prototype.add = function (v) {
+    this.x += v;
+    this.y += v;
+}
+
+
+var point = new Point(3, 4);
+
+points.add(3);
+
+// ------------------------------------------------
+
+var Point_x = 0;
+var Point_y = 2;
+var Point_sizeOf = 6;
+
+function PointConstruct(self, x, y) {
+    *(self + Point_x) = x;
+    *(self + Point_y) = y;
+}
+
+function PointAdd(self, v) {
+    var tmp;
+
+    tmp = *(self + Point_x);
+    tmp = add(tmp, v);
+    *(self + Point_x) = tmp;             // $('*+', self, Point_x) = tmp;
+
+    tmp = *(self + Point_y);
+    tmp = add(tmp, v);
+    *(self + Point_y) = tmp;
+}
+
+var point = { <byteReserve>, 6 };        // $('{}', '<byteReserve>, 6');
+
+PointConstruct(&point, 3, 4);            // $('&', point);
+
+PointAdd(&point, 3);
+
+PointConstruct()
