@@ -30,7 +30,7 @@ var SequencerExecuteAdd = (function () {
             console.log('    regIn1Value = ' + BitUtils.hex(regIn1Value, BitUtils.BYTE_2));
             console.log('    result = ' + BitUtils.hex(regResult, BitUtils.BYTE_2) + ' (sum)');
 
-            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_FIRST;
+            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
             this.$$cpu.core.registerSet.save(regOut, regResult);
         };
 

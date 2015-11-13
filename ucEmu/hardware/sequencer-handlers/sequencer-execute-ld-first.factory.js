@@ -29,7 +29,7 @@ var SequencerExecuteLdFirst = (function () {
             console.log('    memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
 
             this.$$cpu.registers.regMemory = memoryReadShifted;
-            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.EXECUTE_LD_SECOND;
+            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.EXECUTE_LD_SECOND;
         };
 
         SELF.prototype.$$updateOutputMemoryRowAddress = function () {

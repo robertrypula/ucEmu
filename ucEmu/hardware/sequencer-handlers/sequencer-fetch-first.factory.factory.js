@@ -26,7 +26,7 @@ var SequencerFetchFirst = (function () {
 
             this.$$cpu.registers.regMemory = memoryReadShifted;
             this.$$cpu.registers.regInstruction = memoryReadShifted;              // TODO check it, this may be redundant with regMemory
-            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_SECOND_AND_DECODE;
+            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_SECOND_AND_DECODE;
         };
 
         SFF.prototype.$$updateOutputMemoryRowAddress = function () {

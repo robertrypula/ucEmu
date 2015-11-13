@@ -86,7 +86,7 @@ function runCpu()
         console.log("\n");
         clockTicks++;
 
-        if (cpu.registers.regSequencer == cpu.core.sequencer.STATES.FETCH_FIRST) {
+        if (cpu.registers.regSequencer == cpu.core.sequencer.STATE.FETCH_FIRST) {
             console.log(
                 "------------------------------------------------------" +
                 "------------------------------------------------------" +

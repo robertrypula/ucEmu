@@ -31,7 +31,7 @@ var SequencerExecuteJnz = (function () {
             console.log('    notZeroFlag = ' + (notZeroFlag ? "true (regIn1Value NOT EQUAL zero - jump)" : "false (regIn1Value EQUAL zero - no jump)"));
             console.log('    regPCNext = ' + BitUtils.hex(regPCNext, BitUtils.BYTE_2));
 
-            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_FIRST;
+            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
             this.$$cpu.core.registerSet.setProgramCounter(regPCNext);
         };
 

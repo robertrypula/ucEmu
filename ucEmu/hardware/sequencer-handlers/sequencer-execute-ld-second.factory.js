@@ -34,7 +34,7 @@ var SequencerExecuteLdSecond = (function () {
             console.log('    regMANext = ' + BitUtils.hex(regMANext, BitUtils.BYTE_2));
 
             this.$$cpu.core.registerSet.setMemoryAccess(regMANext);
-            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATES.FETCH_FIRST;
+            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
         };
 
         SELS.prototype.$$updateOutputMemoryRowAddress = function () {

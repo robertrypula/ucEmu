@@ -10,7 +10,7 @@ var Sequencer = (function () {
             CpuAware.apply(this, arguments);
 
             this.$$handlers = [];
-            this.STATES = null;
+            this.STATE = {};
 
             this.$$initialize();
         };
@@ -24,42 +24,32 @@ var Sequencer = (function () {
             this.$$initializeHandler();
         };
 
+        S.prototype.$$loopState = function (callback) {
+            var key;
+
+            for (key in SequencerHandlerBuilder.STATE) {
+                callback(key, SequencerHandlerBuilder.STATE[key]);
+            }
+        };
+
         S.prototype.$$initializeState = function () {
-            this.STATES = {
-                FETCH_FIRST: 0,
-                FETCH_SECOND_AND_DECODE: 1,
-                EXECUTE_ADD: 2,
-                EXECUTE_NAND: 3,
-                EXECUTE_SH: 4,
-                EXECUTE_JNZ: 5,
-                EXECUTE_COPY: 6,
-                EXECUTE_IMM: 7,
-                EXECUTE_LD_FIRST: 8,
-                EXECUTE_LD_SECOND: 9,
-                EXECUTE_ST_FIRST: 10,
-                EXECUTE_ST_SECOND: 11,
-                EXECUTE_ST_THIRD: 12,
-                EXECUTE_ST_FOURTH: 13
-            };
+            var self = this;
+
+            this.$$loopState(function (key, state) {
+                self.STATE[key] = state;
+            });
         };
 
         S.prototype.$$initializeHandler = function () {
-            this.$$handlers.push(
-                { state: this.STATES.FETCH_FIRST, handler: new SequencerFetchFirst() },
-                { state: this.STATES.FETCH_SECOND_AND_DECODE, handler: new SequencerFetchSecondAndDecode() },
-                { state: this.STATES.EXECUTE_ADD, handler: new SequencerExecuteAdd() },
-                { state: this.STATES.EXECUTE_NAND, handler: new SequencerExecuteNand() },
-                { state: this.STATES.EXECUTE_SH, handler: new SequencerExecuteSh() },
-                { state: this.STATES.EXECUTE_JNZ, handler: new SequencerExecuteJnz() },
-                { state: this.STATES.EXECUTE_COPY, handler: new SequencerExecuteCopy() },
-                { state: this.STATES.EXECUTE_IMM, handler: new SequencerExecuteImm() },
-                { state: this.STATES.EXECUTE_LD_FIRST, handler: new SequencerExecuteLdFirst() },
-                { state: this.STATES.EXECUTE_LD_SECOND, handler: new SequencerExecuteLdSecond() },
-                { state: this.STATES.EXECUTE_ST_FIRST, handler: new SequencerExecuteStFirst() },
-                { state: this.STATES.EXECUTE_ST_SECOND, handler: new SequencerExecuteStSecond() },
-                { state: this.STATES.EXECUTE_ST_THIRD, handler: new SequencerExecuteStThird() },
-                { state: this.STATES.EXECUTE_ST_FOURTH, handler: new SequencerExecuteStFourth() }
-            );
+            var self = this;
+
+            this.$$loopState(function (key, state) {
+                self.$$handlers.push({
+                    key: key,
+                    state: state,
+                    handler: SequencerHandlerBuilder.build(state, self.$$cpu)
+                });
+            });
         };
 
         S.prototype.$$setCpuAtHandlers = function (cpu) {
@@ -81,11 +71,13 @@ var Sequencer = (function () {
 
             state = this.$$cpu.registers.regSequencer;
             this.$$checkState(state);
-            if (this.$$handlers[state].handler !== null) {
-                return this.$$handlers[state].handler;
+
+            if (!this.$$handlers[state].handler) {
+                throw 'Sequencer handler for state ' + state + ' is not defined';
             }
 
-            throw 'Sequencer handler for state ' + state + ' is not defined';
+            return this.$$handlers[state].handler;
+
         };
 
         S.prototype.setCpu = function (cpu) {
