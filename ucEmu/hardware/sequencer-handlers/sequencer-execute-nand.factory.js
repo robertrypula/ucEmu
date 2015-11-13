@@ -6,7 +6,7 @@ var SequencerExecuteNand = (function () {
     function _SequencerExecuteNand() {
         var SEN;
 
-        SEN = function () {
+        SEN = function (cpu) {
             AbstractSequencerHandler.apply(this, arguments);
         };
 

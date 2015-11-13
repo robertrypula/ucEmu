@@ -12,10 +12,12 @@ var SequencerHandlerBuilder = (function () {
         'SequencerExecuteImm',
         'SequencerExecuteLdFirst',
         'SequencerExecuteLdSecond',
-        'SequencerExecuteStFirst',
-        'SequencerExecuteStSecond',
-        'SequencerExecuteStThird',
-        'SequencerExecuteStFourth'
+        'SequencerExecuteStFirstA',
+        'SequencerExecuteStFirstB',
+        'SequencerExecuteStFirstC',
+        'SequencerExecuteStSecondA',
+        'SequencerExecuteStSecondB',
+        'SequencerExecuteStSecondC'
     ];
 
     function _SequencerHandlerBuilder() {
@@ -30,10 +32,12 @@ var SequencerHandlerBuilder = (function () {
             EXECUTE_IMM: 7,
             EXECUTE_LD_FIRST: 8,
             EXECUTE_LD_SECOND: 9,
-            EXECUTE_ST_FIRST: 10,
-            EXECUTE_ST_SECOND: 11,
-            EXECUTE_ST_THIRD: 12,
-            EXECUTE_ST_FOURTH: 13
+            EXECUTE_ST_FIRST_A: 10,
+            EXECUTE_ST_FIRST_B: 11,
+            EXECUTE_ST_FIRST_C: 12,
+            EXECUTE_ST_SECOND_A: 13,
+            EXECUTE_ST_SECOND_B: 14,
+            EXECUTE_ST_SECOND_C: 15
         };
 
         function build(state, cpu) {
@@ -41,54 +45,58 @@ var SequencerHandlerBuilder = (function () {
 
             switch (state) {
                 case STATE.FETCH_FIRST:
-                    handler = new SequencerFetchFirst();
+                    handler = new SequencerFetchFirst(cpu);
                     break;
                 case STATE.FETCH_SECOND_AND_DECODE:
-                    handler = new SequencerFetchSecondAndDecode();
+                    handler = new SequencerFetchSecondAndDecode(cpu);
                     break;
                 case STATE.EXECUTE_ADD:
-                    handler = new SequencerExecuteAdd();
+                    handler = new SequencerExecuteAdd(cpu);
                     break;
                 case STATE.EXECUTE_NAND:
-                    handler = new SequencerExecuteNand();
+                    handler = new SequencerExecuteNand(cpu);
                     break;
                 case STATE.EXECUTE_SH:
-                    handler = new SequencerExecuteSh();
+                    handler = new SequencerExecuteSh(cpu);
                     break;
                 case STATE.EXECUTE_JNZ:
-                    handler = new SequencerExecuteJnz();
+                    handler = new SequencerExecuteJnz(cpu);
                     break;
                 case STATE.EXECUTE_COPY:
-                    handler = new SequencerExecuteCopy();
+                    handler = new SequencerExecuteCopy(cpu);
                     break;
                 case STATE.EXECUTE_IMM:
-                    handler = new SequencerExecuteImm();
+                    handler = new SequencerExecuteImm(cpu);
                     break;
                 case STATE.EXECUTE_LD_FIRST:
-                    handler = new SequencerExecuteLdFirst();
+                    handler = new SequencerExecuteLdFirst(cpu);
                     break;
                 case STATE.EXECUTE_LD_SECOND:
-                    handler = new SequencerExecuteLdSecond();
+                    handler = new SequencerExecuteLdSecond(cpu);
                     break;
-                case STATE.EXECUTE_ST_FIRST:
-                    handler = new SequencerExecuteStFirst();
+                case STATE.EXECUTE_ST_FIRST_A:
+                    handler = new SequencerExecuteStFirstA(cpu);
                     break;
-                case STATE.EXECUTE_ST_SECOND:
-                    handler = new SequencerExecuteStSecond();
+                case STATE.EXECUTE_ST_FIRST_B:
+                    handler = new SequencerExecuteStFirstB(cpu);
                     break;
-                case STATE.EXECUTE_ST_THIRD:
-                    handler = new SequencerExecuteStThird();
+                case STATE.EXECUTE_ST_FIRST_C:
+                    handler = new SequencerExecuteStFirstC(cpu);
                     break;
-                case STATE.EXECUTE_ST_FOURTH:
-                    handler = new SequencerExecuteStFourth();
+                case STATE.EXECUTE_ST_SECOND_A:
+                    handler = new SequencerExecuteStSecondA(cpu);
+                    break;
+                case STATE.EXECUTE_ST_SECOND_B:
+                    handler = new SequencerExecuteStSecondB(cpu);
+                    break;
+                case STATE.EXECUTE_ST_SECOND_C:
+                    handler = new SequencerExecuteStSecondC(cpu);
                     break;
             }
 
             if (!handler) {
                 throw 'Cannot build handler for state: ' + state;
             }
-
-            handler.setCpu(cpu);
 
             return handler;
         }

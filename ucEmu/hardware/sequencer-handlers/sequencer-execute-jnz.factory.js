@@ -6,7 +6,7 @@ var SequencerExecuteJnz = (function () {
     function _SequencerExecuteJnz() {
         var SEJ;
 
-        SEJ = function () {
+        SEJ = function (cpu) {
             AbstractSequencerHandler.apply(this, arguments);
         };
 

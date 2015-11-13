@@ -15,7 +15,7 @@ var CpuAware = (function () {
         };
 
         CA.prototype.$$checkCpu = function () {
-            if (this.$$cpu === null) {
+            if (!this.$$cpu) {
                 throw 'Please attach cpu first';
             }
         };

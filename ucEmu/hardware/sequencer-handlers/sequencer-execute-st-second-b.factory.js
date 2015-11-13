@@ -1,0 +1,28 @@
+var SequencerExecuteStSecondB = (function () {
+    'use strict';
+
+    _SequencerExecuteStSecondB.$inject = [];
+
+    function _SequencerExecuteStSecondB() {
+        var SESSB;
+
+        SESSB = function (cpu) {
+            AbstractSequencerHandler.apply(this, arguments);
+        };
+
+        SESSB.prototype = Object.create(AbstractSequencerHandler.prototype);
+        SESSB.prototype.constructor = SESSB;
+
+        SESSB.prototype.$$goToNextState = function () {
+
+            console.log('    :: sequencerExecuteStSecondB');
+
+            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.EXECUTE_ST_SECOND_C;
+        };
+
+        return SESSB;
+    }
+
+    return _SequencerExecuteStSecondB();        // TODO change it do dependency injection
+
+})();

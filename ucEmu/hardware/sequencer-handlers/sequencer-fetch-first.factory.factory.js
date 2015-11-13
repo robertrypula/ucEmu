@@ -6,7 +6,7 @@ var SequencerFetchFirst = (function () {
     function _SequencerFetchFirst() {
         var SFF;
 
-        SFF = function () {
+        SFF = function (cpu) {
             AbstractSequencerHandler.apply(this, arguments);
         };
 

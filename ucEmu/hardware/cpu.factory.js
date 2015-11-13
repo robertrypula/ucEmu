@@ -97,10 +97,10 @@ var Cpu = (function () {
 
         C.prototype.$$initialize = function () {
             this.core = {
-                registerSet: new RegisterSet(),
-                instructionDecoder: new InstructionDecoder(this),
-                sequencer: new Sequencer(this),
-                alu: new Alu()
+                registerSet: RegisterSetBuilder.build(),
+                instructionDecoder: InstructionDecoderBuilder.build(this),
+                sequencer: SequencerBuilder.build(this),
+                alu: AluBuilder.build()
             };
 
             this.inputs = {

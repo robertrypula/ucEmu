@@ -4,7 +4,7 @@
             + [0.50h] move output computing to handlers (default value at abstract)
             + [0.25h] remember to update outputs when cpu boots because we dont have faling edge at thus point
             + [1.00h] remove dumpHex and use hex
-            - [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
+            + [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
             - [0.75h] move inputs at the top of the log, and header like 'Cpu state after blablba'
             - [0.75h] service for logging with verbose levels
             - [0.75h] rename sequencer handler to some microCode blabla?
@@ -80,7 +80,7 @@ function runCpu()
 {
     var clockTicks = 0;
 
-    while (clockTicks < 28) {
+    while (clockTicks < 30) {
         clockHigh();
         clockLow();
 

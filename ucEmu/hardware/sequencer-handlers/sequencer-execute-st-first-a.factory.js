@@ -1,4 +1,4 @@
-var SequencerExecuteStFirst = (function () {
+var SequencerExecuteStFirstA = (function () {
     'use strict';
 
     /*
@@ -57,26 +57,28 @@ var SequencerExecuteStFirst = (function () {
 
     */
     
-    _SequencerExecuteStFirst.$inject = [];
+    _SequencerExecuteStFirstA.$inject = [];
 
-    function _SequencerExecuteStFirst() {
-        var SESF;
+    function _SequencerExecuteStFirstA() {
+        var SESFA;
 
-        SESF = function () {
+        SESFA = function (cpu) {
             AbstractSequencerHandler.apply(this, arguments);
         };
 
-        SESF.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SESF.prototype.constructor = SESF;
+        SESFA.prototype = Object.create(AbstractSequencerHandler.prototype);
+        SESFA.prototype.constructor = SESFA;
 
-        SESF.prototype.$$goToNextState = function () {
+        SESFA.prototype.$$goToNextState = function () {
 
-            console.log('    :: sequencerExecuteStFirst');
+            console.log('    :: sequencerExecuteStFirstA');
+
+            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.EXECUTE_ST_FIRST_B;
         };
 
-        return SESF;
+        return SESFA;
     }
 
-    return _SequencerExecuteStFirst();        // TODO change it do dependency injection
+    return _SequencerExecuteStFirstA();        // TODO change it do dependency injection
 
 })();

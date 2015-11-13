@@ -6,7 +6,7 @@ var SequencerExecuteSh = (function () {
     function _SequencerExecuteSh() {
         var SES;
 
-        SES = function () {
+        SES = function (cpu) {
             AbstractSequencerHandler.apply(this, arguments);
         };
 

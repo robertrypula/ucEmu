@@ -6,7 +6,7 @@ var SequencerExecuteLdFirst = (function () {
     function _SequencerExecuteLdFirst() {
         var SELF;
 
-        SELF = function () {
+        SELF = function (cpu) {
             AbstractSequencerHandler.apply(this, arguments);
         };
 

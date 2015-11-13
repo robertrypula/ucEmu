@@ -18,7 +18,7 @@ var SequencerFetchSecondAndDecode = (function () {
     function _SequencerFetchSecondAndDecode() {
         var SFSAD;
 
-        SFSAD = function () {
+        SFSAD = function (cpu) {
             AbstractSequencerHandler.apply(this, arguments);
         };
 
@@ -51,7 +51,7 @@ var SequencerFetchSecondAndDecode = (function () {
                 case OPCODES.COPY: regSequencerNext = STATE.EXECUTE_COPY; break;
                 case OPCODES.IMM: regSequencerNext = STATE.EXECUTE_IMM; break;
                 case OPCODES.LD: regSequencerNext = STATE.EXECUTE_LD_FIRST; break;
-                case OPCODES.ST: regSequencerNext = STATE.EXECUTE_ST_FIRST; break;
+                case OPCODES.ST: regSequencerNext = STATE.EXECUTE_ST_FIRST_A; break;
             }
 
             console.log('    :: sequenceFetchSecondAndDecode');
