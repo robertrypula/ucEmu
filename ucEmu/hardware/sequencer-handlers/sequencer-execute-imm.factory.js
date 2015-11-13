@@ -6,7 +6,7 @@ var SequencerExecuteImm = (function () {
     function _SequencerExecuteImm() {
         var SEI;
 
-        SEI = function () {
+        SEI = function (cpu) {
             AbstractSequencerHandler.apply(this, arguments);
         };
 

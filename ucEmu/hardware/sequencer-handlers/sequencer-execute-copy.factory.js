@@ -6,7 +6,7 @@ var SequencerExecuteCopy = (function () {
     function _SequencerExecuteCopy() {
         var SEC;
 
-        SEC = function () {
+        SEC = function (cpu) {
             AbstractSequencerHandler.apply(this, arguments);
         };
 

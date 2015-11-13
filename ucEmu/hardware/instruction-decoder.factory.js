@@ -6,7 +6,7 @@ var InstructionDecoder = (function () {
     function _InstructionDecoder() {
         var ID;
 
-        ID = function () {
+        ID = function (cpu) {
             CpuAware.apply(this, arguments);
 
             this.OPCODES = null;

@@ -98,8 +98,8 @@ var Cpu = (function () {
         C.prototype.$$initialize = function () {
             this.core = {
                 registerSet: new RegisterSet(),
-                instructionDecoder: new InstructionDecoder(),
-                sequencer: new Sequencer(),
+                instructionDecoder: new InstructionDecoder(this),
+                sequencer: new Sequencer(this),
                 alu: new Alu()
             };
 
@@ -127,9 +127,6 @@ var Cpu = (function () {
                 // timer
                 regTimer: BitUtils.random(BitUtils.BYTE_4)
             };
-
-            this.core.sequencer.setCpu(this);
-            this.core.instructionDecoder.setCpu(this);
         };
 
         C.prototype.update = function () {

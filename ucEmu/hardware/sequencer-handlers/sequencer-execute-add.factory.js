@@ -6,7 +6,7 @@ var SequencerExecuteAdd = (function () {
     function _SequencerExecuteAdd() {
         var SEA;
 
-        SEA = function () {
+        SEA = function (cpu) {
             AbstractSequencerHandler.apply(this, arguments);
         };
 

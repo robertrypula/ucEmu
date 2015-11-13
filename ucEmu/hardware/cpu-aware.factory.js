@@ -6,8 +6,8 @@ var CpuAware = (function () {
     function _CpuAware() {
         var CA;
 
-        CA = function () {
-            this.$$cpu = null;
+        CA = function (cpu) {
+            this.$$cpu = cpu;
         };
 
         CA.prototype.setCpu = function (cpu) {

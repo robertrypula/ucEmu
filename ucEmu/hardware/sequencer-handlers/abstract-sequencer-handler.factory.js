@@ -6,7 +6,7 @@ var AbstractSequencerHandler = (function () {
     function _AbstractSequencerHandler() {
         var ASH;
 
-        ASH = function () {
+        ASH = function (cpu) {
             CpuAware.apply(this, arguments);
         };
 

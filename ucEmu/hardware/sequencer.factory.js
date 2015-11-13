@@ -6,7 +6,7 @@ var Sequencer = (function () {
     function _Sequencer() {
         var S;
 
-        S = function () {
+        S = function (cpu) {
             CpuAware.apply(this, arguments);
 
             this.$$handlers = [];
