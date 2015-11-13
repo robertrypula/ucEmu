@@ -8,7 +8,8 @@
             - [0.75h] move inputs at the top of the log, and header like 'Cpu state after blablba'
             - [0.75h] service for logging with verbose levels
             - [0.75h] rename sequencer handler to some microCode blabla?
-               still needed total: 2.75h
+            - [0.25h] WE and with clock
+               still needed total: 2.50h
 
                 :: fun starts here ::
             - [2.00h] create MainBoard factory instead boot.js - first step only move existing functionality
