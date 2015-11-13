@@ -4,14 +4,16 @@
             + [0.50h] move output computing to handlers (default value at abstract)
             + [0.25h] remember to update outputs when cpu boots because we dont have faling edge at thus point
             + [1.00h] remove dumpHex and use hex
-            - [1.00h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
-            - [1.00h] move inputs at the top of the log, and header like 'Cpu state after blablba'
-            - [1.00h] service for logging with verbose levels
-               total: 4.75h
+            - [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
+            - [0.75h] move inputs at the top of the log, and header like 'Cpu state after blablba'
+            - [0.75h] service for logging with verbose levels
+            - [0.75h] rename sequencer handler to some microCode blabla?
+               still needed total: 2.75h
 
                 :: fun starts here ::
             - [2.00h] create MainBoard factory instead boot.js - first step only move existing functionality
             - [2.00h] signal class?
+            - [x.xxh] fix load instruction to access Timer
             - [x.xxh] module approach with update and input changed checking
 
         Integrate IO with existing code for dot matrix and keyboard
