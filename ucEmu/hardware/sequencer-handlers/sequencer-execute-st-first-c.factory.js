@@ -15,7 +15,7 @@ var SequencerExecuteStFirstC = (function () {
 
         SESFC.prototype.$$goToNextState = function () {
 
-            Logger.log(':: sequencerExecuteStFirstC');
+            Logger.log(2, ':: sequencerExecuteStFirstC');
 
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.EXECUTE_ST_SECOND_A;
         };

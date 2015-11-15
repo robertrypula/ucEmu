@@ -15,7 +15,7 @@ var SequencerExecuteStSecondA = (function () {
 
         SESSA.prototype.$$goToNextState = function () {
 
-            Logger.log(':: sequencerExecuteStSecondA');
+            Logger.log(2, ':: sequencerExecuteStSecondA');
 
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.EXECUTE_ST_SECOND_B;
         };
