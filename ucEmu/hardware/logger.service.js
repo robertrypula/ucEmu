@@ -7,6 +7,11 @@ var Logger = (function () {
 
         function log(verbose, str) {
             console.log(str);
+            
+            for (var i = 0; i < verbose * 4; i++) {
+                document.write("&nbsp;");
+            }
+            document.write(str + "<br>\n");
         }
 
         return {
