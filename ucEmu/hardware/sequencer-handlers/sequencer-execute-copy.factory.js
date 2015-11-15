@@ -20,9 +20,9 @@ var SequencerExecuteCopy = (function () {
             regIn0 = this.$$cpu.core.instructionDecoder.getRegIn0();
             regIn0Value = this.$$cpu.core.registerSet.read(regIn0);
 
-            console.log('    :: sequencerExecuteCopy');
-            console.log('    regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
-            console.log('    regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2) + " (COPY, save regIn0Value at regOut)");
+            Logger.log(':: sequencerExecuteCopy');
+            Logger.log('regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
+            Logger.log('regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2) + " (COPY, save regIn0Value at regOut)");
 
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
             this.$$cpu.core.registerSet.save(regOut, regIn0Value);

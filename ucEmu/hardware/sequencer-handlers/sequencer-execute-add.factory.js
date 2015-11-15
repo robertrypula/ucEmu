@@ -24,11 +24,11 @@ var SequencerExecuteAdd = (function () {
             regIn1Value = this.$$cpu.core.registerSet.read(regIn1);
             regResult = this.$$cpu.core.alu.add(regIn0Value, regIn1Value);
 
-            console.log('    :: sequencerExecuteAdd');
-            console.log('    regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
-            console.log('    regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2));
-            console.log('    regIn1Value = ' + BitUtils.hex(regIn1Value, BitUtils.BYTE_2));
-            console.log('    result = ' + BitUtils.hex(regResult, BitUtils.BYTE_2) + ' (sum)');
+            Logger.log(2, ':: sequencerExecuteAdd');
+            Logger.log(3, 'regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
+            Logger.log(3, 'regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2));
+            Logger.log(3, 'regIn1Value = ' + BitUtils.hex(regIn1Value, BitUtils.BYTE_2));
+            Logger.log(3, 'result = ' + BitUtils.hex(regResult, BitUtils.BYTE_2) + ' (sum)');
 
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
             this.$$cpu.core.registerSet.save(regOut, regResult);
