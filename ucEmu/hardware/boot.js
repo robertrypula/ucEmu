@@ -61,7 +61,7 @@ runCpu();
 
 function triggerCpuResetAndProgramStaticRam()
 {
-    console.log(':: trigger RESET AND PROGRAM STARTS');
+    Logger.log(1, ':: trigger RESET AND PROGRAM STARTS');
 
     cpu.inputs.reset = true;
     clockHigh();
@@ -73,8 +73,8 @@ function triggerCpuResetAndProgramStaticRam()
     clockHigh();
     clockLow();
 
-    console.log(':: trigger RESET AND PROGRAM ENDS');
-    console.log("\n\n");
+    Logger.log(1, ':: trigger RESET AND PROGRAM ENDS');
+    Logger.log(1, "\n\n");
 }
 
 function runCpu()
@@ -85,12 +85,13 @@ function runCpu()
         clockHigh();
         clockLow();
 
-        console.log('----> clockTicks ', clockTicks);
-        console.log("\n");
+        Logger.log(1, '----> clockTicks ', clockTicks);
+        Logger.log(1, "\n");
         clockTicks++;
 
         if (cpu.registers.regSequencer == cpu.core.sequencer.STATE.FETCH_FIRST) {
-            console.log(
+            Logger.log(
+                1,
                 "------------------------------------------------------" +
                 "------------------------------------------------------" +
                 "\n\n"
@@ -147,18 +148,25 @@ function cpuLog()
     var rs = cpu.core.registerSet,
         r = cpu.registers;
 
-    console.log(
+    Logger.log(
+        1,
         'in.clock: ' + cpu.inputs.clock + ' | ' +
         'in.memoryRead = ' + BitUtils.hex(cpu.inputs.memoryRead, BitUtils.BYTE_4) + ' | ' +
         'in.reset = ' + BitUtils.hex(cpu.inputs.reset, BitUtils.BIT_1) + '      ' +
         'out.memoryRowAddress = ' + BitUtils.hex(cpu.outputs.memoryRowAddress, BitUtils.BYTE_4 - BitUtils.BIT_2) + ' | ' +
         'out.memoryWrite = ' + BitUtils.hex(cpu.outputs.memoryWrite, BitUtils.BYTE_4) + ' | ' +
-        'out.memoryWE = ' + BitUtils.hex(cpu.outputs.memoryWE, BitUtils.BIT_1) + ' | ' + "\n" +
+        'out.memoryWE = ' + BitUtils.hex(cpu.outputs.memoryWE, BitUtils.BIT_1) + ' | '
+    );
+    Logger.log(
+        1,
         'regMemory = ' + BitUtils.hex(r.regMemory, BitUtils.BYTE_4) + ' | ' +
         'regSequencer = ' + BitUtils.hex(r.regSequencer, BitUtils.BYTE_HALF) + ' | ' +
         'regInstruction = ' + BitUtils.hex(r.regInstruction, BitUtils.BYTE_4) + ' | ' +
         'regTimer = ' + BitUtils.hex(r.regTimer, BitUtils.BYTE_4) + ' | ' +
-        'regReset = ' + BitUtils.hex(r.regReset, BitUtils.BIT_1) + "\n" +
+        'regReset = ' + BitUtils.hex(r.regReset, BitUtils.BIT_1)
+    );
+    Logger.log(
+        1,
         'reg00 = ' + BitUtils.hex(rs.read(0), BitUtils.BYTE_2) + ' | ' +
         'reg01 = ' + BitUtils.hex(rs.read(1), BitUtils.BYTE_2) + ' | ' +
         'reg02 = ' + BitUtils.hex(rs.read(2), BitUtils.BYTE_2) + ' | ' +
@@ -166,7 +174,10 @@ function cpuLog()
         'reg04 = ' + BitUtils.hex(rs.read(4), BitUtils.BYTE_2) + ' | ' +
         'reg05 = ' + BitUtils.hex(rs.read(5), BitUtils.BYTE_2) + ' | ' +
         'reg06 = ' + BitUtils.hex(rs.read(6), BitUtils.BYTE_2) + ' | ' +
-        'reg07 = ' + BitUtils.hex(rs.read(7), BitUtils.BYTE_2) + ' | ' + "\n" +
+        'reg07 = ' + BitUtils.hex(rs.read(7), BitUtils.BYTE_2) + ' | '
+    );
+    Logger.log(
+        1,
         'reg08 = ' + BitUtils.hex(rs.read(8), BitUtils.BYTE_2) + ' | ' +
         'reg09 = ' + BitUtils.hex(rs.read(9), BitUtils.BYTE_2) + ' | ' +
         'reg10 = ' + BitUtils.hex(rs.read(10), BitUtils.BYTE_2) + ' | ' +
@@ -175,8 +186,6 @@ function cpuLog()
         'reg13 = ' + BitUtils.hex(rs.read(13), BitUtils.BYTE_2) + ' | ' +
         'regMA = ' + BitUtils.hex(rs.getMemoryAccess(), BitUtils.BYTE_2) + ' | ' +
         'regPC = ' + BitUtils.hex(rs.getProgramCounter(), BitUtils.BYTE_2) + ' | '
-
-        
     );
 }
 

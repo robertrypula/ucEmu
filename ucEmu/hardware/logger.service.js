@@ -6,12 +6,16 @@ var Logger = (function () {
     function _Logger() {
 
         function log(verbose, str) {
+            var strParsed;
+
             console.log(str);
             
             for (var i = 0; i < verbose * 4; i++) {
                 document.write("&nbsp;");
             }
-            document.write(str + "<br>\n");
+
+            strParsed = str.replace(/\n/g, '<br/>');
+            document.write(strParsed + "<br>");
         }
 
         return {
