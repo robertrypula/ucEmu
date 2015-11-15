@@ -15,7 +15,7 @@ var SequencerExecuteStSecondC = (function () {
 
         SESSC.prototype.$$goToNextState = function () {
 
-            console.log('    :: sequencerExecuteStSecondC');
+            Logger.log(':: sequencerExecuteStSecondC');
 
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
         };

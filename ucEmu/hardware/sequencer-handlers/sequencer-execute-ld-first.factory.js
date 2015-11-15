@@ -21,12 +21,12 @@ var SequencerExecuteLdFirst = (function () {
             memoryColumn = BitUtils.mask(regIn0Value, BitUtils.BIT_2);
             memoryReadShifted = BitUtils.shiftLeft(this.$$cpu.inputs.memoryRead, memoryColumn * BitUtils.BYTE_1);
 
-            console.log('    :: sequencerExecuteLdFirst');
-            console.log('    regIn0 = ' + regIn0);
-            console.log('    regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2));
-            console.log('    memoryColumn = ' + memoryColumn);
-            console.log('    inputs.memoryRead = ' + BitUtils.hex(this.$$cpu.inputs.memoryRead, BitUtils.BYTE_4));
-            console.log('    memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
+            Logger.log(':: sequencerExecuteLdFirst');
+            Logger.log('regIn0 = ' + regIn0);
+            Logger.log('regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2));
+            Logger.log('memoryColumn = ' + memoryColumn);
+            Logger.log('inputs.memoryRead = ' + BitUtils.hex(this.$$cpu.inputs.memoryRead, BitUtils.BYTE_4));
+            Logger.log('memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
 
             this.$$cpu.registers.regMemory = memoryReadShifted;
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.EXECUTE_LD_SECOND;
