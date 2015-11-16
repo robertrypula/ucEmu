@@ -5,16 +5,16 @@
             + [0.25h] remember to update outputs when cpu boots because we dont have faling edge at thus point
             + [1.00h] remove dumpHex and use hex
             + [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
-            - [0.75h] move inputs at the top of the log, and header like 'Cpu state after blablba'
-            - [0.75h] service for logging with verbose levels
+            + [0.75h] service for logging with verbose levels
+            - [0.50h] move inputs at the top of the log, and header like 'Cpu state after blablba'
+            - [0.25h] WE and with clock (B positive clock, C negative clock)
             - [0.75h] rename sequencer handler to some microCode blabla?
-            - [0.25h] WE and with clock
-               still needed total: 2.50h
+               still needed total: 1.50h
 
                 :: fun starts here ::
             - [2.00h] create MainBoard factory instead boot.js - first step only move existing functionality
-            - [2.00h] signal class?
             - [x.xxh] fix load instruction to access Timer
+            - [2.00h] signal class?
             - [x.xxh] module approach with update and input changed checking
 
         Integrate IO with existing code for dot matrix and keyboard
@@ -81,17 +81,22 @@ function runCpu()
 {
     var clockTicks = 0;
 
-    while (clockTicks < 30) {
+    while (clockTicks < 30 * 10) {
+        clockTicks++;
         clockHigh();
         clockLow();
 
-        Logger.log(1, '----> clockTicks ', clockTicks);
+        Logger.log(1, '----> clockTicks ' + clockTicks);
         Logger.log(1, "\n");
-        clockTicks++;
-
+        
         if (cpu.registers.regSequencer == cpu.core.sequencer.STATE.FETCH_FIRST) {
             Logger.log(
-                1,
+                0, 
+                '                                                      ' +
+                '                               clockTicks: ' + BitUtils.hex(clockTicks, BitUtils.BYTE_4)
+            );
+            Logger.log(
+                0,
                 "------------------------------------------------------" +
                 "------------------------------------------------------" +
                 "\n\n"

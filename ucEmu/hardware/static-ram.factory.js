@@ -25,7 +25,7 @@ var StaticRam = (function () {
                     return;
                 }
                 Logger.log(
-                    1,
+                    0,
                     ' StaticRam:  ' +
                     BitUtils.hex(i, BitUtils.BYTE_2) + ' | ' +
                     BitUtils.hex(this.data[i], BitUtils.BYTE_4)
