@@ -50,13 +50,15 @@ var staticRam = new StaticRam(
     cpu.outputs.memoryWE,
     cpu.outputs.memoryWrite
 );
-globalUpdate();
+cpu.update();
+syncCpuWithStaticRam();
 cpuLog();
 
 triggerCpuResetAndProgramStaticRam();
 
 cpu.registers.regPC = 0;
-globalUpdate();
+cpu.update();
+syncCpuWithStaticRam();
 
 var secondsStart = new Date().getTime();
 document.write('START<br/>');
@@ -88,7 +90,10 @@ function runCpu()
 {
     var clockTicks = 0;
 
-    while (clockTicks < 1000 * 1000) {      // 30
+    // 3.8 emulated MHz @ 3.6 GHz real cpu    
+    //         -> JavaScript requires 1000 cycler per each emulated cycle
+
+    while (clockTicks < Math.round(3.8 * 1000 * 1000)) {      // 30              
         clockTicks++;
         clockHigh();
         clockLow();
@@ -147,7 +152,8 @@ function syncCpuWithStaticRam()
 function clockHigh()
 {
     cpu.inputs.clock = true;
-    globalUpdate();
+    cpu.update();
+    syncCpuWithStaticRam();
 
     /*
     if (Logger.isEnabled()) {
@@ -159,17 +165,12 @@ function clockHigh()
 function clockLow()
 {
     cpu.inputs.clock = false;
-    globalUpdate();
+    cpu.update();
+    syncCpuWithStaticRam();
 
     if (Logger.isEnabled()) {
         cpuLog();
     }
-}
-
-function globalUpdate()
-{
-    cpu.update();
-    syncCpuWithStaticRam();
 }
 
 function cpuLog()

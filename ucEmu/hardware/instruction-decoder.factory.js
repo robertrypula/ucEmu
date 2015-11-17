@@ -56,7 +56,7 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.getOpcode = function () {
-            this.$$checkCpu();
+            //this.$$checkCpu();
 
             return BitUtils.shiftRight(
                 this.$$cpu.registers.regInstruction & 0x70000000, 
@@ -65,7 +65,7 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.getRegOut = function () {
-            this.$$checkCpu();
+            //this.$$checkCpu();
 
             return BitUtils.shiftRight(
                 this.$$cpu.registers.regInstruction & 0x0F000000, 
@@ -74,7 +74,7 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.getRegIn0 = function () {
-            this.$$checkCpu();
+            //this.$$checkCpu();
 
             return BitUtils.shiftRight(
                 this.$$cpu.registers.regInstruction & 0x00F00000, 
@@ -83,7 +83,7 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.getRegIn1 = function () {
-            this.$$checkCpu();
+            //this.$$checkCpu();
 
             return BitUtils.shiftRight(
                 this.$$cpu.registers.regInstruction & 0x000F0000, 
@@ -92,14 +92,14 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.getImm = function () {
-            this.$$checkCpu();
+            //this.$$checkCpu();
             
             return this.$$cpu.registers.regInstruction & 0x0000FFFF;
         };
 
         ID.prototype.getInstruction = function (opcode) {
-            this.$$checkCpu();
-            this.$$checkOpcode(opcode, 'getInstruction');
+            //this.$$checkCpu();
+            //this.$$checkOpcode(opcode, 'getInstruction');
 
             return this.$$instructionSet[opcode];
         };

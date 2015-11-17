@@ -7,13 +7,13 @@ var StaticRam = (function () {
         var SR;
 
         SR = function (row, writeEnable, dataIn) {
-            this.data = [];
+            this.ROWS_COUNT = (64 * 1024) / 4;
+            this.data = new Uint32Array(this.ROWS_COUNT);
             this.inputs = {
                 row: row,
                 writeEnable: writeEnable,
                 dataIn: dataIn
             };
-            this.ROWS_COUNT = (64 * 1024) / 4;
 
             this.$$initialize();
         };
@@ -60,9 +60,9 @@ var StaticRam = (function () {
 
         SR.prototype.$$initialize = function () {
             for (var i = 0; i < this.ROWS_COUNT; i++) {
-                this.data.push(
+                this.data[
                     BitUtils.random(BitUtils.BYTE_4)
-                );
+                ];
             }
             this.update();
         };

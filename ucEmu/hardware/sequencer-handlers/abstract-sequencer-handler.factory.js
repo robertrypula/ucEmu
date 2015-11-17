@@ -14,12 +14,12 @@ var AbstractSequencerHandler = (function () {
         ASH.prototype.constructor = ASH;
 
         ASH.prototype.goToNextState = function () {
-            this.$$checkCpu();
+            //this.$$checkCpu();
             this.$$goToNextState();               // polymorphic call TODO change name of method
         };
 
         ASH.prototype.updateOutput = function () {
-            this.$$checkCpu();
+            //this.$$checkCpu();
             this.$$updateOutputMemoryRowAddress();
             this.$$updateOutputMemoryWrite();
             this.$$updateOutputMemoryWE();

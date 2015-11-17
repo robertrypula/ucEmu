@@ -52,13 +52,13 @@ var RegisterSet = (function () {
         };
 
         RS.prototype.read = function (number) {
-            this.$$checkRange(number, 'read');
+            //this.$$checkRange(number, 'read');
 
             return this.registers[number];
         };
 
         RS.prototype.save = function (number, value) {
-            this.$$checkRange(number, 'save');
+            //this.$$checkRange(number, 'save');
             this.registers[number] = BitUtils.mask(value, BitUtils.BYTE_2);
         };
 
