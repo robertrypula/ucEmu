@@ -71,7 +71,9 @@ var SequencerExecuteStFirstA = (function () {
 
         SESFA.prototype.$$goToNextState = function () {
 
-            Logger.log(2, ':: sequencerExecuteStFirstA');
+            if (Logger.isEnabled()) {
+                Logger.log(2, ':: sequencerExecuteStFirstA');
+            }
 
             this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.EXECUTE_ST_FIRST_B;
         };

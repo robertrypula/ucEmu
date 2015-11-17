@@ -13,7 +13,7 @@ var Logger = (function () {
                 document.write("&nbsp;");
             }
             strParsed = str.replace(/\n/g, '<br/>');
-            strParsed = str.replace(/ /g, '&nbsp;');
+            strParsed = strParsed.replace(/ /g, '&nbsp;');
             document.write(strParsed + "<br/>");
         }
 
@@ -38,10 +38,15 @@ var Logger = (function () {
             return $$verbose;
         }
 
+        function isEnabled() {
+            return $$verbose >= 0;
+        }
+
         return {
             log: log,
             getVerbose: getVerbose,
-            setVerbose: setVerbose
+            setVerbose: setVerbose,
+            isEnabled: isEnabled
         };
     }
 

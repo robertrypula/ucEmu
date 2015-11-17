@@ -24,12 +24,15 @@ var StaticRam = (function () {
                 if (i > stopRow) {
                     return;
                 }
-                Logger.log(
-                    0,
-                    ' StaticRam:  ' +
-                    BitUtils.hex(i, BitUtils.BYTE_2) + ' | ' +
-                    BitUtils.hex(this.data[i], BitUtils.BYTE_4)
-                );
+
+                if (Logger.isEnabled()) {
+                    Logger.log(
+                        0,
+                        ' StaticRam:  ' +
+                        BitUtils.hex(i, BitUtils.BYTE_2) + ' | ' +
+                        BitUtils.hex(this.data[i], BitUtils.BYTE_4)
+                    );
+                }
             }
         };
 
@@ -39,20 +42,17 @@ var StaticRam = (function () {
 
         SR.prototype.setWriteEnable = function (writeEnable) {
             this.inputs.writeEnable = writeEnable ? 1 : 0;
-            this.$$update();
         };
 
         SR.prototype.setRow = function (row) {
             this.inputs.row = BitUtils.mask(row, BitUtils.BYTE_2 - BitUtils.BIT_2);
-            this.$$update();
         };
 
         SR.prototype.setDataIn = function (dataIn) {
             this.inputs.dataIn = BitUtils.mask(dataIn, BitUtils.BYTE_4);
-            this.$$update();
         };
 
-        SR.prototype.$$update = function () {
+        SR.prototype.update = function () {
             if (this.inputs.writeEnable) {
                 this.data[this.inputs.row] = this.inputs.dataIn;
             }
@@ -64,7 +64,7 @@ var StaticRam = (function () {
                     BitUtils.random(BitUtils.BYTE_4)
                 );
             }
-            this.$$update();
+            this.update();
         };
 
         return SR;

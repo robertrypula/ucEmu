@@ -39,10 +39,11 @@ var memoryState = [
     {row: 0x0001, data: [0x20, 0x00, 0x30, 0x07]},
     {row: 0x0002, data: [0x45, 0x00, 0x50, 0x00]},
     {row: 0x0003, data: [0xff, 0xff, 0x60, 0x10]},
-    {row: 0x0004, data: [0x70, 0x10, 0xaa, 0xaa]},
-    {row: 0x0005, data: [0xaa, 0xaa, 0xaa, 0xaa]},
-    {row: 0x0006, data: [0xaa, 0xaa, 0xaa, 0xaa]}
+    {row: 0x0004, data: [0x70, 0x10, 0x55, 0x00]},
+    {row: 0x0005, data: [0x00, 0x01, 0x56, 0x00]},
+    {row: 0x0006, data: [0x00, 0x12, 0x30, 0x65]}
 ];
+Logger.setVerbose(-1);
 var cpu = new Cpu();
 var staticRam = new StaticRam(
     cpu.outputs.memoryRowAddress,
@@ -57,7 +58,13 @@ triggerCpuResetAndProgramStaticRam();
 cpu.registers.regPC = 0;
 globalUpdate();
 
+var secondsStart = new Date().getTime();
+document.write('START<br/>');
 runCpu();
+
+var secondsEnd = new Date().getTime();
+document.write('STOP<br/> ' + (secondsEnd - secondsStart) + ' ms');
+
 
 function triggerCpuResetAndProgramStaticRam()
 {
@@ -81,10 +88,14 @@ function runCpu()
 {
     var clockTicks = 0;
 
-    while (clockTicks < 30 * 10) {
+    while (clockTicks < 1000 * 1000) {      // 30
         clockTicks++;
         clockHigh();
         clockLow();
+
+        if (!Logger.isEnabled()) {
+            continue;
+        }
 
         Logger.log(1, '----> clockTicks ' + clockTicks);
         Logger.log(1, "\n");
@@ -95,6 +106,7 @@ function runCpu()
                 '                                                      ' +
                 '                               clockTicks: ' + BitUtils.hex(clockTicks, BitUtils.BYTE_4)
             );
+
             Logger.log(
                 0,
                 "------------------------------------------------------" +
@@ -108,13 +120,16 @@ function runCpu()
 function programStaticRamAndSync(memoryState)
 {
     staticRam.setWriteEnable(false);
+    staticRam.update();
     for (var i = 0; i < memoryState.length; i++) {
         var ms = memoryState[i];
 
         staticRam.setRow(ms.row);
         staticRam.setDataIn(BitUtils.byteRowTo32bit(ms.data));
         staticRam.setWriteEnable(true);
+        staticRam.update();
         staticRam.setWriteEnable(false);
+        staticRam.update();
     }
     syncCpuWithStaticRam();
 }
@@ -122,8 +137,9 @@ function programStaticRamAndSync(memoryState)
 function syncCpuWithStaticRam()
 {
     staticRam.setRow(cpu.outputs.memoryRowAddress);
-    staticRam.setWriteEnable(cpu.outputs.memoryWE);
     staticRam.setDataIn(cpu.outputs.memoryWrite);
+    staticRam.setWriteEnable(cpu.outputs.memoryWE);
+    staticRam.update();
 
     cpu.inputs.memoryRead = staticRam.getDataOut();
 }
@@ -132,14 +148,22 @@ function clockHigh()
 {
     cpu.inputs.clock = true;
     globalUpdate();
-    // cpuLog();
+
+    /*
+    if (Logger.isEnabled()) {
+        cpuLog();
+    }
+    */
 }
 
 function clockLow()
 {
     cpu.inputs.clock = false;
     globalUpdate();
-    cpuLog();
+
+    if (Logger.isEnabled()) {
+        cpuLog();
+    }
 }
 
 function globalUpdate()

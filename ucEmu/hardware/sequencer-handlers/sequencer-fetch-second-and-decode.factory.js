@@ -54,17 +54,19 @@ var SequencerFetchSecondAndDecode = (function () {
                 case OPCODES.ST: regSequencerNext = STATE.EXECUTE_ST_FIRST_A; break;
             }
 
-            Logger.log(2, ':: sequenceFetchSecondAndDecode');
-            Logger.log(3, 'memoryColumn = ' + memoryColumn);
-            Logger.log(3, 'inputs.memoryRead = ' + BitUtils.hex(this.$$cpu.inputs.memoryRead, BitUtils.BYTE_4));
-            Logger.log(3, 'shiftAmount = ' + shiftAmount);
-            Logger.log(3, 'memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
-            Logger.log(3, 'memoryFinal = ' + BitUtils.hex(memoryFinal, BitUtils.BYTE_4));
-            Logger.log(3, 'opCode = ' + opCode);
-            Logger.log(0, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
-            Logger.log(3, 'instructionByteWidth = ' + instructionByteWidth);
-            Logger.log(3, 'regPCNext = ' + BitUtils.hex(regPCNext, BitUtils.BYTE_2));
-            Logger.log(3, 'regSequencerNext = ' + BitUtils.hex(regSequencerNext, BitUtils.BYTE_HALF));
+            if (Logger.isEnabled()) {
+                Logger.log(2, ':: sequenceFetchSecondAndDecode');
+                Logger.log(3, 'memoryColumn = ' + memoryColumn);
+                Logger.log(3, 'inputs.memoryRead = ' + BitUtils.hex(this.$$cpu.inputs.memoryRead, BitUtils.BYTE_4));
+                Logger.log(3, 'shiftAmount = ' + shiftAmount);
+                Logger.log(3, 'memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
+                Logger.log(3, 'memoryFinal = ' + BitUtils.hex(memoryFinal, BitUtils.BYTE_4));
+                Logger.log(3, 'opCode = ' + opCode);
+                Logger.log(0, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
+                Logger.log(3, 'instructionByteWidth = ' + instructionByteWidth);
+                Logger.log(3, 'regPCNext = ' + BitUtils.hex(regPCNext, BitUtils.BYTE_2));
+                Logger.log(3, 'regSequencerNext = ' + BitUtils.hex(regSequencerNext, BitUtils.BYTE_HALF));
+            }
 
             this.$$cpu.registers.regInstruction = memoryFinal;
             this.$$cpu.core.registerSet.setProgramCounter(regPCNext);
