@@ -6,16 +6,24 @@
             + [1.00h] remove dumpHex and use hex
             + [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
             + [0.75h] service for logging with verbose levels
-            - [0.50h] move inputs at the top of the log, and header like 'Cpu state after blablba'
+            - [0.50h] add aliases for cpu internals at abstract-sequencer-handler, CHECK PERFORNANCE
+            - [0.50h] rename sequencer handler to some microCode blabla?
+                        - sequencer -> control-unit
+                        - serquencer-handler -> ucode
+                        - handler@sequencer -> controlStore
+                        - STATE@seqauencer -> SEQUENCER_STATE
+                        - STATE@sequencerBuilder -> ?
+                        - state param @sequencerBuilder.build() -> ?
             - [0.25h] WE and with clock (B positive clock, C negative clock)
-            - [0.75h] rename sequencer handler to some microCode blabla?
-               still needed total: 1.50h
+            - [0.50h] move inputs at the top of the log, and header like 'Cpu state after blablba'
+               still needed total: 1.75h
 
                 :: fun starts here ::
             - [2.00h] create MainBoard factory instead boot.js - first step only move existing functionality
             - [x.xxh] fix load instruction to access Timer
             - [2.00h] signal class?
             - [x.xxh] module approach with update and input changed checking
+                        - Signals at module.input[] should have reference to parent module to run update() method
 
         Integrate IO with existing code for dot matrix and keyboard
             - [x.xxh] MainBoard should expose programming interface and events when input/output was changed
@@ -56,7 +64,7 @@ cpuLog();
 
 triggerCpuResetAndProgramStaticRam();
 
-cpu.registers.regPC = 0;
+cpu.register.regPC = 0;
 cpu.update();
 syncCpuWithStaticRam();
 
@@ -90,10 +98,10 @@ function runCpu()
 {
     var clockTicks = 0;
 
-    // 3.8 emulated MHz @ 3.6 GHz real cpu    
-    //         -> JavaScript requires 1000 cycler per each emulated cycle
+    // 3.95 emulated MHz @ 3.6 GHz real cpu    
+    //         -> JavaScript requires ~1000 cycler per each emulated cycle
 
-    while (clockTicks < Math.round(3.8 * 1000 * 1000)) {      // 30              
+    while (clockTicks < Math.round(3.95 * 1000 * 1000)) {      // 30              
         clockTicks++;
         clockHigh();
         clockLow();
@@ -105,7 +113,7 @@ function runCpu()
         Logger.log(1, '----> clockTicks ' + clockTicks);
         Logger.log(1, "\n");
         
-        if (cpu.registers.regSequencer == cpu.core.sequencer.STATE.FETCH_FIRST) {
+        if (cpu.register.regSequencer == cpu.core.sequencer.STATE.FETCH_FIRST) {
             Logger.log(
                 0, 
                 '                                                      ' +
@@ -176,7 +184,7 @@ function clockLow()
 function cpuLog()
 {
     var rs = cpu.core.registerSet,
-        r = cpu.registers;
+        r = cpu.register;
 
     Logger.log(
         1,

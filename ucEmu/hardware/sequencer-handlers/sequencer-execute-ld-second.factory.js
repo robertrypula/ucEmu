@@ -22,7 +22,7 @@ var SequencerExecuteLdSecond = (function () {
             memoryColumn = BitUtils.mask(regIn0Value, BitUtils.BIT_2);
             shiftAmount = (4 - memoryColumn) * BitUtils.BYTE_1;
             memoryReadShifted = BitUtils.shiftRight(this.$$cpu.inputs.memoryRead, shiftAmount);
-            regMANext = BitUtils.shiftRight(memoryReadShifted | this.$$cpu.registers.regMemory, BitUtils.BYTE_2);
+            regMANext = BitUtils.shiftRight(memoryReadShifted | this.$$cpu.register.regMemory, BitUtils.BYTE_2);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequencerExecuteLdSecond');
@@ -36,7 +36,7 @@ var SequencerExecuteLdSecond = (function () {
             }
 
             this.$$cpu.core.registerSet.setMemoryAccess(regMANext);
-            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
+            this.$$cpu.register.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
         };
 
         SELS.prototype.$$updateOutputMemoryRowAddress = function () {

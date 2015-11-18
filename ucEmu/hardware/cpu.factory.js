@@ -88,7 +88,7 @@ var Cpu = (function () {
             this.core = null;
             this.inputs = null;
             this.outputs = null;
-            this.registers = null;
+            this.register = null;
             this.$$clockPrevious = null;
 
             this.$$initialize();
@@ -115,12 +115,12 @@ var Cpu = (function () {
                 memoryWE: 0
             };
 
-            this.registers = {
-                // control registers
+            this.register = {
+                // control register
                 regSequencer: BitUtils.random(BitUtils.BYTE_HALF),
                 regInstruction: BitUtils.random(BitUtils.BYTE_4),
 
-                // input helper registers
+                // input helper register
                 regReset: BitUtils.random(BitUtils.BIT_1),
                 regMemory: BitUtils.random(BitUtils.BYTE_4),
 
@@ -154,12 +154,12 @@ var Cpu = (function () {
         C.prototype.$$clockHighToLow = function () {
             var resetOccurred = false;
 
-            if (this.registers.regReset) {
+            if (this.register.regReset) {
                 this.$$performRegistersReset();
                 resetOccurred = true;
             }
 
-            this.registers.regReset = this.inputs.reset;         // store current input
+            this.register.regReset = this.inputs.reset;         // store current input
             if (resetOccurred) {
                 return;
             }
@@ -170,11 +170,11 @@ var Cpu = (function () {
         C.prototype.$$performRegistersReset = function () {
             this.core.registerSet.reset();
 
-            this.registers.regSequencer = 0;
-            this.registers.regInstruction = 0;
+            this.register.regSequencer = 0;
+            this.register.regInstruction = 0;
 
-            this.registers.regMemory = 0;
-            this.registers.regTimer = 0;
+            this.register.regMemory = 0;
+            this.register.regTimer = 0;
 
             // !!! regReset register is excluded from reset !!!
         };

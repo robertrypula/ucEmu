@@ -10,16 +10,14 @@ var RegisterSet = (function () {
             this.REGISTERS_SIZE = 16;
             this.PROGRAM_COUNTER_INDEX = this.REGISTERS_SIZE - 1;
             this.MEMORY_ACCESS_INDEX = this.REGISTERS_SIZE - 2;
-            this.registers = [];
+            this.register = new Uint32Array(this.REGISTERS_SIZE);   // accually we need only 16bits
 
             this.$$initialize();
         };
 
         RS.prototype.$$initialize = function () {
             for (var i = 0; i < this.REGISTERS_SIZE; i++) {
-                this.registers.push(
-                    BitUtils.random(BitUtils.BYTE_2)
-                );
+                this.register[i] = BitUtils.random(BitUtils.BYTE_2);
             }
         };
 
@@ -54,12 +52,12 @@ var RegisterSet = (function () {
         RS.prototype.read = function (number) {
             //this.$$checkRange(number, 'read');
 
-            return this.registers[number];
+            return this.register[number];
         };
 
         RS.prototype.save = function (number, value) {
             //this.$$checkRange(number, 'save');
-            this.registers[number] = BitUtils.mask(value, BitUtils.BYTE_2);
+            this.register[number] = BitUtils.mask(value, BitUtils.BYTE_2);
         };
 
         return RS;

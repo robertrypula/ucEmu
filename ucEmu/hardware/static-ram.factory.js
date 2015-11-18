@@ -60,9 +60,7 @@ var StaticRam = (function () {
 
         SR.prototype.$$initialize = function () {
             for (var i = 0; i < this.ROWS_COUNT; i++) {
-                this.data[
-                    BitUtils.random(BitUtils.BYTE_4)
-                ];
+                this.data[i] = BitUtils.random(BitUtils.BYTE_4);
             }
             this.update();
         };

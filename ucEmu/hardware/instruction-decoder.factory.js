@@ -9,8 +9,9 @@ var InstructionDecoder = (function () {
         ID = function (cpu) {
             CpuAware.apply(this, arguments);
 
-            this.OPCODES = null;
+            this.OPCODE = null;
             this.$$instructionSet = [];
+            this.$$byteWidthLookup;
             
             this.$$initialize();
         };
@@ -21,10 +22,11 @@ var InstructionDecoder = (function () {
         ID.prototype.$$initialize = function () {
             this.$$initializeOpcode();
             this.$$initializeInstructionSet();
+            this.$$buildByteWidthLookup();
         };
 
         ID.prototype.$$initializeOpcode = function () {
-            this.OPCODES = {
+            this.OPCODE = {
                 ADD: 0,
                 NAND: 1,
                 SH: 2,
@@ -38,15 +40,23 @@ var InstructionDecoder = (function () {
 
         ID.prototype.$$initializeInstructionSet = function () {
             this.$$instructionSet.push(
-                { opcode: this.OPCODES.ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
-                { opcode: this.OPCODES.NAND, cycles: null, byteWidth: 2, name: 'nand', nameFull: 'Bitwise NAND' },
-                { opcode: this.OPCODES.SH, cycles: null, byteWidth: 2, name: 'sh',  nameFull: "Logical bit shift" },
-                { opcode: this.OPCODES.JNZ, cycles: null, byteWidth: 2, name: 'jnz', nameFull: "Jump if not zero" },
-                { opcode: this.OPCODES.COPY, cycles: null, byteWidth: 2, name: 'copy', nameFull: "Copy" },
-                { opcode: this.OPCODES.IMM, cycles: null, byteWidth: 4, name: 'imm', nameFull: "Immediate value" },
-                { opcode: this.OPCODES.LD, cycles: null, byteWidth: 2, name: 'ld', nameFull: "Load" },
-                { opcode: this.OPCODES.ST, cycles: null, byteWidth: 2, name: 'st', nameFull: "Store" }
+                { opcode: this.OPCODE.ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
+                { opcode: this.OPCODE.NAND, cycles: null, byteWidth: 2, name: 'nand', nameFull: 'Bitwise NAND' },
+                { opcode: this.OPCODE.SH, cycles: null, byteWidth: 2, name: 'sh',  nameFull: "Logical bit shift" },
+                { opcode: this.OPCODE.JNZ, cycles: null, byteWidth: 2, name: 'jnz', nameFull: "Jump if not zero" },
+                { opcode: this.OPCODE.COPY, cycles: null, byteWidth: 2, name: 'copy', nameFull: "Copy" },
+                { opcode: this.OPCODE.IMM, cycles: null, byteWidth: 4, name: 'imm', nameFull: "Immediate value" },
+                { opcode: this.OPCODE.LD, cycles: null, byteWidth: 2, name: 'ld', nameFull: "Load" },
+                { opcode: this.OPCODE.ST, cycles: null, byteWidth: 2, name: 'st', nameFull: "Store" }
             );
+        };
+
+        ID.prototype.$$buildByteWidthLookup = function () {
+            this.$$byteWidthLookup = new Uint8Array(this.$$instructionSet.length);
+
+            for (var i = 0; i < this.$$instructionSet.length; i++) {
+                this.$$byteWidthLookup[i] = this.$$instructionSet[i].byteWidth;
+            }
         };
 
         ID.prototype.$$checkOpcode = function(opcode, method) {
@@ -59,7 +69,7 @@ var InstructionDecoder = (function () {
             //this.$$checkCpu();
 
             return BitUtils.shiftRight(
-                this.$$cpu.registers.regInstruction & 0x70000000, 
+                this.$$cpu.register.regInstruction & 0x70000000, 
                 BitUtils.BYTE_3 + BitUtils.BYTE_HALF
             );
         };
@@ -68,7 +78,7 @@ var InstructionDecoder = (function () {
             //this.$$checkCpu();
 
             return BitUtils.shiftRight(
-                this.$$cpu.registers.regInstruction & 0x0F000000, 
+                this.$$cpu.register.regInstruction & 0x0F000000, 
                 BitUtils.BYTE_3
             );
         };
@@ -77,7 +87,7 @@ var InstructionDecoder = (function () {
             //this.$$checkCpu();
 
             return BitUtils.shiftRight(
-                this.$$cpu.registers.regInstruction & 0x00F00000, 
+                this.$$cpu.register.regInstruction & 0x00F00000, 
                 BitUtils.BYTE_2 + BitUtils.BYTE_HALF
             );
         };
@@ -86,7 +96,7 @@ var InstructionDecoder = (function () {
             //this.$$checkCpu();
 
             return BitUtils.shiftRight(
-                this.$$cpu.registers.regInstruction & 0x000F0000, 
+                this.$$cpu.register.regInstruction & 0x000F0000, 
                 BitUtils.BYTE_2
             );
         };
@@ -94,7 +104,11 @@ var InstructionDecoder = (function () {
         ID.prototype.getImm = function () {
             //this.$$checkCpu();
             
-            return this.$$cpu.registers.regInstruction & 0x0000FFFF;
+            return this.$$cpu.register.regInstruction & 0x0000FFFF;
+        };
+
+        ID.prototype.getByteWidth = function (opcode) {
+            return this.$$byteWidthLookup[opcode];
         };
 
         ID.prototype.getInstruction = function (opcode) {

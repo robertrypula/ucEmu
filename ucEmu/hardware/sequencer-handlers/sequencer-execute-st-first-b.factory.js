@@ -19,7 +19,7 @@ var SequencerExecuteStFirstB = (function () {
                 Logger.log(2, ':: sequencerExecuteStFirstB');
             }
 
-            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.EXECUTE_ST_FIRST_C;
+            this.$$cpu.register.regSequencer = this.$$cpu.core.sequencer.STATE.EXECUTE_ST_FIRST_C;
         };
 
         return SESFB;

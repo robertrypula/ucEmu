@@ -33,7 +33,7 @@ var SequencerExecuteJnz = (function () {
                 Logger.log(3, 'regPCNext = ' + BitUtils.hex(regPCNext, BitUtils.BYTE_2));
             }
 
-            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
+            this.$$cpu.register.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
             this.$$cpu.core.registerSet.setProgramCounter(regPCNext);
         };
 

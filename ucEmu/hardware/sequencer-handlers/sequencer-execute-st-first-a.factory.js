@@ -20,11 +20,11 @@ var SequencerExecuteStFirstA = (function () {
 
     :: 1b
 
-        data write (WE == true and clock)
+        data write (WE == true and clock) or (!WE == false and !clock)
 
     :: 1c
 
-        data hold (WE == false)
+        data hold (WE == false and clock) or (!WE == true and !clock)
 
     :: 2a
 
@@ -38,11 +38,11 @@ var SequencerExecuteStFirstA = (function () {
 
     :: 2b
 
-        data write (WE == true and clock)
+        data write (WE == true and clock) or (!WE == false and !clock)
 
     :: 2c
 
-        data hold (WE == false)
+        data hold (WE == false and clock) or (!WE == true and !clock)
 
 
     |1a |1b |1c |2a |2b |2c |         store sequencer cycles
@@ -75,7 +75,7 @@ var SequencerExecuteStFirstA = (function () {
                 Logger.log(2, ':: sequencerExecuteStFirstA');
             }
 
-            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.EXECUTE_ST_FIRST_B;
+            this.$$cpu.register.regSequencer = this.$$cpu.core.sequencer.STATE.EXECUTE_ST_FIRST_B;
         };
 
         return SESFA;

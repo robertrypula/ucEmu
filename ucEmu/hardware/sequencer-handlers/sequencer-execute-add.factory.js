@@ -32,7 +32,7 @@ var SequencerExecuteAdd = (function () {
                 Logger.log(3, 'result = ' + BitUtils.hex(regResult, BitUtils.BYTE_2) + ' (sum)');
             }
 
-            this.$$cpu.registers.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
+            this.$$cpu.register.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
             this.$$cpu.core.registerSet.save(regOut, regResult);
         };
 

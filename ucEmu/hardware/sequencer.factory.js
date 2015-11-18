@@ -10,7 +10,6 @@ var Sequencer = (function () {
             CpuAware.apply(this, arguments);
 
             this.$$handler = [];
-            this.$$handlerLookup = [];
             this.STATE = {};
 
             this.$$initialize();
@@ -23,7 +22,6 @@ var Sequencer = (function () {
         S.prototype.$$initialize = function () {
             this.$$initializeState();
             this.$$initializeHandler();
-            this.$$buildHandlerLookup();
         };
 
         S.prototype.$$loopState = function (callback) {
@@ -46,13 +44,9 @@ var Sequencer = (function () {
             var self = this;
 
             this.$$loopState(function (key, state) {
-                var entry = {
-                    key: key,
-                    state: state,
-                    handler: SequencerHandlerBuilder.build(state, self.$$cpu)
-                };
-
-                self.$$handler.push(entry);
+                self.$$handler.push(
+                    SequencerHandlerBuilder.build(state, self.$$cpu)
+                );
             });
         };
 
@@ -60,17 +54,6 @@ var Sequencer = (function () {
             for (var i = 0; i < this.$$handler.length; i++) {
                 if (this.$$handler[i].handler !== null) {
                     this.$$handler[i].handler.setCpu(cpu);
-                }
-            }
-        };
-
-        S.prototype.$$buildHandlerLookup = function () {
-            this.$$handlerLookup.length = 0;
-            for (var i = 0; i < this.$$handler.length; i++) {
-                if (this.$$handler[i].handler !== null) {
-                    this.$$handlerLookup.push(
-                        this.$$handler[i].handler
-                    );
                 }
             }
         };
@@ -84,14 +67,10 @@ var Sequencer = (function () {
         S.prototype.$$getHandler = function () {
             var state;
 
-            state = this.$$cpu.registers.regSequencer;
+            state = this.$$cpu.register.regSequencer;
             //this.$$checkState(state);
 
-            if (!this.$$handler[state].handler) {
-                throw 'Sequencer handler for state ' + state + ' is not defined';
-            }
-
-            return this.$$handler[state].handler;
+            return this.$$handler[state];
 
         };
 
@@ -103,18 +82,12 @@ var Sequencer = (function () {
         S.prototype.goToNextState = function () {
             //this.$$checkCpu();
 
-            if (0) {
-                this.$$handlerLookup[this.$$cpu.registers.regSequencer].$$goToNextState(); 
-            } else {
-                this.$$getHandler().goToNextState();
-            }
+            this.$$getHandler().goToNextState();
 
-            this.$$cpu.registers.regTimer = BitUtils.mask(this.$$cpu.registers.regTimer + 1, BitUtils.BYTE_4);
+            this.$$cpu.register.regTimer = BitUtils.mask(this.$$cpu.register.regTimer + 1, BitUtils.BYTE_4);
         };
 
         S.prototype.updateOutput = function () {
-            var h = this.$$handlerLookup[this.$$cpu.registers.regSequencer];
-
             //this.$$checkCpu();
 
             if (0) {
