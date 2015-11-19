@@ -92,7 +92,12 @@ var Cpu = (function () {
             this.$$clockPrevious = null;
 
             this.$$initialize();
-            this.update();
+            this.$$update();
+        };
+
+        C.prototype.setClock = function (clock) {
+            this.inputs.clock = clock ? 1 : 0;
+            this.$$update();
         };
 
         C.prototype.$$initialize = function () {
@@ -129,7 +134,7 @@ var Cpu = (function () {
             };
         };
 
-        C.prototype.update = function () {
+        C.prototype.$$update = function () {
 
             if (this.$$clockPrevious === null) {
                 this.$$clockPrevious = this.inputs.clock;

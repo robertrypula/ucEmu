@@ -24,6 +24,8 @@
             - [2.00h] signal class?
             - [x.xxh] module approach with update and input changed checking
                         - Signals at module.input[] should have reference to parent module to run update() method
+                        - for CPU factory it means that we could remove manual update() calling - we could only watch clock input signal
+                        - module aproach is about refresing outputs after input is changed (internals are not important)
 
         Integrate IO with existing code for dot matrix and keyboard
             - [x.xxh] MainBoard should expose programming interface and events when input/output was changed
@@ -51,21 +53,19 @@ var memoryState = [
     {row: 0x0005, data: [0x00, 0x01, 0x56, 0x00]},
     {row: 0x0006, data: [0x00, 0x12, 0x30, 0x65]}
 ];
-Logger.setVerbose(-1);
+Logger.setVerbose(4);
 var cpu = new Cpu();
 var staticRam = new StaticRam(
     cpu.outputs.memoryRowAddress,
     cpu.outputs.memoryWE,
     cpu.outputs.memoryWrite
 );
-cpu.update();
 syncCpuWithStaticRam();
+cpu.setClock(false);
 cpuLog();
 
 triggerCpuResetAndProgramStaticRam();
 
-cpu.register.regPC = 0;
-cpu.update();
 syncCpuWithStaticRam();
 
 var secondsStart = new Date().getTime();
@@ -101,7 +101,7 @@ function runCpu()
     // 3.95 emulated MHz @ 3.6 GHz real cpu    
     //         -> JavaScript requires ~1000 cycler per each emulated cycle
 
-    while (clockTicks < Math.round(3.95 * 1000 * 1000)) {      // 30              
+    while (clockTicks < 30) {//Math.round(3.95 * 1000 * 1000)) {      // 30              
         clockTicks++;
         clockHigh();
         clockLow();
@@ -132,17 +132,16 @@ function runCpu()
 
 function programStaticRamAndSync(memoryState)
 {
-    staticRam.setWriteEnable(false);
-    staticRam.update();
     for (var i = 0; i < memoryState.length; i++) {
         var ms = memoryState[i];
 
+        staticRam.setWriteEnable(false);
+
         staticRam.setRow(ms.row);
         staticRam.setDataIn(BitUtils.byteRowTo32bit(ms.data));
+
         staticRam.setWriteEnable(true);
-        staticRam.update();
         staticRam.setWriteEnable(false);
-        staticRam.update();
     }
     syncCpuWithStaticRam();
 }
@@ -152,15 +151,13 @@ function syncCpuWithStaticRam()
     staticRam.setRow(cpu.outputs.memoryRowAddress);
     staticRam.setDataIn(cpu.outputs.memoryWrite);
     staticRam.setWriteEnable(cpu.outputs.memoryWE);
-    staticRam.update();
 
     cpu.inputs.memoryRead = staticRam.getDataOut();
 }
 
 function clockHigh()
 {
-    cpu.inputs.clock = true;
-    cpu.update();
+    cpu.setClock(true);
     syncCpuWithStaticRam();
 
     /*
@@ -172,8 +169,7 @@ function clockHigh()
 
 function clockLow()
 {
-    cpu.inputs.clock = false;
-    cpu.update();
+    cpu.setClock(false);
     syncCpuWithStaticRam();
 
     if (Logger.isEnabled()) {
