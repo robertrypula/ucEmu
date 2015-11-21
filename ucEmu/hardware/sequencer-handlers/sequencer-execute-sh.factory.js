@@ -17,12 +17,12 @@ var SequencerExecuteSh = (function () {
             var regOut, regIn0, regIn1, 
                 regIn0Value, regIn1Value, regResult;
 
-            regOut = this.$$cpu.core.instructionDecoder.getRegOut();
-            regIn0 = this.$$cpu.core.instructionDecoder.getRegIn0();
-            regIn1 = this.$$cpu.core.instructionDecoder.getRegIn1();
-            regIn0Value = this.$$cpu.core.registerSet.read(regIn0);
-            regIn1Value = this.$$cpu.core.registerSet.read(regIn1);
-            regResult = this.$$cpu.core.alu.sh(regIn0Value, regIn1Value);
+            regOut = this.$$insDec.getRegOut();
+            regIn0 = this.$$insDec.getRegIn0();
+            regIn1 = this.$$insDec.getRegIn1();
+            regIn0Value = this.$$regSet.read(regIn0);
+            regIn1Value = this.$$regSet.read(regIn1);
+            regResult = this.$$alu.sh(regIn0Value, regIn1Value);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequencerExecuteSh');
@@ -32,8 +32,8 @@ var SequencerExecuteSh = (function () {
                 Logger.log(3, 'result = ' + BitUtils.hex(regResult, BitUtils.BYTE_2) + ' (BIT SHIFT)');
             }
 
-            this.$$cpu.register.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
-            this.$$cpu.core.registerSet.save(regOut, regResult);
+            this.$$reg.regSequencer = this.$$seqSTATE.FETCH_FIRST;
+            this.$$regSet.save(regOut, regResult);
         };
 
         return SES;

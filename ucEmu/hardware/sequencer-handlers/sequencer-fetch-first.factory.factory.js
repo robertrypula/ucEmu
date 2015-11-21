@@ -16,23 +16,23 @@ var SequencerFetchFirst = (function () {
         SFF.prototype.$$goToNextState = function () {
             var memoryColumn, memoryReadShifted;
 
-            memoryColumn = BitUtils.mask(this.$$cpu.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
-            memoryReadShifted = BitUtils.shiftLeft(this.$$cpu.inputs.memoryRead, memoryColumn * BitUtils.BYTE_1);
+            memoryColumn = BitUtils.mask(this.$$regSet.getProgramCounter(), BitUtils.BIT_2);
+            memoryReadShifted = BitUtils.shiftLeft(this.$$in.memoryRead, memoryColumn * BitUtils.BYTE_1);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequenceFetchFirst');
                 Logger.log(3, 'memoryColumn = ' + memoryColumn);
-                Logger.log(3, 'inputs.memoryRead = ' + BitUtils.hex(this.$$cpu.inputs.memoryRead, BitUtils.BYTE_4));
+                Logger.log(3, 'inputs.memoryRead = ' + BitUtils.hex(this.$$in.memoryRead, BitUtils.BYTE_4));
                 Logger.log(3, 'memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
             }
 
-            this.$$cpu.register.regMemory = memoryReadShifted;
-            this.$$cpu.register.regInstruction = memoryReadShifted;              // TODO check it, this may be redundant with regMemory
-            this.$$cpu.register.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_SECOND_AND_DECODE;
+            this.$$reg.regMemory = memoryReadShifted;
+            this.$$reg.regInstruction = memoryReadShifted;              // TODO check it, this may be redundant with regMemory
+            this.$$reg.regSequencer = this.$$seqSTATE.FETCH_SECOND_AND_DECODE;
         };
 
         SFF.prototype.$$updateOutputMemoryRowAddress = function () {
-            this.$$cpu.outputs.memoryRowAddress = BitUtils.shiftRight(this.$$cpu.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
+            this.$$out.memoryRowAddress = BitUtils.shiftRight(this.$$regSet.getProgramCounter(), BitUtils.BIT_2);
         };
 
         return SFF;

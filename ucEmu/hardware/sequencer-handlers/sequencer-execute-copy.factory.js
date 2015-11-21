@@ -16,9 +16,9 @@ var SequencerExecuteCopy = (function () {
         SEC.prototype.$$goToNextState = function () {
             var regOut, regIn0, regIn0Value;
 
-            regOut = this.$$cpu.core.instructionDecoder.getRegOut();
-            regIn0 = this.$$cpu.core.instructionDecoder.getRegIn0();
-            regIn0Value = this.$$cpu.core.registerSet.read(regIn0);
+            regOut = this.$$insDec.getRegOut();
+            regIn0 = this.$$insDec.getRegIn0();
+            regIn0Value = this.$$regSet.read(regIn0);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequencerExecuteCopy');
@@ -26,8 +26,8 @@ var SequencerExecuteCopy = (function () {
                 Logger.log(3, 'regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2) + " (COPY, save regIn0Value at regOut)");
             }
 
-            this.$$cpu.register.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
-            this.$$cpu.core.registerSet.save(regOut, regIn0Value);
+            this.$$reg.regSequencer = this.$$seqSTATE.FETCH_FIRST;
+            this.$$regSet.save(regOut, regIn0Value);
         };
 
         return SEC;

@@ -16,8 +16,8 @@ var SequencerExecuteImm = (function () {
         SEI.prototype.$$goToNextState = function () {
             var regOut, imm;
 
-            regOut = this.$$cpu.core.instructionDecoder.getRegOut();
-            imm = this.$$cpu.core.instructionDecoder.getImm();
+            regOut = this.$$insDec.getRegOut();
+            imm = this.$$insDec.getImm();
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequencerExecuteImm');
@@ -25,8 +25,8 @@ var SequencerExecuteImm = (function () {
                 Logger.log(3, 'imm = ' + BitUtils.hex(imm, BitUtils.BYTE_2) + " (store immediate value at regOut)");
             }
 
-            this.$$cpu.register.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
-            this.$$cpu.core.registerSet.save(regOut, imm);
+            this.$$reg.regSequencer = this.$$seqSTATE.FETCH_FIRST;
+            this.$$regSet.save(regOut, imm);
         };
 
         return SEI;

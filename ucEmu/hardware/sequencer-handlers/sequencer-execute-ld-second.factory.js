@@ -17,35 +17,35 @@ var SequencerExecuteLdSecond = (function () {
             var regIn0, regIn0Value, memoryColumn, shiftAmount,
                 memoryReadShifted, regMANext;
             
-            regIn0 = this.$$cpu.core.instructionDecoder.getRegIn0();
-            regIn0Value = this.$$cpu.core.registerSet.read(regIn0);
+            regIn0 = this.$$insDec.getRegIn0();
+            regIn0Value = this.$$regSet.read(regIn0);
             memoryColumn = BitUtils.mask(regIn0Value, BitUtils.BIT_2);
             shiftAmount = (4 - memoryColumn) * BitUtils.BYTE_1;
-            memoryReadShifted = BitUtils.shiftRight(this.$$cpu.inputs.memoryRead, shiftAmount);
-            regMANext = BitUtils.shiftRight(memoryReadShifted | this.$$cpu.register.regMemory, BitUtils.BYTE_2);
+            memoryReadShifted = BitUtils.shiftRight(this.$$in.memoryRead, shiftAmount);
+            regMANext = BitUtils.shiftRight(memoryReadShifted | this.$$reg.regMemory, BitUtils.BYTE_2);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequencerExecuteLdSecond');
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2));
                 Logger.log(3, 'memoryColumn = ' + memoryColumn);
-                Logger.log(3, 'inputs.memoryRead = ' + BitUtils.hex(this.$$cpu.inputs.memoryRead, BitUtils.BYTE_4));
+                Logger.log(3, 'inputs.memoryRead = ' + BitUtils.hex(this.$$in.memoryRead, BitUtils.BYTE_4));
                 Logger.log(3, 'shiftAmount = ' + shiftAmount);
                 Logger.log(3, 'memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
                 Logger.log(3, 'regMANext = ' + BitUtils.hex(regMANext, BitUtils.BYTE_2));
             }
 
-            this.$$cpu.core.registerSet.setMemoryAccess(regMANext);
-            this.$$cpu.register.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
+            this.$$regSet.setMemoryAccess(regMANext);
+            this.$$reg.regSequencer = this.$$seqSTATE.FETCH_FIRST;
         };
 
         SELS.prototype.$$updateOutputMemoryRowAddress = function () {
             var regIn0, regIn0Value;
 
-            regIn0 = this.$$cpu.core.instructionDecoder.getRegIn0();
-            regIn0Value = this.$$cpu.core.registerSet.read(regIn0);
+            regIn0 = this.$$insDec.getRegIn0();
+            regIn0Value = this.$$regSet.read(regIn0);
 
-            this.$$cpu.outputs.memoryRowAddress = BitUtils.shiftRight(regIn0Value, BitUtils.BIT_2) + 1;
+            this.$$out.memoryRowAddress = BitUtils.shiftRight(regIn0Value, BitUtils.BIT_2) + 1;
         };
 
         return SELS;

@@ -17,12 +17,12 @@ var SequencerExecuteJnz = (function () {
             var regIn0, regIn1, regIn0Value, regIn1Value,
                 notZeroFlag, regPCNext;
 
-            regIn0 = this.$$cpu.core.instructionDecoder.getRegIn0();
-            regIn1 = this.$$cpu.core.instructionDecoder.getRegIn1();
-            regIn0Value = this.$$cpu.core.registerSet.read(regIn0);
-            regIn1Value = this.$$cpu.core.registerSet.read(regIn1);
+            regIn0 = this.$$insDec.getRegIn0();
+            regIn1 = this.$$insDec.getRegIn1();
+            regIn0Value = this.$$regSet.read(regIn0);
+            regIn1Value = this.$$regSet.read(regIn1);
             notZeroFlag = regIn1Value !== 0;
-            regPCNext = notZeroFlag ? regIn0Value : this.$$cpu.core.registerSet.getProgramCounter();
+            regPCNext = notZeroFlag ? regIn0Value : this.$$regSet.getProgramCounter();
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequencerExecuteJnz');
@@ -33,8 +33,8 @@ var SequencerExecuteJnz = (function () {
                 Logger.log(3, 'regPCNext = ' + BitUtils.hex(regPCNext, BitUtils.BYTE_2));
             }
 
-            this.$$cpu.register.regSequencer = this.$$cpu.core.sequencer.STATE.FETCH_FIRST;
-            this.$$cpu.core.registerSet.setProgramCounter(regPCNext);
+            this.$$reg.regSequencer = this.$$seqSTATE.FETCH_FIRST;
+            this.$$regSet.setProgramCounter(regPCNext);
         };
 
         return SEJ;

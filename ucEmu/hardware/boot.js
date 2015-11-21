@@ -53,7 +53,7 @@ var memoryState = [
     {row: 0x0005, data: [0x00, 0x01, 0x56, 0x00]},
     {row: 0x0006, data: [0x00, 0x12, 0x30, 0x65]}
 ];
-Logger.setVerbose(4);
+Logger.setVerbose(-1);
 var cpu = new Cpu();
 var staticRam = new StaticRam(
     cpu.outputs.memoryRowAddress,
@@ -101,7 +101,7 @@ function runCpu()
     // 3.95 emulated MHz @ 3.6 GHz real cpu    
     //         -> JavaScript requires ~1000 cycler per each emulated cycle
 
-    while (clockTicks < 30) {//Math.round(3.95 * 1000 * 1000)) {      // 30              
+    while (clockTicks < Math.round(4.3 * 1000 * 1000)) {      // 30
         clockTicks++;
         clockHigh();
         clockLow();

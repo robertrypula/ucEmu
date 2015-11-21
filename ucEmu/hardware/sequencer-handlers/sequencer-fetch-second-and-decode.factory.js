@@ -27,39 +27,34 @@ var SequencerFetchSecondAndDecode = (function () {
 
         SFSAD.prototype.$$goToNextState = function () {
             var memoryColumn, shiftAmount, memoryReadShifted, memoryFinal,
-                opCode, instruction, instructionByteWidth,
-                regPCNext, regSequencerNext,
-                ID, OPCODE, STATE;
+                opCode, instructionByteWidth,
+                regPCNext, regSequencerNext;
 
-            ID = this.$$cpu.core.instructionDecoder;
-            OPCODE = ID.OPCODE;
-            STATE = this.$$cpu.core.sequencer.STATE;
-
-            memoryColumn = BitUtils.mask(this.$$cpu.core.registerSet.getProgramCounter(), BitUtils.BIT_2);
+            memoryColumn = BitUtils.mask(this.$$regSet.getProgramCounter(), BitUtils.BIT_2);
             shiftAmount = (4 - memoryColumn) * BitUtils.BYTE_1;
-            memoryReadShifted = BitUtils.shiftRight(this.$$cpu.inputs.memoryRead, shiftAmount);
-            memoryFinal = memoryReadShifted | this.$$cpu.register.regMemory;
-            opCode = ID.getOpcode();
-            // instruction = ID.getInstruction(opCode);
-            instructionByteWidth = ID.getByteWidth(opCode);
-            regPCNext = BitUtils.mask(this.$$cpu.core.registerSet.getProgramCounter() + instructionByteWidth, BitUtils.BYTE_2);
+            memoryReadShifted = BitUtils.shiftRight(this.$$in.memoryRead, shiftAmount);
+            memoryFinal = memoryReadShifted | this.$$reg.regMemory;
+            opCode = this.$$insDec.getOpcode();
+            // instruction = this.$$insDec.getInstruction(opCode);
+            instructionByteWidth = this.$$insDec.getByteWidth(opCode);
+            regPCNext = BitUtils.mask(this.$$regSet.getProgramCounter() + instructionByteWidth, BitUtils.BYTE_2);
             regSequencerNext = 0;
 
             switch (opCode) {
-                case OPCODE.ADD: regSequencerNext = STATE.EXECUTE_ADD; break;
-                case OPCODE.NAND: regSequencerNext = STATE.EXECUTE_NAND; break;
-                case OPCODE.SH: regSequencerNext = STATE.EXECUTE_SH; break;
-                case OPCODE.JNZ: regSequencerNext = STATE.EXECUTE_JNZ; break;
-                case OPCODE.COPY: regSequencerNext = STATE.EXECUTE_COPY; break;
-                case OPCODE.IMM: regSequencerNext = STATE.EXECUTE_IMM; break;
-                case OPCODE.LD: regSequencerNext = STATE.EXECUTE_LD_FIRST; break;
-                case OPCODE.ST: regSequencerNext = STATE.EXECUTE_ST_FIRST_A; break;
+                case this.$$insDecOPCODE.ADD: regSequencerNext = this.$$seqSTATE.EXECUTE_ADD; break;
+                case this.$$insDecOPCODE.NAND: regSequencerNext = this.$$seqSTATE.EXECUTE_NAND; break;
+                case this.$$insDecOPCODE.SH: regSequencerNext = this.$$seqSTATE.EXECUTE_SH; break;
+                case this.$$insDecOPCODE.JNZ: regSequencerNext = this.$$seqSTATE.EXECUTE_JNZ; break;
+                case this.$$insDecOPCODE.COPY: regSequencerNext = this.$$seqSTATE.EXECUTE_COPY; break;
+                case this.$$insDecOPCODE.IMM: regSequencerNext = this.$$seqSTATE.EXECUTE_IMM; break;
+                case this.$$insDecOPCODE.LD: regSequencerNext = this.$$seqSTATE.EXECUTE_LD_FIRST; break;
+                case this.$$insDecOPCODE.ST: regSequencerNext = this.$$seqSTATE.EXECUTE_ST_FIRST_A; break;
             }
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequenceFetchSecondAndDecode');
                 Logger.log(3, 'memoryColumn = ' + memoryColumn);
-                Logger.log(3, 'inputs.memoryRead = ' + BitUtils.hex(this.$$cpu.inputs.memoryRead, BitUtils.BYTE_4));
+                Logger.log(3, 'inputs.memoryRead = ' + BitUtils.hex(this.$$in.memoryRead, BitUtils.BYTE_4));
                 Logger.log(3, 'shiftAmount = ' + shiftAmount);
                 Logger.log(3, 'memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
                 Logger.log(3, 'memoryFinal = ' + BitUtils.hex(memoryFinal, BitUtils.BYTE_4));
@@ -70,14 +65,14 @@ var SequencerFetchSecondAndDecode = (function () {
                 Logger.log(3, 'regSequencerNext = ' + BitUtils.hex(regSequencerNext, BitUtils.BYTE_HALF));
             }
 
-            this.$$cpu.register.regInstruction = memoryFinal;
-            this.$$cpu.core.registerSet.setProgramCounter(regPCNext);
-            this.$$cpu.register.regSequencer = regSequencerNext;
+            this.$$reg.regInstruction = memoryFinal;
+            this.$$regSet.setProgramCounter(regPCNext);
+            this.$$reg.regSequencer = regSequencerNext;
         };
 
 
         SFSAD.prototype.$$updateOutputMemoryRowAddress = function () {
-            this.$$cpu.outputs.memoryRowAddress = BitUtils.shiftRight(this.$$cpu.core.registerSet.getProgramCounter(), BitUtils.BIT_2) + 1;
+            this.$$out.memoryRowAddress = BitUtils.shiftRight(this.$$regSet.getProgramCounter(), BitUtils.BIT_2) + 1;
         };
 
         return SFSAD;
