@@ -1,19 +1,19 @@
-var SequencerExecuteImm = (function () {
+var MicrocodeExecuteImm = (function () {
     'use strict';
 
-    _SequencerExecuteImm.$inject = [];
+    _MicrocodeExecuteImm.$inject = [];
 
-    function _SequencerExecuteImm() {
-        var SEI;
+    function _MicrocodeExecuteImm() {
+        var MEI;
 
-        SEI = function (cpu) {
-            AbstractSequencerHandler.apply(this, arguments);
+        MEI = function (cpu) {
+            AbstractMicrocode.apply(this, arguments);
         };
 
-        SEI.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SEI.prototype.constructor = SEI;
+        MEI.prototype = Object.create(AbstractMicrocode.prototype);
+        MEI.prototype.constructor = MEI;
 
-        SEI.prototype.$$goToNextState = function () {
+        MEI.prototype.$$goToNextState = function () {
             var regOut, imm;
 
             regOut = this.$$insDec.getRegOut();
@@ -29,9 +29,9 @@ var SequencerExecuteImm = (function () {
             this.$$regSet.save(regOut, imm);
         };
 
-        return SEI;
+        return MEI;
     }
 
-    return _SequencerExecuteImm();        // TODO change it do dependency injection
+    return _MicrocodeExecuteImm();        // TODO change it do dependency injection
 
 })();

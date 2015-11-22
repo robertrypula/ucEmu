@@ -1,19 +1,19 @@
-var SequencerExecuteLdFirst = (function () {
+var MicrocodeExecuteLdFirst = (function () {
     'use strict';
 
-    _SequencerExecuteLdFirst.$inject = [];
+    _MicrocodeExecuteLdFirst.$inject = [];
 
-    function _SequencerExecuteLdFirst() {
-        var SELF;
+    function _MicrocodeExecuteLdFirst() {
+        var MELF;
 
-        SELF = function (cpu) {
-            AbstractSequencerHandler.apply(this, arguments);
+        MELF = function (cpu) {
+            AbstractMicrocode.apply(this, arguments);
         };
 
-        SELF.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SELF.prototype.constructor = SELF;
+        MELF.prototype = Object.create(AbstractMicrocode.prototype);
+        MELF.prototype.constructor = MELF;
 
-        SELF.prototype.$$goToNextState = function () {
+        MELF.prototype.$$goToNextState = function () {
             var regIn0, regIn0Value, memoryColumn, memoryReadShifted;
 
             regIn0 = this.$$insDec.getRegIn0();
@@ -34,7 +34,7 @@ var SequencerExecuteLdFirst = (function () {
             this.$$reg.regSequencer = this.$$MICROCODE.EXECUTE_LD_SECOND;
         };
 
-        SELF.prototype.$$updateOutputMemoryRowAddress = function () {
+        MELF.prototype.$$updateOutputMemoryRowAddress = function () {
             var regIn0, regIn0Value;
 
             regIn0 = this.$$insDec.getRegIn0();
@@ -43,9 +43,9 @@ var SequencerExecuteLdFirst = (function () {
             this.$$out.memoryRowAddress = BitUtils.shiftRight(regIn0Value, BitUtils.BIT_2);
         };
 
-        return SELF;
+        return MELF;
     }
 
-    return _SequencerExecuteLdFirst();        // TODO change it do dependency injection
+    return _MicrocodeExecuteLdFirst();        // TODO change it do dependency injection
 
 })();

@@ -8,11 +8,11 @@
             + [0.75h] service for logging with verbose levels
             + [0.50h] add aliases for cpu internals at abstract-sequencer-handler, CHECK PERFORNANCE -> no change :/
             - [0.50h] rename sequencer handler to some microCode blabla?
-                        - sequencer -> control-unit
-                        - serquencer-handler -> ucode
-                        - handler@sequencer -> controlStore
-                        - STATE@seqauencer -> SEQUENCER_STATE
-                        - STATE@sequencerBuilder -> ?
+                        + sequencer -> control-unit
+                        + serquencer-handler -> ucode
+                        + handler@sequencer -> controlStore
+                        + STATE@seqauencer -> MICROCODE
+                        + STATE@sequencerBuilder -> moved to ControlUnit
                         - state param @sequencerBuilder.build() -> ?
             - [0.25h] WE and with clock (B positive clock, C negative clock)
             - [0.50h] move inputs at the top of the log, and header like 'Cpu state after blablba'
@@ -53,7 +53,7 @@ var memoryState = [
     {row: 0x0005, data: [0x00, 0x01, 0x56, 0x00]},
     {row: 0x0006, data: [0x00, 0x12, 0x30, 0x65]}
 ];
-Logger.setVerbose(-1);
+Logger.setVerbose(4);
 var cpu = new Cpu();
 var staticRam = new StaticRam(
     cpu.outputs.memoryRowAddress,
@@ -101,7 +101,7 @@ function runCpu()
     // 3.95 emulated MHz @ 3.6 GHz real cpu    
     //         -> JavaScript requires ~1000 cycler per each emulated cycle
 
-    while (clockTicks < Math.round(4.3 * 1000 * 1000)) {      // 30
+    while (clockTicks < /*Math.round(4.3 * 1000 * 1000)*/30) {      // 30
         clockTicks++;
         clockHigh();
         clockLow();
@@ -113,7 +113,7 @@ function runCpu()
         Logger.log(1, '----> clockTicks ' + clockTicks);
         Logger.log(1, "\n");
         
-        if (cpu.register.regSequencer == Sequencer.MICROCODE.FETCH_FIRST) {
+        if (cpu.register.regSequencer == ControlUnit.MICROCODE.FETCH_FIRST) {
             Logger.log(
                 0, 
                 '                                                      ' +

@@ -1,19 +1,19 @@
-var SequencerExecuteJnz = (function () {
+var MicrocodeExecuteJnz = (function () {
     'use strict';
 
-    _SequencerExecuteJnz.$inject = [];
+    _MicrocodeExecuteJnz.$inject = [];
 
-    function _SequencerExecuteJnz() {
-        var SEJ;
+    function _MicrocodeExecuteJnz() {
+        var MEJ;
 
-        SEJ = function (cpu) {
-            AbstractSequencerHandler.apply(this, arguments);
+        MEJ = function (cpu) {
+            AbstractMicrocode.apply(this, arguments);
         };
 
-        SEJ.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SEJ.prototype.constructor = SEJ;
+        MEJ.prototype = Object.create(AbstractMicrocode.prototype);
+        MEJ.prototype.constructor = MEJ;
 
-        SEJ.prototype.$$goToNextState = function () {
+        MEJ.prototype.$$goToNextState = function () {
             var regIn0, regIn1, regIn0Value, regIn1Value,
                 notZeroFlag, regPCNext;
 
@@ -37,9 +37,9 @@ var SequencerExecuteJnz = (function () {
             this.$$regSet.setProgramCounter(regPCNext);
         };
 
-        return SEJ;
+        return MEJ;
     }
 
-    return _SequencerExecuteJnz();        // TODO change it do dependency injection
+    return _MicrocodeExecuteJnz();        // TODO change it do dependency injection
 
 })();

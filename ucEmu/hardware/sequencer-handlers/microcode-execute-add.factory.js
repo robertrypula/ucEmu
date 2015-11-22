@@ -1,20 +1,20 @@
-var SequencerExecuteSh = (function () {
+var MicrocodeExecuteAdd = (function () {
     'use strict';
 
-    _SequencerExecuteSh.$inject = [];
+     _MicrocodeExecuteAdd.$inject = [];
 
-    function _SequencerExecuteSh() {
-        var SES;
+    function _MicrocodeExecuteAdd() {
+        var MEA;
 
-        SES = function (cpu) {
-            AbstractSequencerHandler.apply(this, arguments);
+        MEA = function (cpu) {
+            AbstractMicrocode.apply(this, arguments);
         };
 
-        SES.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SES.prototype.constructor = SES;
+        MEA.prototype = Object.create(AbstractMicrocode.prototype);
+        MEA.prototype.constructor = MEA;
 
-        SES.prototype.$$goToNextState = function () {
-            var regOut, regIn0, regIn1, 
+        MEA.prototype.$$goToNextState = function () {
+            var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
             regOut = this.$$insDec.getRegOut();
@@ -22,23 +22,23 @@ var SequencerExecuteSh = (function () {
             regIn1 = this.$$insDec.getRegIn1();
             regIn0Value = this.$$regSet.read(regIn0);
             regIn1Value = this.$$regSet.read(regIn1);
-            regResult = this.$$alu.sh(regIn0Value, regIn1Value);
+            regResult = this.$$alu.add(regIn0Value, regIn1Value);
 
             if (Logger.isEnabled()) {
-                Logger.log(2, ':: sequencerExecuteSh');
+                Logger.log(2, ':: sequencerExecuteAdd');
                 Logger.log(3, 'regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
                 Logger.log(3, 'regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2));
                 Logger.log(3, 'regIn1Value = ' + BitUtils.hex(regIn1Value, BitUtils.BYTE_2));
-                Logger.log(3, 'result = ' + BitUtils.hex(regResult, BitUtils.BYTE_2) + ' (BIT SHIFT)');
+                Logger.log(3, 'result = ' + BitUtils.hex(regResult, BitUtils.BYTE_2) + ' (sum)');
             }
 
             this.$$reg.regSequencer = this.$$MICROCODE.FETCH_FIRST;
             this.$$regSet.save(regOut, regResult);
         };
 
-        return SES;
+        return MEA;
     }
 
-    return _SequencerExecuteSh();        // TODO change it do dependency injection
+    return _MicrocodeExecuteAdd();        // TODO change it do dependency injection
 
 })();

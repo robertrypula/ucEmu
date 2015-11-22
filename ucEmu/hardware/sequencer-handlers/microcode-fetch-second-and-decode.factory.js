@@ -1,4 +1,4 @@
-var SequencerFetchSecondAndDecode = (function () {
+var MicrocodeFetchSecondAndDecode = (function () {
     'use strict';
 
     /*
@@ -13,19 +13,19 @@ var SequencerFetchSecondAndDecode = (function () {
      ____ ____ 0xcc 0xdd     >> 4-aCol width zero fill
     */
 
-    _SequencerFetchSecondAndDecode.$inject = [];
+    _MicrocodeFetchSecondAndDecode.$inject = [];
 
-    function _SequencerFetchSecondAndDecode() {
-        var SFSAD;
+    function _MicrocodeFetchSecondAndDecode() {
+        var MFSAD;
 
-        SFSAD = function (cpu) {
-            AbstractSequencerHandler.apply(this, arguments);
+        MFSAD = function (cpu) {
+            AbstractMicrocode.apply(this, arguments);
         };
 
-        SFSAD.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SFSAD.prototype.constructor = SFSAD;
+        MFSAD.prototype = Object.create(AbstractMicrocode.prototype);
+        MFSAD.prototype.constructor = MFSAD;
 
-        SFSAD.prototype.$$goToNextState = function () {
+        MFSAD.prototype.$$goToNextState = function () {
             var memoryColumn, shiftAmount, memoryReadShifted, memoryFinal,
                 opCode, instructionByteWidth,
                 regPCNext, regSequencerNext;
@@ -60,13 +60,13 @@ var SequencerFetchSecondAndDecode = (function () {
         };
 
 
-        SFSAD.prototype.$$updateOutputMemoryRowAddress = function () {
+        MFSAD.prototype.$$updateOutputMemoryRowAddress = function () {
             this.$$out.memoryRowAddress = BitUtils.shiftRight(this.$$regSet.getProgramCounter(), BitUtils.BIT_2) + 1;
         };
 
-        return SFSAD;
+        return MFSAD;
     }
 
-    return _SequencerFetchSecondAndDecode();        // TODO change it do dependency injection
+    return _MicrocodeFetchSecondAndDecode();        // TODO change it do dependency injection
 
 })();

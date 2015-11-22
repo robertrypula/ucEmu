@@ -1,19 +1,19 @@
-var SequencerExecuteNand = (function () {
+var MicrocodeExecuteNand = (function () {
     'use strict';
 
-    _SequencerExecuteNand.$inject = [];
+    _MicrocodeExecuteNand.$inject = [];
 
-    function _SequencerExecuteNand() {
-        var SEN;
+    function _MicrocodeExecuteNand() {
+        var MEN;
 
-        SEN = function (cpu) {
-            AbstractSequencerHandler.apply(this, arguments);
+        MEN = function (cpu) {
+            AbstractMicrocode.apply(this, arguments);
         };
 
-        SEN.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SEN.prototype.constructor = SEN;
+        MEN.prototype = Object.create(AbstractMicrocode.prototype);
+        MEN.prototype.constructor = MEN;
 
-        SEN.prototype.$$goToNextState = function () {
+        MEN.prototype.$$goToNextState = function () {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
@@ -36,9 +36,9 @@ var SequencerExecuteNand = (function () {
             this.$$regSet.save(regOut, regResult);
         };
 
-        return SEN;
+        return MEN;
     }
 
-    return _SequencerExecuteNand();        // TODO change it do dependency injection
+    return _MicrocodeExecuteNand();        // TODO change it do dependency injection
 
 })();

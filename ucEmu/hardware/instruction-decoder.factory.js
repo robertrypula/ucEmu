@@ -37,7 +37,7 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.$$initializeInstructionSet = function () {
-            var MC = Sequencer.MICROCODE;
+            var MC = ControlUnit.MICROCODE;
 
             this.$$instructionSet.push(
                 { opCode: ID.OPCODE.ADD, microcodeJump: MC.EXECUTE_ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },

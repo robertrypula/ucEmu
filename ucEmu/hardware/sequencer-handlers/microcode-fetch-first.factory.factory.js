@@ -1,19 +1,19 @@
-var SequencerFetchFirst = (function () {
+var MicrocodeFetchFirst = (function () {
     'use strict';
 
-    _SequencerFetchFirst.$inject = [];
+    _MicrocodeFetchFirst.$inject = [];
 
-    function _SequencerFetchFirst() {
-        var SFF;
+    function _MicrocodeFetchFirst() {
+        var MFF;
 
-        SFF = function (cpu) {
-            AbstractSequencerHandler.apply(this, arguments);
+        MFF = function (cpu) {
+            AbstractMicrocode.apply(this, arguments);
         };
 
-        SFF.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SFF.prototype.constructor = SFF;
+        MFF.prototype = Object.create(AbstractMicrocode.prototype);
+        MFF.prototype.constructor = MFF;
 
-        SFF.prototype.$$goToNextState = function () {
+        MFF.prototype.$$goToNextState = function () {
             var memoryColumn, memoryReadShifted;
 
             memoryColumn = BitUtils.mask(this.$$regSet.getProgramCounter(), BitUtils.BIT_2);
@@ -31,13 +31,13 @@ var SequencerFetchFirst = (function () {
             this.$$reg.regSequencer = this.$$MICROCODE.FETCH_SECOND_AND_DECODE;
         };
 
-        SFF.prototype.$$updateOutputMemoryRowAddress = function () {
+        MFF.prototype.$$updateOutputMemoryRowAddress = function () {
             this.$$out.memoryRowAddress = BitUtils.shiftRight(this.$$regSet.getProgramCounter(), BitUtils.BIT_2);
         };
 
-        return SFF;
+        return MFF;
     }
 
-    return _SequencerFetchFirst();        // TODO change it do dependency injection
+    return _MicrocodeFetchFirst();        // TODO change it do dependency injection
 
 })();

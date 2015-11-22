@@ -1,4 +1,4 @@
-var SequencerExecuteStFirstA = (function () {
+var MicrocodeExecuteStFirstA = (function () {
     'use strict';
 
     /*
@@ -57,19 +57,19 @@ var SequencerExecuteStFirstA = (function () {
 
     */
     
-    _SequencerExecuteStFirstA.$inject = [];
+    _MicrocodeExecuteStFirstA.$inject = [];
 
-    function _SequencerExecuteStFirstA() {
-        var SESFA;
+    function _MicrocodeExecuteStFirstA() {
+        var MESFA;
 
-        SESFA = function (cpu) {
-            AbstractSequencerHandler.apply(this, arguments);
+        MESFA = function (cpu) {
+            AbstractMicrocode.apply(this, arguments);
         };
 
-        SESFA.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SESFA.prototype.constructor = SESFA;
+        MESFA.prototype = Object.create(AbstractMicrocode.prototype);
+        MESFA.prototype.constructor = MESFA;
 
-        SESFA.prototype.$$goToNextState = function () {
+        MESFA.prototype.$$goToNextState = function () {
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequencerExecuteStFirstA');
@@ -78,9 +78,9 @@ var SequencerExecuteStFirstA = (function () {
             this.$$reg.regSequencer = this.$$MICROCODE.EXECUTE_ST_FIRST_B;
         };
 
-        return SESFA;
+        return MESFA;
     }
 
-    return _SequencerExecuteStFirstA();        // TODO change it do dependency injection
+    return _MicrocodeExecuteStFirstA();        // TODO change it do dependency injection
 
 })();

@@ -1,19 +1,19 @@
-var SequencerExecuteCopy = (function () {
+var MicrocodeExecuteCopy = (function () {
     'use strict';
 
-    _SequencerExecuteCopy.$inject = [];
+    _MicrocodeExecuteCopy.$inject = [];
 
-    function _SequencerExecuteCopy() {
-        var SEC;
+    function _MicrocodeExecuteCopy() {
+        var MEC;
 
-        SEC = function (cpu) {
-            AbstractSequencerHandler.apply(this, arguments);
+        MEC = function (cpu) {
+            AbstractMicrocode.apply(this, arguments);
         };
 
-        SEC.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SEC.prototype.constructor = SEC;
+        MEC.prototype = Object.create(AbstractMicrocode.prototype);
+        MEC.prototype.constructor = MEC;
 
-        SEC.prototype.$$goToNextState = function () {
+        MEC.prototype.$$goToNextState = function () {
             var regOut, regIn0, regIn0Value;
 
             regOut = this.$$insDec.getRegOut();
@@ -30,9 +30,9 @@ var SequencerExecuteCopy = (function () {
             this.$$regSet.save(regOut, regIn0Value);
         };
 
-        return SEC;
+        return MEC;
     }
 
-    return _SequencerExecuteCopy();        // TODO change it do dependency injection
+    return _MicrocodeExecuteCopy();        // TODO change it do dependency injection
 
 })();

@@ -1,9 +1,9 @@
-var AbstractSequencerHandler = (function () {
+var AbstractMicrocode = (function () {
     'use strict';
 
-    _AbstractSequencerHandler.$inject = [];
+    _AbstractMicrocode.$inject = [];
 
-    function _AbstractSequencerHandler() {
+    function _AbstractMicrocode() {
         var ASH;
 
         ASH = function (cpu) {
@@ -42,7 +42,7 @@ var AbstractSequencerHandler = (function () {
 
         ASH.prototype.$$generateCpuShorthand = function () {
             this.$$OPCODE = InstructionDecoder.OPCODE;
-            this.$$MICROCODE = Sequencer.MICROCODE;
+            this.$$MICROCODE = ControlUnit.MICROCODE;
 
             this.$$insDec = this.$$cpu.core.instructionDecoder;
             this.$$regSet = this.$$cpu.core.registerSet;
@@ -69,6 +69,6 @@ var AbstractSequencerHandler = (function () {
         return ASH;
     }
 
-    return _AbstractSequencerHandler();        // TODO change it do dependency injection
+    return _AbstractMicrocode();        // TODO change it do dependency injection
 
 })();

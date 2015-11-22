@@ -104,7 +104,7 @@ var Cpu = (function () {
             this.core = {
                 registerSet: RegisterSetBuilder.build(),
                 instructionDecoder: InstructionDecoderBuilder.build(this),
-                sequencer: SequencerBuilder.build(this),
+                sequencer: ControlUnitBuilder.build(this),
                 alu: AluBuilder.build()
             };
 

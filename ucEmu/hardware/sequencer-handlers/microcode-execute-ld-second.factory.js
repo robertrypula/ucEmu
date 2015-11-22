@@ -1,19 +1,19 @@
-var SequencerExecuteLdSecond = (function () {
+var MicrocodeExecuteLdSecond = (function () {
     'use strict';
 
-    _SequencerExecuteLdSecond.$inject = [];
+    _MicrocodeExecuteLdSecond.$inject = [];
 
-    function _SequencerExecuteLdSecond() {
-        var SELS;
+    function _MicrocodeExecuteLdSecond() {
+        var MELS;
 
-        SELS = function (cpu) {
-            AbstractSequencerHandler.apply(this, arguments);
+        MELS = function (cpu) {
+            AbstractMicrocode.apply(this, arguments);
         };
 
-        SELS.prototype = Object.create(AbstractSequencerHandler.prototype);
-        SELS.prototype.constructor = SELS;
+        MELS.prototype = Object.create(AbstractMicrocode.prototype);
+        MELS.prototype.constructor = MELS;
 
-        SELS.prototype.$$goToNextState = function () {
+        MELS.prototype.$$goToNextState = function () {
             var regIn0, regIn0Value, memoryColumn, shiftAmount,
                 memoryReadShifted, regMANext;
             
@@ -39,7 +39,7 @@ var SequencerExecuteLdSecond = (function () {
             this.$$reg.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
-        SELS.prototype.$$updateOutputMemoryRowAddress = function () {
+        MELS.prototype.$$updateOutputMemoryRowAddress = function () {
             var regIn0, regIn0Value;
 
             regIn0 = this.$$insDec.getRegIn0();
@@ -48,9 +48,9 @@ var SequencerExecuteLdSecond = (function () {
             this.$$out.memoryRowAddress = BitUtils.shiftRight(regIn0Value, BitUtils.BIT_2) + 1;
         };
 
-        return SELS;
+        return MELS;
     };
 
-    return _SequencerExecuteLdSecond();        // TODO change it do dependency injection
+    return _MicrocodeExecuteLdSecond();        // TODO change it do dependency injection
 
 })();
