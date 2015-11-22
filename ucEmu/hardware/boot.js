@@ -7,20 +7,21 @@
             + [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
             + [0.75h] service for logging with verbose levels
             + [0.50h] add aliases for cpu internals at abstract-sequencer-handler, CHECK PERFORNANCE -> no change :/
-            - [0.50h] rename sequencer handler to some microCode blabla?
-                        + sequencer -> control-unit
-                        + serquencer-handler -> ucode
+            + [0.50h] rename sequencer handler to some microCode blabla?
+                        + sequencer -> ControlUnit
+                        + serquencer-handler -> microcode
                         + handler@sequencer -> controlStore
                         + STATE@seqauencer -> MICROCODE
                         + STATE@sequencerBuilder -> moved to ControlUnit
-                        - state param @sequencerBuilder.build() -> ?
+                        + state param @sequencerBuilder.build() -> microcode
             - [0.25h] WE and with clock (B positive clock, C negative clock)
             - [0.50h] move inputs at the top of the log, and header like 'Cpu state after blablba'
+            - [0.50h] fix load instruction to access Timer 
+             
                still needed total: 1.25h
 
                 :: fun starts here ::
             - [2.00h] create MainBoard factory instead boot.js - first step only move existing functionality
-            - [x.xxh] fix load instruction to access Timer
             - [2.00h] signal class?
             - [x.xxh] module approach with update and input changed checking
                         - Signals at module.input[] should have reference to parent module to run update() method

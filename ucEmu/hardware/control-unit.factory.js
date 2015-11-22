@@ -58,7 +58,7 @@ var ControlUnit = (function () {
             });
         };
 
-        CU.prototype.$$setCpuAtMicrocode = function (cpu) {
+        CU.prototype.$$setCpuAtControlStore = function (cpu) {
             for (var i = 0; i < this.$$controlStore.length; i++) {
                 this.$$controlStore[i].setCpu(cpu);
             }
@@ -82,7 +82,7 @@ var ControlUnit = (function () {
 
         CU.prototype.setCpu = function (cpu) {
             CpuAware.prototype.setCpu.apply(this, arguments);
-            this.$$setCpuAtMicrocode(cpu);
+            this.$$setCpuAtControlStore(cpu);
         };
 
         CU.prototype.goToNextState = function () {
