@@ -34,22 +34,11 @@ var SequencerFetchSecondAndDecode = (function () {
             shiftAmount = (4 - memoryColumn) * BitUtils.BYTE_1;
             memoryReadShifted = BitUtils.shiftRight(this.$$in.memoryRead, shiftAmount);
             memoryFinal = memoryReadShifted | this.$$reg.regMemory;
-            opCode = this.$$insDec.getOpcode();
+            opCode = this.$$insDec.getOpCode();
             // instruction = this.$$insDec.getInstruction(opCode);
             instructionByteWidth = this.$$insDec.getByteWidth(opCode);
             regPCNext = BitUtils.mask(this.$$regSet.getProgramCounter() + instructionByteWidth, BitUtils.BYTE_2);
-            regSequencerNext = 0;
-
-            switch (opCode) {
-                case this.$$insDecOPCODE.ADD: regSequencerNext = this.$$seqSTATE.EXECUTE_ADD; break;
-                case this.$$insDecOPCODE.NAND: regSequencerNext = this.$$seqSTATE.EXECUTE_NAND; break;
-                case this.$$insDecOPCODE.SH: regSequencerNext = this.$$seqSTATE.EXECUTE_SH; break;
-                case this.$$insDecOPCODE.JNZ: regSequencerNext = this.$$seqSTATE.EXECUTE_JNZ; break;
-                case this.$$insDecOPCODE.COPY: regSequencerNext = this.$$seqSTATE.EXECUTE_COPY; break;
-                case this.$$insDecOPCODE.IMM: regSequencerNext = this.$$seqSTATE.EXECUTE_IMM; break;
-                case this.$$insDecOPCODE.LD: regSequencerNext = this.$$seqSTATE.EXECUTE_LD_FIRST; break;
-                case this.$$insDecOPCODE.ST: regSequencerNext = this.$$seqSTATE.EXECUTE_ST_FIRST_A; break;
-            }
+            regSequencerNext = this.$$insDec.getMicrocodeJump(opCode);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequenceFetchSecondAndDecode');

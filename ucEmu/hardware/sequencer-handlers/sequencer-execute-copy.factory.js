@@ -26,7 +26,7 @@ var SequencerExecuteCopy = (function () {
                 Logger.log(3, 'regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2) + " (COPY, save regIn0Value at regOut)");
             }
 
-            this.$$reg.regSequencer = this.$$seqSTATE.FETCH_FIRST;
+            this.$$reg.regSequencer = this.$$MICROCODE.FETCH_FIRST;
             this.$$regSet.save(regOut, regIn0Value);
         };
 

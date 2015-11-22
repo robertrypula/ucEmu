@@ -19,7 +19,7 @@ var SequencerExecuteStFirstB = (function () {
                 Logger.log(2, ':: sequencerExecuteStFirstB');
             }
 
-            this.$$reg.regSequencer = this.$$seqSTATE.EXECUTE_ST_FIRST_C;
+            this.$$reg.regSequencer = this.$$MICROCODE.EXECUTE_ST_FIRST_C;
         };
 
         return SESFB;

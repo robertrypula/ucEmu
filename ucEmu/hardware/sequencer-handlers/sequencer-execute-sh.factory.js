@@ -32,7 +32,7 @@ var SequencerExecuteSh = (function () {
                 Logger.log(3, 'result = ' + BitUtils.hex(regResult, BitUtils.BYTE_2) + ' (BIT SHIFT)');
             }
 
-            this.$$reg.regSequencer = this.$$seqSTATE.FETCH_FIRST;
+            this.$$reg.regSequencer = this.$$MICROCODE.FETCH_FIRST;
             this.$$regSet.save(regOut, regResult);
         };
 

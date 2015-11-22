@@ -41,14 +41,15 @@ var AbstractSequencerHandler = (function () {
         };
 
         ASH.prototype.$$generateCpuShorthand = function () {
+            this.$$OPCODE = InstructionDecoder.OPCODE;
+            this.$$MICROCODE = Sequencer.MICROCODE;
+
             this.$$insDec = this.$$cpu.core.instructionDecoder;
-            this.$$insDecOPCODE = this.$$cpu.core.instructionDecoder.OPCODE;
             this.$$regSet = this.$$cpu.core.registerSet;
             this.$$alu = this.$$cpu.core.alu;
             this.$$reg = this.$$cpu.register;
             this.$$out = this.$$cpu.outputs;
             this.$$in = this.$$cpu.inputs;
-            this.$$seqSTATE = this.$$cpu.core.sequencer.STATE;
 
             this.$$cpuShorthandReady = true;
         };

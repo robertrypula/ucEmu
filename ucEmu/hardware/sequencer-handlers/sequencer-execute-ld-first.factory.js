@@ -31,7 +31,7 @@ var SequencerExecuteLdFirst = (function () {
             }
 
             this.$$reg.regMemory = memoryReadShifted;
-            this.$$reg.regSequencer = this.$$seqSTATE.EXECUTE_LD_SECOND;
+            this.$$reg.regSequencer = this.$$MICROCODE.EXECUTE_LD_SECOND;
         };
 
         SELF.prototype.$$updateOutputMemoryRowAddress = function () {

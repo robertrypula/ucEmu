@@ -36,7 +36,7 @@ var SequencerExecuteLdSecond = (function () {
             }
 
             this.$$regSet.setMemoryAccess(regMANext);
-            this.$$reg.regSequencer = this.$$seqSTATE.FETCH_FIRST;
+            this.$$reg.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
         SELS.prototype.$$updateOutputMemoryRowAddress = function () {

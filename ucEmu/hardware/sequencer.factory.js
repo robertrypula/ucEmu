@@ -10,34 +10,42 @@ var Sequencer = (function () {
             CpuAware.apply(this, arguments);
 
             this.$$handler = [];
-            this.STATE = {};
 
             this.$$initialize();
         };
 
+        S.MICROCODE = {
+            FETCH_FIRST: 0,
+            FETCH_SECOND_AND_DECODE: 1,
+            EXECUTE_ADD: 2,
+            EXECUTE_NAND: 3,
+            EXECUTE_SH: 4,
+            EXECUTE_JNZ: 5,
+            EXECUTE_COPY: 6,
+            EXECUTE_IMM: 7,
+            EXECUTE_LD_FIRST: 8,
+            EXECUTE_LD_SECOND: 9,
+            EXECUTE_ST_FIRST_A: 10,
+            EXECUTE_ST_FIRST_B: 11,
+            EXECUTE_ST_FIRST_C: 12,
+            EXECUTE_ST_SECOND_A: 13,
+            EXECUTE_ST_SECOND_B: 14,
+            EXECUTE_ST_SECOND_C: 15
+        };
 
         S.prototype = Object.create(CpuAware.prototype);
         S.prototype.constructor = S;
 
         S.prototype.$$initialize = function () {
-            this.$$initializeState();
             this.$$initializeHandler();
         };
 
         S.prototype.$$loopState = function (callback) {
             var key;
 
-            for (key in SequencerHandlerBuilder.STATE) {
-                callback(key, SequencerHandlerBuilder.STATE[key]);
+            for (key in S.MICROCODE) {
+                callback(key, S.MICROCODE[key]);
             }
-        };
-
-        S.prototype.$$initializeState = function () {
-            var self = this;
-
-            this.$$loopState(function (key, state) {
-                self.STATE[key] = state;
-            });
         };
 
         S.prototype.$$initializeHandler = function () {
@@ -90,27 +98,7 @@ var Sequencer = (function () {
         S.prototype.updateOutput = function () {
             //this.$$checkCpu();
 
-            if (0) {
-                /*
-                if (h.$$updateOutputMemoryRowAddress) {
-                    h.$$updateOutputMemoryRowAddress();
-                } else {
-                    this.$$cpu.outputs.memoryRowAddress = 0;                       // floating bus - pulled down by resistors
-                }
-                if (h.$$updateOutputMemoryWrite) {
-                    h.$$updateOutputMemoryWrite();
-                } else {
-                    this.$$cpu.outputs.memoryWrite = 0;                            // floating bus - pulled down by resistors
-                }
-                if (h.$$updateOutputMemoryWE) {
-                    h.$$updateOutputMemoryWE();
-                } else {
-                    this.$$cpu.outputs.memoryWE = 0;                               // floating bus - pulled down by resistors                    
-                }
-                */
-            } else {
-                this.$$getHandler().updateOutput();
-            }
+            this.$$getHandler().updateOutput();
         };
 
         return S;

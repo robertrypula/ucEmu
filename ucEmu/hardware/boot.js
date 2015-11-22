@@ -6,7 +6,7 @@
             + [1.00h] remove dumpHex and use hex
             + [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
             + [0.75h] service for logging with verbose levels
-            - [0.50h] add aliases for cpu internals at abstract-sequencer-handler, CHECK PERFORNANCE
+            + [0.50h] add aliases for cpu internals at abstract-sequencer-handler, CHECK PERFORNANCE -> no change :/
             - [0.50h] rename sequencer handler to some microCode blabla?
                         - sequencer -> control-unit
                         - serquencer-handler -> ucode
@@ -16,7 +16,7 @@
                         - state param @sequencerBuilder.build() -> ?
             - [0.25h] WE and with clock (B positive clock, C negative clock)
             - [0.50h] move inputs at the top of the log, and header like 'Cpu state after blablba'
-               still needed total: 1.75h
+               still needed total: 1.25h
 
                 :: fun starts here ::
             - [2.00h] create MainBoard factory instead boot.js - first step only move existing functionality
@@ -113,7 +113,7 @@ function runCpu()
         Logger.log(1, '----> clockTicks ' + clockTicks);
         Logger.log(1, "\n");
         
-        if (cpu.register.regSequencer == cpu.core.sequencer.STATE.FETCH_FIRST) {
+        if (cpu.register.regSequencer == Sequencer.MICROCODE.FETCH_FIRST) {
             Logger.log(
                 0, 
                 '                                                      ' +

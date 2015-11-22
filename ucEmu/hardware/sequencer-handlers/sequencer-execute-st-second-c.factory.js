@@ -19,7 +19,7 @@ var SequencerExecuteStSecondC = (function () {
                 Logger.log(2, ':: sequencerExecuteStSecondC');
             }
 
-            this.$$reg.regSequencer = this.$$seqSTATE.FETCH_FIRST;
+            this.$$reg.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
         return SESSC;
