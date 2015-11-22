@@ -4,17 +4,17 @@ var AbstractMicrocode = (function () {
     _AbstractMicrocode.$inject = [];
 
     function _AbstractMicrocode() {
-        var ASH;
+        var AM;
 
-        ASH = function (cpu) {
+        AM = function (cpu) {
             CpuAware.apply(this, arguments);
             this.$$cpuShorthandReady = false;
         };
 
-        ASH.prototype = Object.create(CpuAware.prototype);
-        ASH.prototype.constructor = ASH;
+        AM.prototype = Object.create(CpuAware.prototype);
+        AM.prototype.constructor = AM;
 
-        ASH.prototype.goToNextState = function () {
+        AM.prototype.goToNextState = function () {
             //this.$$checkCpu();
 
             if (!this.$$cpuShorthandReady) {
@@ -24,7 +24,7 @@ var AbstractMicrocode = (function () {
             this.$$goToNextState();               // polymorphic call TODO change name of method
         };
 
-        ASH.prototype.updateOutput = function () {
+        AM.prototype.updateOutput = function () {
             //this.$$checkCpu();
 
             if (!this.$$cpuShorthandReady) {
@@ -36,11 +36,11 @@ var AbstractMicrocode = (function () {
             this.$$updateOutputMemoryWE();
         };
 
-        ASH.prototype.$$goToNextState = function () {
+        AM.prototype.$$goToNextState = function () {
             throw 'Abstract method called!';
         };
 
-        ASH.prototype.$$generateCpuShorthand = function () {
+        AM.prototype.$$generateCpuShorthand = function () {
             this.$$OPCODE = InstructionDecoder.OPCODE;
             this.$$MICROCODE = ControlUnit.MICROCODE;
 
@@ -54,19 +54,19 @@ var AbstractMicrocode = (function () {
             this.$$cpuShorthandReady = true;
         };
 
-        ASH.prototype.$$updateOutputMemoryRowAddress = function () {
+        AM.prototype.$$updateOutputMemoryRowAddress = function () {
             this.$$out.memoryRowAddress = 0;                       // floating bus - pulled down by resistors
         };
 
-        ASH.prototype.$$updateOutputMemoryWrite = function () {
+        AM.prototype.$$updateOutputMemoryWrite = function () {
             this.$$out.memoryWrite = 0;                            // floating bus - pulled down by resistors
         };
 
-        ASH.prototype.$$updateOutputMemoryWE = function () {
+        AM.prototype.$$updateOutputMemoryWE = function () {
             this.$$out.memoryWE = 0;                               // floating bus - pulled down by resistors
         };
 
-        return ASH;
+        return AM;
     }
 
     return _AbstractMicrocode();        // TODO change it do dependency injection
