@@ -10,10 +10,15 @@ function __ASM_nand(a, b)
 
 function __ASM_shift(v, amount)
 {
-    // TODO fix issue with amount >= 32
-    return amount >= 0 
-        ? v << amount 
-        : v >>> -amount;
+    var result = 0;
+
+    if (amount > -32 && amount < 32) {
+        result = amount >= 0 
+            ? v << amount 
+            : v >>> -amount;
+    }
+    
+    return result;
 }
 
 function __ASM_add(a, b)

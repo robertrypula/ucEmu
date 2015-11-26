@@ -55,7 +55,7 @@ var AbstractMicrocode = (function () {
         };
 
         AM.prototype.$$updateOutputMemoryRowAddress = function () {
-            this.$$out.memoryRowAddress = 0;                       // floating bus - pulled down by resistors
+            this.$$out.memoryRowAddress = BitUtils.shiftRight(this.$$regSet.getProgramCounter(), BitUtils.BIT_2);
         };
 
         AM.prototype.$$updateOutputMemoryWrite = function () {

@@ -31,10 +31,6 @@ var MicrocodeFetchFirst = (function () {
             this.$$reg.regSequencer = this.$$MICROCODE.FETCH_SECOND_AND_DECODE;
         };
 
-        MFF.prototype.$$updateOutputMemoryRowAddress = function () {
-            this.$$out.memoryRowAddress = BitUtils.shiftRight(this.$$regSet.getProgramCounter(), BitUtils.BIT_2);
-        };
-
         return MFF;
     }
 

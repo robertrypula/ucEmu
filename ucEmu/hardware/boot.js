@@ -66,7 +66,9 @@ cpu.setClock(false);
 cpuLog();
 
 triggerCpuResetAndProgramStaticRam();
-
+cpu.setClock(false);
+syncCpuWithStaticRam();
+cpu.setClock(false);
 syncCpuWithStaticRam();
 
 var secondsStart = new Date().getTime();
@@ -102,7 +104,7 @@ function runCpu()
     // 3.95 emulated MHz @ 3.6 GHz real cpu    
     //         -> JavaScript requires ~1000 cycler per each emulated cycle
 
-    while (clockTicks < /*Math.round(4.3 * 1000 * 1000)*/30) {      // 30
+    while (clockTicks < /*Math.round(3.95 * 1000 * 1000)*/30) {      // 30
         clockTicks++;
         clockHigh();
         clockLow();
