@@ -184,6 +184,10 @@ var Cpu = (function () {
             // !!! regReset register is excluded from reset !!!
         };
 
+        C.prototype.dumpState = function () {
+
+        }
+
         return C;
     }
 
