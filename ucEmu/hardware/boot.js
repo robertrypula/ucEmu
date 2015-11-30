@@ -16,7 +16,7 @@
                         + state param @sequencerBuilder.build() -> microcode
 
             - [0.50h] move inputs at the top of the log, and header like 'Cpu state after blablba'
-                - create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
+                + create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
                 - ability to pass previous dumpState to mark changes values - changed = true/false/null
                 - move Instructon State and Microcode State to separate file (also method for fetching key by value)
                 - return instr/microcode state at extra field in cpu dump
@@ -230,6 +230,8 @@ function cpuLog()
         'regMA = ' + BitUtils.hex(rs.getMemoryAccess(), BitUtils.BYTE_2) + ' | ' +
         'regPC = ' + BitUtils.hex(rs.getProgramCounter(), BitUtils.BYTE_2) + ' | '
     );
+
+    console.log(cpu.dumpState());
 }
 
 staticRam.log(0, 3);

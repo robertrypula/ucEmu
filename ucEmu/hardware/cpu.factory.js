@@ -185,8 +185,50 @@ var Cpu = (function () {
         };
 
         C.prototype.dumpState = function () {
+            var dump = {
+                input: {
+                    clock: { value: cpu.inputs.clock, bitSize: BitUtils.BIT_1, changed: null },
+                    memoryRead: { value: cpu.inputs.memoryRead, bitSize: BitUtils.BYTE_4, changed: null },
+                    reset: { value: cpu.inputs.reset, bitSize: BitUtils.BIT_1, changed: null }
+                },
+                output: {
+                    memoryRowAddress: { value: cpu.outputs.memoryRowAddress, bitSize: BitUtils.BYTE_4 - BitUtils.BIT_2, changed: null },
+                    memoryWrite: { value: cpu.outputs.memoryWrite, bitSize: BitUtils.BYTE_4, changed: null },
+                    memoryWE: { value: cpu.outputs.memoryWE, bitSize: BitUtils.BIT_1, changed: null }
+                },
+                registerSpecialPurpose: {
+                    regMemory: { value: cpu.register.regMemory, bitSize: BitUtils.BYTE_4, changed: null },
+                    regSequencer: { value: cpu.register.regSequencer, bitSize: BitUtils.BYTE_HALF, changed: null },
+                    regInstruction: { value: cpu.register.regInstruction, bitSize: BitUtils.BYTE_4, changed: null },
+                    regTimer: { value: cpu.register.regTimer, bitSize: BitUtils.BYTE_4, changed: null },
+                    regReset: { value: cpu.register.regReset, bitSize: BitUtils.BIT_1, changed: null }
+                },
+                registerGeneralPurpose: {
+                    reg00: { value: cpu.core.registerSet.read(0), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg01: { value: cpu.core.registerSet.read(1), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg02: { value: cpu.core.registerSet.read(2), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg03: { value: cpu.core.registerSet.read(3), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg04: { value: cpu.core.registerSet.read(4), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg05: { value: cpu.core.registerSet.read(5), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg06: { value: cpu.core.registerSet.read(6), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg07: { value: cpu.core.registerSet.read(7), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg08: { value: cpu.core.registerSet.read(8), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg09: { value: cpu.core.registerSet.read(9), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg10: { value: cpu.core.registerSet.read(10), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg11: { value: cpu.core.registerSet.read(11), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg12: { value: cpu.core.registerSet.read(12), bitSize: BitUtils.BYTE_2, changed: null },
+                    reg13: { value: cpu.core.registerSet.read(13), bitSize: BitUtils.BYTE_2, changed: null },
+                    regMA: { value: cpu.core.registerSet.read(14), bitSize: BitUtils.BYTE_2, changed: null },
+                    regPC: { value: cpu.core.registerSet.read(15), bitSize: BitUtils.BYTE_2, changed: null }
+                },
+                extra: {
+                    microcode: '',
+                    opCode: ''
+                }
+            };
 
-        }
+            return dump;
+        };
 
         return C;
     }
