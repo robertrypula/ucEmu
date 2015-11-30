@@ -40,6 +40,6 @@ var MicrocodeExecuteJnz = (function () {
         return MEJ;
     }
 
-    return _MicrocodeExecuteJnz();        // TODO change it do dependency injection
+    return _MicrocodeExecuteJnz();        // TODO change it to dependency injection
 
 })();

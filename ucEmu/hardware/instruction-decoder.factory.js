@@ -16,17 +16,6 @@ var InstructionDecoder = (function () {
             this.$$initialize();
         };
 
-        ID.OPCODE = {
-            ADD: 0,
-            NAND: 1,
-            SH: 2,
-            JNZ: 3,
-            COPY: 4,
-            IMM: 5,
-            LD: 6,
-            ST: 7
-        };
-
         ID.prototype = Object.create(CpuAware.prototype);
         ID.prototype.constructor = ID;
 
@@ -37,17 +26,20 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.$$initializeInstructionSet = function () {
-            var MC = ControlUnit.MICROCODE;
+            var O, M;
+
+            O = Opcode.OPCODE;
+            M = Microcode.MICROCODE;
 
             this.$$instructionSet.push(
-                { opCode: ID.OPCODE.ADD, microcodeJump: MC.EXECUTE_ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
-                { opCode: ID.OPCODE.NAND, microcodeJump: MC.EXECUTE_NAND, cycles: null, byteWidth: 2, name: 'nand', nameFull: 'Bitwise NAND' },
-                { opCode: ID.OPCODE.SH, microcodeJump: MC.EXECUTE_SH, cycles: null, byteWidth: 2, name: 'sh',  nameFull: "Logical bit shift" },
-                { opCode: ID.OPCODE.JNZ, microcodeJump: MC.EXECUTE_JNZ, cycles: null, byteWidth: 2, name: 'jnz', nameFull: "Jump if not zero" },
-                { opCode: ID.OPCODE.COPY, microcodeJump: MC.EXECUTE_COPY, cycles: null, byteWidth: 2, name: 'copy', nameFull: "Copy" },
-                { opCode: ID.OPCODE.IMM, microcodeJump: MC.EXECUTE_IMM, cycles: null, byteWidth: 4, name: 'imm', nameFull: "Immediate value" },
-                { opCode: ID.OPCODE.LD, microcodeJump: MC.EXECUTE_LD_FIRST, cycles: null, byteWidth: 2, name: 'ld', nameFull: "Load" },
-                { opCode: ID.OPCODE.ST, microcodeJump: MC.EXECUTE_ST_FIRST_A, cycles: null, byteWidth: 2, name: 'st', nameFull: "Store" }
+                { opcode: O.ADD, microcodeJump: M.EXECUTE_ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
+                { opcode: O.NAND, microcodeJump: M.EXECUTE_NAND, cycles: null, byteWidth: 2, name: 'nand', nameFull: 'Bitwise NAND' },
+                { opcode: O.SH, microcodeJump: M.EXECUTE_SH, cycles: null, byteWidth: 2, name: 'sh',  nameFull: "Logical bit shift" },
+                { opcode: O.JNZ, microcodeJump: M.EXECUTE_JNZ, cycles: null, byteWidth: 2, name: 'jnz', nameFull: "Jump if not zero" },
+                { opcode: O.COPY, microcodeJump: M.EXECUTE_COPY, cycles: null, byteWidth: 2, name: 'copy', nameFull: "Copy" },
+                { opcode: O.IMM, microcodeJump: M.EXECUTE_IMM, cycles: null, byteWidth: 4, name: 'imm', nameFull: "Immediate value" },
+                { opcode: O.LD, microcodeJump: M.EXECUTE_LD_FIRST, cycles: null, byteWidth: 2, name: 'ld', nameFull: "Load" },
+                { opcode: O.ST, microcodeJump: M.EXECUTE_ST_FIRST_A, cycles: null, byteWidth: 2, name: 'st', nameFull: "Store" }
             );
         };
 
@@ -67,13 +59,13 @@ var InstructionDecoder = (function () {
             }
         };
 
-        ID.prototype.$$checkOpCode = function(opCode, method) {
-            if (opCode < 0 || opCode >= this.$$instructionSet.length) {
-                throw 'InstructionDecoder.' + method + '() - unknown opCode: ' + opCode;
+        ID.prototype.$$checkOpcode = function(opcode, method) {
+            if (opcode < 0 || opcode >= this.$$instructionSet.length) {
+                throw 'InstructionDecoder.' + method + '() - unknown opcode: ' + opcode;
             }
         };
 
-        ID.prototype.getOpCode = function () {
+        ID.prototype.getOpcode = function () {
             //this.$$checkCpu();
 
             return BitUtils.shiftRight(
@@ -115,24 +107,24 @@ var InstructionDecoder = (function () {
             return this.$$cpu.register.regInstruction & 0x0000FFFF;
         };
 
-        ID.prototype.getByteWidth = function (opCode) {
-            return this.$$byteWidthLookup[opCode];
+        ID.prototype.getByteWidth = function (opcode) {
+            return this.$$byteWidthLookup[opcode];
         };
 
-        ID.prototype.getMicrocodeJump = function (opCode) {
-            return this.$$microcodeJumpLookup[opCode];
+        ID.prototype.getMicrocodeJump = function (opcode) {
+            return this.$$microcodeJumpLookup[opcode];
         };
 
-        ID.prototype.getInstruction = function (opCode) {
+        ID.prototype.getInstruction = function (opcode) {
             //this.$$checkCpu();
-            //this.$$checkOpCode(opCode, 'getInstruction');
+            //this.$$checkOpcode(opcode, 'getInstruction');
 
-            return this.$$instructionSet[opCode];
+            return this.$$instructionSet[opcode];
         };
 
         return ID;
     }
 
-    return _InstructionDecoder();         // TODO change it do dependency injection
+    return _InstructionDecoder();         // TODO change it to dependency injection
 })();
 

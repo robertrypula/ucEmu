@@ -14,6 +14,6 @@ var InstructionDecoderBuilder = (function () {
         };
     }
 
-    return new _InstructionDecoderBuilder();        // TODO change it do dependency injection
+    return new _InstructionDecoderBuilder();        // TODO change it to dependency injection
 
 })();

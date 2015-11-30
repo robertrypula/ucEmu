@@ -27,18 +27,18 @@ var MicrocodeFetchSecondAndDecode = (function () {
 
         MFSAD.prototype.$$goToNextState = function () {
             var memoryColumn, shiftAmount, memoryReadShifted, memoryFinal,
-                opCode, instructionByteWidth,
+                opcode, instructionByteWidth,
                 regPCNext, regSequencerNext;
 
             memoryColumn = BitUtils.mask(this.$$regSet.getProgramCounter(), BitUtils.BIT_2);
             shiftAmount = (4 - memoryColumn) * BitUtils.BYTE_1;
             memoryReadShifted = BitUtils.shiftRight(this.$$in.memoryRead, shiftAmount);
             memoryFinal = memoryReadShifted | this.$$reg.regMemory;
-            opCode = this.$$insDec.getOpCode();
-            // instruction = this.$$insDec.getInstruction(opCode);
-            instructionByteWidth = this.$$insDec.getByteWidth(opCode);
+            opcode = this.$$insDec.getOpcode();
+            // instruction = this.$$insDec.getInstruction(opcode);
+            instructionByteWidth = this.$$insDec.getByteWidth(opcode);
             regPCNext = BitUtils.mask(this.$$regSet.getProgramCounter() + instructionByteWidth, BitUtils.BYTE_2);
-            regSequencerNext = this.$$insDec.getMicrocodeJump(opCode);
+            regSequencerNext = this.$$insDec.getMicrocodeJump(opcode);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequenceFetchSecondAndDecode');
@@ -47,7 +47,7 @@ var MicrocodeFetchSecondAndDecode = (function () {
                 Logger.log(3, 'shiftAmount = ' + shiftAmount);
                 Logger.log(3, 'memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
                 Logger.log(3, 'memoryFinal = ' + BitUtils.hex(memoryFinal, BitUtils.BYTE_4));
-                Logger.log(3, 'opCode = ' + opCode);
+                Logger.log(3, 'opcode = ' + opcode);
                 // Logger.log(0, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'instructionByteWidth = ' + instructionByteWidth);
                 Logger.log(3, 'regPCNext = ' + BitUtils.hex(regPCNext, BitUtils.BYTE_2));
@@ -67,6 +67,6 @@ var MicrocodeFetchSecondAndDecode = (function () {
         return MFSAD;
     }
 
-    return _MicrocodeFetchSecondAndDecode();        // TODO change it do dependency injection
+    return _MicrocodeFetchSecondAndDecode();        // TODO change it to dependency injection
 
 })();

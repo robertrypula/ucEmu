@@ -39,6 +39,6 @@ var MicrocodeExecuteAdd = (function () {
         return MEA;
     }
 
-    return _MicrocodeExecuteAdd();        // TODO change it do dependency injection
+    return _MicrocodeExecuteAdd();        // TODO change it to dependency injection
 
 })();

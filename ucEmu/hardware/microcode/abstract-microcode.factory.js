@@ -41,8 +41,7 @@ var AbstractMicrocode = (function () {
         };
 
         AM.prototype.$$generateCpuShorthand = function () {
-            this.$$OPCODE = InstructionDecoder.OPCODE;
-            this.$$MICROCODE = ControlUnit.MICROCODE;
+            this.$$MICROCODE = Microcode.MICROCODE;
 
             this.$$insDec = this.$$cpu.core.instructionDecoder;
             this.$$regSet = this.$$cpu.core.registerSet;
@@ -69,6 +68,6 @@ var AbstractMicrocode = (function () {
         return AM;
     }
 
-    return _AbstractMicrocode();        // TODO change it do dependency injection
+    return _AbstractMicrocode();        // TODO change it to dependency injection
 
 })();

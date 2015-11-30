@@ -33,6 +33,6 @@ var MicrocodeExecuteCopy = (function () {
         return MEC;
     }
 
-    return _MicrocodeExecuteCopy();        // TODO change it do dependency injection
+    return _MicrocodeExecuteCopy();        // TODO change it to dependency injection
 
 })();

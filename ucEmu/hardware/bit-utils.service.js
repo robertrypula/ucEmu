@@ -117,6 +117,6 @@ var BitUtils = (function () {
         };
     }
 
-    return new _BitUtils();        // TODO change it do dependency injection
+    return new _BitUtils();        // TODO change it to dependency injection
 
 })();

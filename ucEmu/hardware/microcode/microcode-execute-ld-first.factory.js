@@ -46,6 +46,6 @@ var MicrocodeExecuteLdFirst = (function () {
         return MELF;
     }
 
-    return _MicrocodeExecuteLdFirst();        // TODO change it do dependency injection
+    return _MicrocodeExecuteLdFirst();        // TODO change it to dependency injection
 
 })();

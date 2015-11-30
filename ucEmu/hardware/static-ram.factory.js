@@ -71,6 +71,6 @@ var StaticRam = (function () {
         return SR;
     }
 
-    return _StaticRam();       // TODO change it do dependency injection
+    return _StaticRam();       // TODO change it to dependency injection
 
 })();

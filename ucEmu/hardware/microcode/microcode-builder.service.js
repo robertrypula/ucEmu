@@ -5,64 +5,67 @@ var MicrocodeBuilder = (function () {
 
     function _MicrocodeBuilder() {
         function build(microcode, cpu) {
-            var uc = null;
+            var microcodeObject, M;
+
+            M = Microcode.MICROCODE;
+            microcodeObject = null;
 
             switch (microcode) {
-                case ControlUnit.MICROCODE.FETCH_FIRST:
-                    uc = new MicrocodeFetchFirst(cpu);
+                case M.FETCH_FIRST:
+                    microcodeObject = new MicrocodeFetchFirst(cpu);
                     break;
-                case ControlUnit.MICROCODE.FETCH_SECOND_AND_DECODE:
-                    uc = new MicrocodeFetchSecondAndDecode(cpu);
+                case M.FETCH_SECOND_AND_DECODE:
+                    microcodeObject = new MicrocodeFetchSecondAndDecode(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_ADD:
-                    uc = new MicrocodeExecuteAdd(cpu);
+                case M.EXECUTE_ADD:
+                    microcodeObject = new MicrocodeExecuteAdd(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_NAND:
-                    uc = new MicrocodeExecuteNand(cpu);
+                case M.EXECUTE_NAND:
+                    microcodeObject = new MicrocodeExecuteNand(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_SH:
-                    uc = new MicrocodeExecuteSh(cpu);
+                case M.EXECUTE_SH:
+                    microcodeObject = new MicrocodeExecuteSh(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_JNZ:
-                    uc = new MicrocodeExecuteJnz(cpu);
+                case M.EXECUTE_JNZ:
+                    microcodeObject = new MicrocodeExecuteJnz(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_COPY:
-                    uc = new MicrocodeExecuteCopy(cpu);
+                case M.EXECUTE_COPY:
+                    microcodeObject = new MicrocodeExecuteCopy(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_IMM:
-                    uc = new MicrocodeExecuteImm(cpu);
+                case M.EXECUTE_IMM:
+                    microcodeObject = new MicrocodeExecuteImm(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_LD_FIRST:
-                    uc = new MicrocodeExecuteLdFirst(cpu);
+                case M.EXECUTE_LD_FIRST:
+                    microcodeObject = new MicrocodeExecuteLdFirst(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_LD_SECOND:
-                    uc = new MicrocodeExecuteLdSecond(cpu);
+                case M.EXECUTE_LD_SECOND:
+                    microcodeObject = new MicrocodeExecuteLdSecond(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_ST_FIRST_A:
-                    uc = new MicrocodeExecuteStFirstA(cpu);
+                case M.EXECUTE_ST_FIRST_A:
+                    microcodeObject = new MicrocodeExecuteStFirstA(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_ST_FIRST_B:
-                    uc = new MicrocodeExecuteStFirstB(cpu);
+                case M.EXECUTE_ST_FIRST_B:
+                    microcodeObject = new MicrocodeExecuteStFirstB(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_ST_FIRST_C:
-                    uc = new MicrocodeExecuteStFirstC(cpu);
+                case M.EXECUTE_ST_FIRST_C:
+                    microcodeObject = new MicrocodeExecuteStFirstC(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_ST_SECOND_A:
-                    uc = new MicrocodeExecuteStSecondA(cpu);
+                case M.EXECUTE_ST_SECOND_A:
+                    microcodeObject = new MicrocodeExecuteStSecondA(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_ST_SECOND_B:
-                    uc = new MicrocodeExecuteStSecondB(cpu);
+                case M.EXECUTE_ST_SECOND_B:
+                    microcodeObject = new MicrocodeExecuteStSecondB(cpu);
                     break;
-                case ControlUnit.MICROCODE.EXECUTE_ST_SECOND_C:
-                    uc = new MicrocodeExecuteStSecondC(cpu);
+                case M.EXECUTE_ST_SECOND_C:
+                    microcodeObject = new MicrocodeExecuteStSecondC(cpu);
                     break;
             }
 
-            if (!uc) {
-                throw 'Cannot build microcode: ' + microcode;
+            if (!microcodeObject) {
+                throw 'Cannot build microcodeObject: ' + microcode;
             }
 
-            return uc;
+            return microcodeObject;
         }
 
         return {
@@ -70,6 +73,6 @@ var MicrocodeBuilder = (function () {
         };
     }
 
-    return new _MicrocodeBuilder();        // TODO change it do dependency injection
+    return new _MicrocodeBuilder();        // TODO change it to dependency injection
 
 })();

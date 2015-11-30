@@ -39,6 +39,6 @@ var MicrocodeExecuteNand = (function () {
         return MEN;
     }
 
-    return _MicrocodeExecuteNand();        // TODO change it do dependency injection
+    return _MicrocodeExecuteNand();        // TODO change it to dependency injection
 
 })();

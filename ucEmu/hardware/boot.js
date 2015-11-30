@@ -122,7 +122,7 @@ function runCpu()
         Logger.log(1, '----> clockTicks ' + clockTicks);
         Logger.log(1, "\n");
         
-        if (cpu.register.regSequencer == ControlUnit.MICROCODE.FETCH_FIRST) {
+        if (cpu.register.regSequencer == Microcode.MICROCODE.FETCH_FIRST) {
             Logger.log(
                 0, 
                 '                                                      ' +

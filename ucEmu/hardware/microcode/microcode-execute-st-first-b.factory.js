@@ -25,6 +25,6 @@ var MicrocodeExecuteStFirstB = (function () {
         return MESFB;
     }
 
-    return _MicrocodeExecuteStFirstB();        // TODO change it do dependency injection
+    return _MicrocodeExecuteStFirstB();        // TODO change it to dependency injection
 
 })();

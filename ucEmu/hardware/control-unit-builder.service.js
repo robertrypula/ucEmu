@@ -14,6 +14,6 @@ var ControlUnitBuilder = (function () {
         };
     }
 
-    return new _ControlUnitBuilder();        // TODO change it do dependency injection
+    return new _ControlUnitBuilder();        // TODO change it to dependency injection
 
 })();

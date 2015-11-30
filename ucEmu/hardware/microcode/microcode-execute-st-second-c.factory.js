@@ -25,6 +25,6 @@ var MicrocodeExecuteStSecondC = (function () {
         return MESSC;
     }
 
-    return _MicrocodeExecuteStSecondC();        // TODO change it do dependency injection
+    return _MicrocodeExecuteStSecondC();        // TODO change it to dependency injection
 
 })();

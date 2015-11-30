@@ -14,6 +14,6 @@ var AluBuilder = (function () {
         };
     }
 
-    return new _AluBuilder();        // TODO change it do dependency injection
+    return new _AluBuilder();        // TODO change it to dependency injection
 
 })();

@@ -42,6 +42,6 @@ var Alu = (function () {
         return A;
     }
 
-    return _Alu();        // TODO change it do dependency injection
+    return _Alu();        // TODO change it to dependency injection
 
 })();

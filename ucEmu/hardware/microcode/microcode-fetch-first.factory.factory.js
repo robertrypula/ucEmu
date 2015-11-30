@@ -34,6 +34,6 @@ var MicrocodeFetchFirst = (function () {
         return MFF;
     }
 
-    return _MicrocodeFetchFirst();        // TODO change it do dependency injection
+    return _MicrocodeFetchFirst();        // TODO change it to dependency injection
 
 })();

@@ -51,6 +51,6 @@ var MicrocodeExecuteLdSecond = (function () {
         return MELS;
     };
 
-    return _MicrocodeExecuteLdSecond();        // TODO change it do dependency injection
+    return _MicrocodeExecuteLdSecond();        // TODO change it to dependency injection
 
 })();

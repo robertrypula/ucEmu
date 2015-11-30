@@ -81,6 +81,6 @@ var MicrocodeExecuteStFirstA = (function () {
         return MESFA;
     }
 
-    return _MicrocodeExecuteStFirstA();        // TODO change it do dependency injection
+    return _MicrocodeExecuteStFirstA();        // TODO change it to dependency injection
 
 })();

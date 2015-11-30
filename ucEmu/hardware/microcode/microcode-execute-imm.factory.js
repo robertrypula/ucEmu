@@ -32,6 +32,6 @@ var MicrocodeExecuteImm = (function () {
         return MEI;
     }
 
-    return _MicrocodeExecuteImm();        // TODO change it do dependency injection
+    return _MicrocodeExecuteImm();        // TODO change it to dependency injection
 
 })();

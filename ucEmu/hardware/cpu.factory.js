@@ -223,7 +223,7 @@ var Cpu = (function () {
                 },
                 extra: {
                     microcode: '',
-                    opCode: ''
+                    opcode: ''
                 }
             };
 
@@ -233,6 +233,6 @@ var Cpu = (function () {
         return C;
     }
 
-    return _Cpu();       // TODO change it do dependency injection
+    return _Cpu();       // TODO change it to dependency injection
 
 })();

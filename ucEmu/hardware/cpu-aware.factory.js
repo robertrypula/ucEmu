@@ -23,6 +23,6 @@ var CpuAware = (function () {
         return CA;
     }
 
-    return _CpuAware();        // TODO change it do dependency injection
+    return _CpuAware();        // TODO change it to dependency injection
 
 })();

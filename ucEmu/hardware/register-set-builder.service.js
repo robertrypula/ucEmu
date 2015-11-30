@@ -14,6 +14,6 @@ var RegisterSetBuilder = (function () {
         };
     }
 
-    return new _RegisterSetBuilder();        // TODO change it do dependency injection
+    return new _RegisterSetBuilder();        // TODO change it to dependency injection
 
 })();

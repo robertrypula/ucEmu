@@ -39,6 +39,6 @@ var MicrocodeExecuteSh = (function () {
         return MES;
     }
 
-    return _MicrocodeExecuteSh();        // TODO change it do dependency injection
+    return _MicrocodeExecuteSh();        // TODO change it to dependency injection
 
 })();

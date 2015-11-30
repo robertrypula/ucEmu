@@ -63,6 +63,6 @@ var RegisterSet = (function () {
         return RS;
     }
 
-    return _RegisterSet();       // TODO change it do dependency injection
+    return _RegisterSet();       // TODO change it to dependency injection
 
 })();

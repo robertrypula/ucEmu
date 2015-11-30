@@ -50,6 +50,6 @@ var Logger = (function () {
         };
     }
 
-    return new _Logger();        // TODO change it do dependency injection
+    return new _Logger();        // TODO change it to dependency injection
 
 })();
