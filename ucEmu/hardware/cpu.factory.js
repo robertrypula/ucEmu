@@ -86,8 +86,8 @@ var Cpu = (function () {
 
         C = function () {
             this.core = null;
-            this.inputs = null;
-            this.outputs = null;
+            this.input = null;
+            this.output = null;
             this.register = null;
             this.$$clockPrevious = null;
 
@@ -96,7 +96,7 @@ var Cpu = (function () {
         };
 
         C.prototype.setClock = function (clock) {
-            this.inputs.clock = clock ? 1 : 0;
+            this.input.clock = clock ? 1 : 0;
             this.$$update();
         };
 
@@ -108,13 +108,13 @@ var Cpu = (function () {
                 alu: AluBuilder.build()
             };
 
-            this.inputs = {
+            this.input = {
                 clock: 0,
                 reset: 0,
                 memoryRead: 0
             };
 
-            this.outputs = {
+            this.output = {
                 memoryRowAddress: 0,
                 memoryWrite: 0,
                 memoryWE: 0
@@ -137,16 +137,16 @@ var Cpu = (function () {
         C.prototype.$$update = function () {
 
             if (this.$$clockPrevious === null) {
-                this.$$clockPrevious = this.inputs.clock;
+                this.$$clockPrevious = this.input.clock;
             }
 
-            if (this.$$clockPrevious !== this.inputs.clock) {
-                if (this.inputs.clock) {
+            if (this.$$clockPrevious !== this.input.clock) {
+                if (this.input.clock) {
                     this.$$clockLowToHigh();
                 } else {
                     this.$$clockHighToLow();
                 }
-                this.$$clockPrevious = this.inputs.clock;
+                this.$$clockPrevious = this.input.clock;
             }
 
             this.core.sequencer.updateOutput();
@@ -164,7 +164,7 @@ var Cpu = (function () {
                 resetOccurred = true;
             }
 
-            this.register.regReset = this.inputs.reset;         // store current input
+            this.register.regReset = this.input.reset;         // store current input
             if (resetOccurred) {
                 return;
             }
@@ -187,14 +187,14 @@ var Cpu = (function () {
         C.prototype.dumpState = function () {
             var dump = {
                 input: {
-                    clock: { value: cpu.inputs.clock, bitSize: BitUtils.BIT_1, changed: null },
-                    memoryRead: { value: cpu.inputs.memoryRead, bitSize: BitUtils.BYTE_4, changed: null },
-                    reset: { value: cpu.inputs.reset, bitSize: BitUtils.BIT_1, changed: null }
+                    clock: { value: cpu.input.clock, bitSize: BitUtils.BIT_1, changed: null },
+                    memoryRead: { value: cpu.input.memoryRead, bitSize: BitUtils.BYTE_4, changed: null },
+                    reset: { value: cpu.input.reset, bitSize: BitUtils.BIT_1, changed: null }
                 },
                 output: {
-                    memoryRowAddress: { value: cpu.outputs.memoryRowAddress, bitSize: BitUtils.BYTE_4 - BitUtils.BIT_2, changed: null },
-                    memoryWrite: { value: cpu.outputs.memoryWrite, bitSize: BitUtils.BYTE_4, changed: null },
-                    memoryWE: { value: cpu.outputs.memoryWE, bitSize: BitUtils.BIT_1, changed: null }
+                    memoryRowAddress: { value: cpu.output.memoryRowAddress, bitSize: BitUtils.BYTE_4 - BitUtils.BIT_2, changed: null },
+                    memoryWrite: { value: cpu.output.memoryWrite, bitSize: BitUtils.BYTE_4, changed: null },
+                    memoryWE: { value: cpu.output.memoryWE, bitSize: BitUtils.BIT_1, changed: null }
                 },
                 registerSpecialPurpose: {
                     regMemory: { value: cpu.register.regMemory, bitSize: BitUtils.BYTE_4, changed: null },

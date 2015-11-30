@@ -9,7 +9,7 @@ var StaticRam = (function () {
         SR = function (row, writeEnable, dataIn) {
             this.ROWS_COUNT = (64 * 1024) / 4;
             this.data = new Uint32Array(this.ROWS_COUNT);
-            this.inputs = {
+            this.input = {
                 row: row,
                 writeEnable: writeEnable,
                 dataIn: dataIn
@@ -37,27 +37,27 @@ var StaticRam = (function () {
         };
 
         SR.prototype.getDataOut = function () {
-            return this.data[this.inputs.row];
+            return this.data[this.input.row];
         };
 
         SR.prototype.setWriteEnable = function (writeEnable) {
-            this.inputs.writeEnable = writeEnable ? 1 : 0;
+            this.input.writeEnable = writeEnable ? 1 : 0;
             this.$$update();
         };
 
         SR.prototype.setRow = function (row) {
-            this.inputs.row = BitUtils.mask(row, BitUtils.BYTE_2 - BitUtils.BIT_2);
+            this.input.row = BitUtils.mask(row, BitUtils.BYTE_2 - BitUtils.BIT_2);
             this.$$update();
         };
 
         SR.prototype.setDataIn = function (dataIn) {
-            this.inputs.dataIn = BitUtils.mask(dataIn, BitUtils.BYTE_4);
+            this.input.dataIn = BitUtils.mask(dataIn, BitUtils.BYTE_4);
             this.$$update();
         };
 
         SR.prototype.$$update = function () {
-            if (this.inputs.writeEnable) {
-                this.data[this.inputs.row] = this.inputs.dataIn;
+            if (this.input.writeEnable) {
+                this.data[this.input.row] = this.input.dataIn;
             }
         };
 

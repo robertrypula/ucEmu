@@ -2,7 +2,7 @@
     TODO:
         Code refactor:
             + [0.50h] move output computing to handlers (default value at abstract)
-            + [0.25h] remember to update outputs when cpu boots because we dont have faling edge at thus point
+            + [0.25h] remember to update output when cpu boots because we dont have faling edge at thus point
             + [1.00h] remove dumpHex and use hex
             + [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
             + [0.75h] service for logging with verbose levels
@@ -15,7 +15,7 @@
                         + STATE@sequencerBuilder -> moved to ControlUnit
                         + state param @sequencerBuilder.build() -> microcode
 
-            - [0.50h] move inputs at the top of the log, and header like 'Cpu state after blablba'
+            - [0.50h] move input at the top of the log, and header like 'Cpu state after blablba'
                 + create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
                 - ability to pass previous dumpState to mark changes values - changed = true/false/null
                 - move Instructon State and Microcode State to separate file (also method for fetching key by value)
@@ -32,7 +32,7 @@
             - [x.xxh] module approach with update and input changed checking
                         - Signals at module.input[] should have reference to parent module to run update() method
                         - for CPU factory it means that we could remove manual update() calling - we could only watch clock input signal
-                        - module aproach is about refresing outputs after input is changed (internals are not important)
+                        - module aproach is about refresing output after input is changed (internals are not important)
 
         Integrate IO with existing code for dot matrix and keyboard
             - [x.xxh] MainBoard should expose programming interface and events when input/output was changed
@@ -63,9 +63,9 @@ var memoryState = [
 Logger.setVerbose(4);
 var cpu = new Cpu();
 var staticRam = new StaticRam(
-    cpu.outputs.memoryRowAddress,
-    cpu.outputs.memoryWE,
-    cpu.outputs.memoryWrite
+    cpu.output.memoryRowAddress,
+    cpu.output.memoryWE,
+    cpu.output.memoryWrite
 );
 syncCpuWithStaticRam();
 cpu.setClock(false);
@@ -89,13 +89,13 @@ function triggerCpuResetAndProgramStaticRam()
 {
     Logger.log(1, ':: trigger RESET AND PROGRAM STARTS');
 
-    cpu.inputs.reset = true;
+    cpu.input.reset = true;
     clockHigh();
     clockLow();
 
     programStaticRamAndSync(memoryState);
 
-    cpu.inputs.reset = false;
+    cpu.input.reset = false;
     clockHigh();
     clockLow();
 
@@ -157,11 +157,11 @@ function programStaticRamAndSync(memoryState)
 
 function syncCpuWithStaticRam()
 {
-    staticRam.setRow(cpu.outputs.memoryRowAddress);
-    staticRam.setDataIn(cpu.outputs.memoryWrite);
-    staticRam.setWriteEnable(cpu.outputs.memoryWE);
+    staticRam.setRow(cpu.output.memoryRowAddress);
+    staticRam.setDataIn(cpu.output.memoryWrite);
+    staticRam.setWriteEnable(cpu.output.memoryWE);
 
-    cpu.inputs.memoryRead = staticRam.getDataOut();
+    cpu.input.memoryRead = staticRam.getDataOut();
 }
 
 function clockHigh()
@@ -193,12 +193,12 @@ function cpuLog()
 
     Logger.log(
         1,
-        'in.clock: ' + cpu.inputs.clock + ' | ' +
-        'in.memoryRead = ' + BitUtils.hex(cpu.inputs.memoryRead, BitUtils.BYTE_4) + ' | ' +
-        'in.reset = ' + BitUtils.hex(cpu.inputs.reset, BitUtils.BIT_1) + '      ' +
-        'out.memoryRowAddress = ' + BitUtils.hex(cpu.outputs.memoryRowAddress, BitUtils.BYTE_4 - BitUtils.BIT_2) + ' | ' +
-        'out.memoryWrite = ' + BitUtils.hex(cpu.outputs.memoryWrite, BitUtils.BYTE_4) + ' | ' +
-        'out.memoryWE = ' + BitUtils.hex(cpu.outputs.memoryWE, BitUtils.BIT_1) + ' | '
+        'in.clock: ' + cpu.input.clock + ' | ' +
+        'in.memoryRead = ' + BitUtils.hex(cpu.input.memoryRead, BitUtils.BYTE_4) + ' | ' +
+        'in.reset = ' + BitUtils.hex(cpu.input.reset, BitUtils.BIT_1) + '      ' +
+        'out.memoryRowAddress = ' + BitUtils.hex(cpu.output.memoryRowAddress, BitUtils.BYTE_4 - BitUtils.BIT_2) + ' | ' +
+        'out.memoryWrite = ' + BitUtils.hex(cpu.output.memoryWrite, BitUtils.BYTE_4) + ' | ' +
+        'out.memoryWE = ' + BitUtils.hex(cpu.output.memoryWE, BitUtils.BIT_1) + ' | '
     );
     Logger.log(
         1,
