@@ -30,8 +30,8 @@ var MicrocodeExecuteLdFirst = (function () {
                 Logger.log(3, 'memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
             }
 
-            this.$$reg.regMemory = memoryReadShifted;
-            this.$$reg.regSequencer = this.$$MICROCODE.EXECUTE_LD_SECOND;
+            this.$$core.regMemory = memoryReadShifted;
+            this.$$core.regSequencer = this.$$MICROCODE.EXECUTE_LD_SECOND;
         };
 
         MELF.prototype.$$updateOutputMemoryRowAddress = function () {

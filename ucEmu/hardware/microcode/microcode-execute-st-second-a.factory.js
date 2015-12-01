@@ -19,7 +19,7 @@ var MicrocodeExecuteStSecondA = (function () {
                 Logger.log(2, ':: sequencerExecuteStSecondA');
             }
 
-            this.$$reg.regSequencer = this.$$MICROCODE.EXECUTE_ST_SECOND_B;
+            this.$$core.regSequencer = this.$$MICROCODE.EXECUTE_ST_SECOND_B;
         };
 
         return MESSA;

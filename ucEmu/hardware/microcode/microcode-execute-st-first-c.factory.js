@@ -19,7 +19,7 @@ var MicrocodeExecuteStFirstC = (function () {
                 Logger.log(2, ':: sequencerExecuteStFirstC');
             }
 
-            this.$$reg.regSequencer = this.$$MICROCODE.EXECUTE_ST_SECOND_A;
+            this.$$core.regSequencer = this.$$MICROCODE.EXECUTE_ST_SECOND_A;
         };
 
         return MESFC;

@@ -18,7 +18,7 @@
             - [0.50h] move input at the top of the log, and header like 'Cpu state after blablba'
                 + create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
                 - ability to pass previous dumpState to mark changes values - changed = true/false/null
-                - move Instructon State and Microcode State to separate file (also method for fetching key by value)
+                +/- move Instructon State and Microcode State to separate file (also method for fetching key by value)
                 - return instr/microcode state at extra field in cpu dump
 
             - [0.25h] WE and with clock (B positive clock, C negative clock)
@@ -122,7 +122,7 @@ function runCpu()
         Logger.log(1, '----> clockTicks ' + clockTicks);
         Logger.log(1, "\n");
         
-        if (cpu.register.regSequencer == Microcode.MICROCODE.FETCH_FIRST) {
+        if (cpu.core.regSequencer == Microcode.MICROCODE.FETCH_FIRST) {
             Logger.log(
                 0, 
                 '                                                      ' +
@@ -189,7 +189,7 @@ function clockLow()
 function cpuLog()
 {
     var rs = cpu.core.registerSet,
-        r = cpu.register;
+        c = cpu.core;
 
     Logger.log(
         1,
@@ -202,11 +202,11 @@ function cpuLog()
     );
     Logger.log(
         1,
-        'regMemory = ' + BitUtils.hex(r.regMemory, BitUtils.BYTE_4) + ' | ' +
-        'regSequencer = ' + BitUtils.hex(r.regSequencer, BitUtils.BYTE_HALF) + ' | ' +
-        'regInstruction = ' + BitUtils.hex(r.regInstruction, BitUtils.BYTE_4) + ' | ' +
-        'regTimer = ' + BitUtils.hex(r.regTimer, BitUtils.BYTE_4) + ' | ' +
-        'regReset = ' + BitUtils.hex(r.regReset, BitUtils.BIT_1)
+        'regMemory = ' + BitUtils.hex(c.regMemory, BitUtils.BYTE_4) + ' | ' +
+        'regSequencer = ' + BitUtils.hex(c.regSequencer, BitUtils.BYTE_HALF) + ' | ' +
+        'regInstruction = ' + BitUtils.hex(c.regInstruction, BitUtils.BYTE_4) + ' | ' +
+        'regTimer = ' + BitUtils.hex(c.regTimer, BitUtils.BYTE_4) + ' | ' +
+        'regReset = ' + BitUtils.hex(c.regReset, BitUtils.BIT_1)
     );
     Logger.log(
         1,

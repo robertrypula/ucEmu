@@ -33,7 +33,7 @@ var MicrocodeFetchSecondAndDecode = (function () {
             memoryColumn = BitUtils.mask(this.$$regSet.getProgramCounter(), BitUtils.BIT_2);
             shiftAmount = (4 - memoryColumn) * BitUtils.BYTE_1;
             memoryReadShifted = BitUtils.shiftRight(this.$$in.memoryRead, shiftAmount);
-            memoryFinal = memoryReadShifted | this.$$reg.regMemory;
+            memoryFinal = memoryReadShifted | this.$$core.regMemory;
             opcode = this.$$insDec.getOpcode();
             // instruction = this.$$insDec.getInstruction(opcode);
             instructionByteWidth = this.$$insDec.getByteWidth(opcode);
@@ -54,9 +54,9 @@ var MicrocodeFetchSecondAndDecode = (function () {
                 Logger.log(3, 'regSequencerNext = ' + BitUtils.hex(regSequencerNext, BitUtils.BYTE_HALF));
             }
 
-            this.$$reg.regInstruction = memoryFinal;
+            this.$$core.regInstruction = memoryFinal;
             this.$$regSet.setProgramCounter(regPCNext);
-            this.$$reg.regSequencer = regSequencerNext;
+            this.$$core.regSequencer = regSequencerNext;
         };
 
 

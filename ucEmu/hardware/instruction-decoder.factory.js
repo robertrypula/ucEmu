@@ -69,7 +69,7 @@ var InstructionDecoder = (function () {
             //this.$$checkCpu();
 
             return BitUtils.shiftRight(
-                this.$$cpu.register.regInstruction & 0x70000000, 
+                this.$$cpu.core.regInstruction & 0x70000000,
                 BitUtils.BYTE_3 + BitUtils.BYTE_HALF
             );
         };
@@ -78,7 +78,7 @@ var InstructionDecoder = (function () {
             //this.$$checkCpu();
 
             return BitUtils.shiftRight(
-                this.$$cpu.register.regInstruction & 0x0F000000, 
+                this.$$cpu.core.regInstruction & 0x0F000000,
                 BitUtils.BYTE_3
             );
         };
@@ -87,7 +87,7 @@ var InstructionDecoder = (function () {
             //this.$$checkCpu();
 
             return BitUtils.shiftRight(
-                this.$$cpu.register.regInstruction & 0x00F00000, 
+                this.$$cpu.core.regInstruction & 0x00F00000,
                 BitUtils.BYTE_2 + BitUtils.BYTE_HALF
             );
         };
@@ -96,7 +96,7 @@ var InstructionDecoder = (function () {
             //this.$$checkCpu();
 
             return BitUtils.shiftRight(
-                this.$$cpu.register.regInstruction & 0x000F0000, 
+                this.$$cpu.core.regInstruction & 0x000F0000,
                 BitUtils.BYTE_2
             );
         };
@@ -104,7 +104,7 @@ var InstructionDecoder = (function () {
         ID.prototype.getImm = function () {
             //this.$$checkCpu();
             
-            return this.$$cpu.register.regInstruction & 0x0000FFFF;
+            return this.$$cpu.core.regInstruction & 0x0000FFFF;
         };
 
         ID.prototype.getByteWidth = function (opcode) {

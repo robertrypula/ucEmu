@@ -25,7 +25,7 @@ var MicrocodeExecuteImm = (function () {
                 Logger.log(3, 'imm = ' + BitUtils.hex(imm, BitUtils.BYTE_2) + " (store immediate value at regOut)");
             }
 
-            this.$$reg.regSequencer = this.$$MICROCODE.FETCH_FIRST;
+            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
             this.$$regSet.save(regOut, imm);
         };
 

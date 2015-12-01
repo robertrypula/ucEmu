@@ -4,8 +4,10 @@ var Opcode = (function () {
     _Opcode.$inject = [];
 
     function _Opcode() {
+        var $$OPCODE,
+            $$keyLookUp;
 
-        var OPCODE = {
+        $$OPCODE = {
             ADD: 0,
             NAND: 1,
             SH: 2,
@@ -16,8 +18,35 @@ var Opcode = (function () {
             ST: 7
         };
 
+        function loop(callback) {
+            var key;
+
+            for (key in $$OPCODE) {
+                callback(key, $$OPCODE[key]);
+            }
+        }
+
+        function getOpcodeKey(number) {
+            return $$keyLookUp[number];
+        }
+
+        function $$initializeKeyLookUp() {
+            $$keyLookUp = [];
+
+            loop(function (key) {
+                $$keyLookUp.push(key);
+            });
+        }
+
+        function $$init() {
+            $$initializeKeyLookUp();
+        }
+
+        $$init();
+
         return {
-            OPCODE: OPCODE
+            OPCODE: $$OPCODE,
+            getOpcodeKey: getOpcodeKey
         };
     }
 

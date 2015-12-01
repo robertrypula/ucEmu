@@ -46,7 +46,7 @@ var ControlUnit = (function () {
         CU.prototype.$$getMicrocodeFromControlStore = function () {
             var state;
 
-            state = this.$$cpu.register.regSequencer;
+            state = this.$$cpu.core.regSequencer;
             //this.$$checkState(state);
 
             return this.$$controlStore[state];
@@ -63,7 +63,7 @@ var ControlUnit = (function () {
 
             this.$$getMicrocodeFromControlStore().goToNextState();
 
-            this.$$cpu.register.regTimer = BitUtils.mask(this.$$cpu.register.regTimer + 1, BitUtils.BYTE_4);
+            this.$$cpu.core.regTimer = BitUtils.mask(this.$$cpu.core.regTimer + 1, BitUtils.BYTE_4);
         };
 
         CU.prototype.updateOutput = function () {

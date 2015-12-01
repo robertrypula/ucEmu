@@ -22,7 +22,7 @@ var MicrocodeExecuteLdSecond = (function () {
             memoryColumn = BitUtils.mask(regIn0Value, BitUtils.BIT_2);
             shiftAmount = (4 - memoryColumn) * BitUtils.BYTE_1;
             memoryReadShifted = BitUtils.shiftRight(this.$$in.memoryRead, shiftAmount);
-            regMANext = BitUtils.shiftRight(memoryReadShifted | this.$$reg.regMemory, BitUtils.BYTE_2);
+            regMANext = BitUtils.shiftRight(memoryReadShifted | this.$$core.regMemory, BitUtils.BYTE_2);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequencerExecuteLdSecond');
@@ -36,7 +36,7 @@ var MicrocodeExecuteLdSecond = (function () {
             }
 
             this.$$regSet.setMemoryAccess(regMANext);
-            this.$$reg.regSequencer = this.$$MICROCODE.FETCH_FIRST;
+            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
         MELS.prototype.$$updateOutputMemoryRowAddress = function () {

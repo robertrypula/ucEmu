@@ -26,9 +26,9 @@ var MicrocodeFetchFirst = (function () {
                 Logger.log(3, 'memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
             }
 
-            this.$$reg.regMemory = memoryReadShifted;
-            this.$$reg.regInstruction = memoryReadShifted;              // TODO check it, this may be redundant with regMemory
-            this.$$reg.regSequencer = this.$$MICROCODE.FETCH_SECOND_AND_DECODE;
+            this.$$core.regMemory = memoryReadShifted;
+            this.$$core.regInstruction = memoryReadShifted;              // TODO check it, this may be redundant with regMemory
+            this.$$core.regSequencer = this.$$MICROCODE.FETCH_SECOND_AND_DECODE;
         };
 
         return MFF;

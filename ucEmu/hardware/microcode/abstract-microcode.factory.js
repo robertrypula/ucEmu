@@ -46,7 +46,7 @@ var AbstractMicrocode = (function () {
             this.$$insDec = this.$$cpu.core.instructionDecoder;
             this.$$regSet = this.$$cpu.core.registerSet;
             this.$$alu = this.$$cpu.core.alu;
-            this.$$reg = this.$$cpu.register;
+            this.$$core = this.$$cpu.core;
             this.$$out = this.$$cpu.output;
             this.$$in = this.$$cpu.input;
 

@@ -33,7 +33,7 @@ var MicrocodeExecuteJnz = (function () {
                 Logger.log(3, 'regPCNext = ' + BitUtils.hex(regPCNext, BitUtils.BYTE_2));
             }
 
-            this.$$reg.regSequencer = this.$$MICROCODE.FETCH_FIRST;
+            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
             this.$$regSet.setProgramCounter(regPCNext);
         };
 

@@ -32,7 +32,7 @@ var MicrocodeExecuteAdd = (function () {
                 Logger.log(3, 'result = ' + BitUtils.hex(regResult, BitUtils.BYTE_2) + ' (sum)');
             }
 
-            this.$$reg.regSequencer = this.$$MICROCODE.FETCH_FIRST;
+            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
             this.$$regSet.save(regOut, regResult);
         };
 

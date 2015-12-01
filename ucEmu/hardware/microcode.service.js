@@ -4,8 +4,10 @@ var Microcode = (function () {
     _Microcode.$inject = [];
 
     function _Microcode() {
+        var $$MICROCODE,
+            $$keyLookUp;
 
-        var MICROCODE = {
+        $$MICROCODE = {
             FETCH_FIRST: 0,
             FETCH_SECOND_AND_DECODE: 1,
             EXECUTE_ADD: 2,
@@ -27,14 +29,33 @@ var Microcode = (function () {
         function loop(callback) {
             var key;
 
-            for (key in MICROCODE) {
-                callback(key, MICROCODE[key]);
+            for (key in $$MICROCODE) {
+                callback(key, $$MICROCODE[key]);
             }
-        };
+        }
+
+        function getMicrocodeKey(number) {
+            return $$keyLookUp[number];
+        }
+
+        function $$initializeKeyLookUp() {
+            $$keyLookUp = [];
+
+            loop(function (key) {
+                $$keyLookUp.push(key);
+            });
+        }
+
+        function $$init() {
+            $$initializeKeyLookUp();
+        }
+
+        $$init();
 
         return {
-            MICROCODE: MICROCODE,
-            loop: loop
+            MICROCODE: $$MICROCODE,
+            loop: loop,
+            getMicrocodeKey: getMicrocodeKey
         };
     }
 
