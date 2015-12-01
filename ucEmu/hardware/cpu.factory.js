@@ -74,6 +74,26 @@
         32 bits memory data out          out
         1 bit memory WE                  out
 
+    MainBoard (without IO port pins):
+        - 32 bits memory in       4 bytes
+        - 32 bits memory out      4 bytes
+        - 14 bits memory address  ~2 bytes
+        - 1 bit memory write enable
+        - 1 bit reset
+        - 1 bit clock
+        81 bits
+
+        ******** ******** ******** ********
+        ******** ******** ******** ********
+        ******** ******
+        ***
+
+    Card:
+        | ******** ****** | * | ******** ******** ******** ******** |
+        64 rows * 4 bytes = 256 bytes
+
+        You need 256 cars for 64KB
+
 */
 
 var Cpu = (function () {
@@ -180,8 +200,18 @@ var Cpu = (function () {
             // !!! regReset register is excluded from reset !!!
         };
 
-        C.prototype.dumpState = function () {
-            var dump, rs, c, i, o, id, opcode;
+        C.prototype.$$dumpStateLoopGroupKey = function (group, current, previous, callback) {
+            var key;
+
+            for (key in current[group]) {
+                if (typeof current[group][key].changed !== 'undefined') {
+                    callback(current[group][key], previous[group][key]);
+                }
+            }
+        };
+
+        C.prototype.dumpState = function (previous) {
+            var dump, rs, c, i, o, id, opcode, key;
 
             rs = cpu.core.registerSet;
             c = cpu.core;
@@ -233,6 +263,15 @@ var Cpu = (function () {
                     instruction: id.getInstruction(opcode)
                 }
             };
+
+            // set changed flag
+            if (previous) {
+                for (key in dump) {
+                    this.$$dumpStateLoopGroupKey(key, dump, previous, function (current, previous) {
+                        current.changed = previous.value !== current.value;
+                    });
+                }
+            }
 
             return dump;
         };

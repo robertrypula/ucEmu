@@ -14,15 +14,16 @@
                         + STATE@seqauencer -> MICROCODE
                         + STATE@sequencerBuilder -> moved to ControlUnit
                         + state param @sequencerBuilder.build() -> microcode
-
-            - [0.50h] move input at the top of the log, and header like 'Cpu state after blablba'
+            + [1.00h] change structure of dumping cpu state
                 + create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
-                - ability to pass previous dumpState to mark changes values - changed = true/false/null
+                + ability to pass previous dumpState to mark changes values - changed = true/false/null
                 + move Instructon State and Microcode State to separate file (also method for fetching key by value)
                 + return instr/microcode state at extra field in cpu dump
 
+            - [0.25h] change log messages order (oldState, clockEdge, newState)
             - [0.25h] WE and with clock (B positive clock, C negative clock)
-            - [0.50h] fix load instruction to access Timer 
+            - [0.25h] fix load instruction to access Timer
+            - [0.50h] create new MemoryUnit and move all code related to col/row/shift/mask manipulation
              
                still needed total: 1.25h
 
@@ -37,6 +38,9 @@
         Integrate IO with existing code for dot matrix and keyboard
             - [x.xxh] MainBoard should expose programming interface and events when input/output was changed
               ...
+                mainBoard = new MainBoard();
+
+                mainBoard.output.portRow00
 
  */
 
@@ -186,6 +190,8 @@ function clockLow()
     }
 }
 
+var dumpPrevious;
+
 function cpuLog()
 {
     var rs = cpu.core.registerSet,
@@ -231,7 +237,11 @@ function cpuLog()
         'regPC = ' + BitUtils.hex(rs.getProgramCounter(), BitUtils.BYTE_2) + ' | '
     );
 
-    console.log(cpu.dumpState());
+    var dump;
+
+    dump = cpu.dumpState(dumpPrevious);
+    console.log(dump);
+    dumpPrevious = dump;
 }
 
 staticRam.log(0, 3);
