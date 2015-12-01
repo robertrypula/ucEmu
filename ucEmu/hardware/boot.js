@@ -18,8 +18,8 @@
             - [0.50h] move input at the top of the log, and header like 'Cpu state after blablba'
                 + create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
                 - ability to pass previous dumpState to mark changes values - changed = true/false/null
-                +/- move Instructon State and Microcode State to separate file (also method for fetching key by value)
-                - return instr/microcode state at extra field in cpu dump
+                + move Instructon State and Microcode State to separate file (also method for fetching key by value)
+                + return instr/microcode state at extra field in cpu dump
 
             - [0.25h] WE and with clock (B positive clock, C negative clock)
             - [0.50h] fix load instruction to access Timer 

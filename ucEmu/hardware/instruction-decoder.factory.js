@@ -116,10 +116,21 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.getInstruction = function (opcode) {
+            var instruction;
+
             //this.$$checkCpu();
             //this.$$checkOpcode(opcode, 'getInstruction');
 
-            return this.$$instructionSet[opcode];
+            instruction = this.$$instructionSet[opcode];
+
+            return {
+                opcode: instruction.opcode,
+                microcodeJump: instruction.microcodeJump,
+                cycles: instruction.cycles,
+                byteWidth: instruction.byteWidth,
+                name: instruction.name,
+                nameFull: instruction.nameFull
+            };
         };
 
         return ID;

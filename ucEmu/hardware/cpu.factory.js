@@ -101,20 +101,18 @@ var Cpu = (function () {
 
         C.prototype.$$initialize = function () {
             this.core = {
-                registerSet: RegisterSetBuilder.build(),
                 instructionDecoder: InstructionDecoderBuilder.build(this),
-                sequencer: ControlUnitBuilder.build(this),
+                controlUnit: ControlUnitBuilder.build(this),
                 alu: AluBuilder.build(),
 
-                // control register
+                // general purpose registers
+                registerSet: RegisterSetBuilder.build(),
+
+                // special purpose registers
                 regSequencer: BitUtils.random(BitUtils.BYTE_HALF),
                 regInstruction: BitUtils.random(BitUtils.BYTE_4),
-
-                // input helper register
                 regReset: BitUtils.random(BitUtils.BIT_1),
                 regMemory: BitUtils.random(BitUtils.BYTE_4),
-
-                // timer
                 regTimer: BitUtils.random(BitUtils.BYTE_4)
             };
 
@@ -146,11 +144,12 @@ var Cpu = (function () {
                 this.$$clockPrevious = this.input.clock;
             }
 
-            this.core.sequencer.updateOutput();
+            this.core.controlUnit.updateOutput();
         };
 
         C.prototype.$$clockLowToHigh = function () {
-            // nothing is happening here - data is passed internally inside master–slave D flip-flop registers
+            // registers are not changing state during this phase
+            // data is passed internally inside master–slave D flip-flop registers
         };
 
         C.prototype.$$clockHighToLow = function () {
@@ -166,7 +165,7 @@ var Cpu = (function () {
                 return;
             }
 
-            this.core.sequencer.goToNextState();
+            this.core.controlUnit.goToNextState();
         };
 
         C.prototype.$$performRegistersReset = function () {
@@ -182,14 +181,15 @@ var Cpu = (function () {
         };
 
         C.prototype.dumpState = function () {
-            var dump, rs, c, i, o, opcode;
+            var dump, rs, c, i, o, id, opcode;
 
             rs = cpu.core.registerSet;
             c = cpu.core;
             i = cpu.input;
             o = cpu.output;
+            id = this.core.instructionDecoder;
 
-            opcode = this.core.instructionDecoder.getOpcode();
+            opcode = id.getOpcode();
 
             dump = {
                 input: {
@@ -228,9 +228,9 @@ var Cpu = (function () {
                     regPC: { value: rs.read(15), bitSize: BitUtils.BYTE_2, changed: null }
                 },
                 extra: {
-                    microcodeKey: Microcode.getMicrocodeKey(c.regSequencer),
-                    opcodeKey: Opcode.getOpcodeKey(opcode),
-                    instruction: this.core.instructionDecoder.getInstruction(opcode)
+                    microcodeKey: { value: Microcode.getMicrocodeKey(c.regSequencer), changed: null },
+                    opcodeKey: { value: Opcode.getOpcodeKey(opcode), changed: null },
+                    instruction: id.getInstruction(opcode)
                 }
             };
 
