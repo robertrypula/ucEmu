@@ -8,8 +8,11 @@
 ------------
 Introduction
 ------------
-
-    introdution to simplec at the begginig
+   
+    SimpleC was created because I always wanted to create workig computer from
+    scratch. Blabla
+    
+    NOT FINISHED YET
 
 
 -----------------------
@@ -144,9 +147,12 @@ Variable initialization
 
             var str1 = { <byte[2]>, "abc", <byte[1]>, 0 }; // will give 0x61, 0x62, 0x63, 0x61, 0x62, 0x63, 0x00
             var str2 = { <byte[2]>, "abc", "w" };          // will give 0x61, 0x62, 0x63, 0x61, 0x62, 0x63, 0x77, 0x77
-
-
-        [ ## TODO ## string escape ]
+        
+        You can define string also by using single quotes. In SimpleC we don't have escaping
+        so if you need to put some quote inside your string you can just concatenate it like
+        this:
+        
+            var str = { <byte[1], '<div class="some-class"', ">div's content</div>", 0 };
 
 
 ------------------
@@ -701,7 +707,11 @@ SimpleC summary and examples
 
     [ ## TODO ## finish this ]
 
-    2. Code snippet - loops
+-------------
+Code examples
+-------------
+
+    1. Code snippet - loops
 
         Below you can find code snipets with equvalents for common code constructions from C language.
 
@@ -752,6 +762,9 @@ SimpleC summary and examples
                     // ... #2
                 }
             }
+            
+            
+    [ ## TODO ## put some basic code like strlen, memcopy, strreplace ]
 
 
 -------------------

@@ -42,4 +42,3 @@ PointConstruct(&point, 3, 4);            // $('&', point);
 
 PointAdd(&point, 3);
 
-PointConstruct()
