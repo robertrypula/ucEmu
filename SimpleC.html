@@ -40,7 +40,7 @@ Variable initialization
             function test()
             {
                 var a = 2;           // ERROR, can't use predefined values at funtions
-                var b;               // OK, will give 0x???? - two bytes of uninitialized memory state (variable on stack)
+                var b;               // OK, will give 0x???? - two bytes of uninitialized memory state (variable at functions are created on stack so memory state is unpredictible)
 
                 b = 2;               // OK, assing by '=' operator
             }
@@ -116,7 +116,9 @@ Variable initialization
             }
             
         Reserve keywords (<byteReserve[x]>/<wordReserve[x]>) doesn't change any internal state 
-        like <byte[x]>/<word[x]> do.
+        like <byte[x]>/<word[x]> do. Reserve and type change keyword works independend. If you
+        put byteReserve[1] it will not change treatment of followning constants. By default it will
+        still be word[1].
          
             
     4. Strings support
@@ -137,14 +139,14 @@ Variable initialization
 
         You can also reserve some space to have string buffer variable. Below example assings 
         6 bytes in total to variable 'strBuffer'. You can store zero terminated string up to 
-        5 chars.
+        5 chars in this buffer.
 
             var strBuffer = { <byte[1]>, "abc", <byte[3]>, 0 };  // will give 0x61, 0x62, 0x63, 0x00, 0x00, 0x00
 
         You can also repeat string by using byte/word keywords.
 
-            var str = { <byte[2]>, "abc", <byte[1]>, 0 }; // will give 0x61, 0x62, 0x63, 0x61, 0x62, 0x63, 0x00
-            var str = { <byte[2]>, "abc", "w" };          // will give 0x61, 0x62, 0x63, 0x61, 0x62, 0x63, 0x77, 0x77
+            var str1 = { <byte[2]>, "abc", <byte[1]>, 0 }; // will give 0x61, 0x62, 0x63, 0x61, 0x62, 0x63, 0x00
+            var str2 = { <byte[2]>, "abc", "w" };          // will give 0x61, 0x62, 0x63, 0x61, 0x62, 0x63, 0x77, 0x77
 
 
 ------------------
@@ -158,7 +160,7 @@ Suported operators
             =   Assing right side of the expression to the left side
             []  Helps with access to values in array
             &   Gets address of variable instead its value
-            *   Uses data stored inside variable as address to another memory location
+            *   Uses data stored inside variable as an address to another memory location
             
     
     2. Assign operator (=)
@@ -185,8 +187,8 @@ Suported operators
             arr1: -1, 2, 3
             arr2: 4, 3, 6
 
-        Right side can be constant, other variable or function. Operators that 'gives' 
-        variables also is OK ('[]', '*', '&').
+        Right side can be constant, other variable or function. Operators that 'returns' 
+        data also is OK ('[]', '*', '&').
 
             var a;
             var b = 3;
@@ -197,9 +199,9 @@ Suported operators
             a = someFunc();             // OK
             a = someFuncWithParam(b);   // OK
 
-            a = c[1];                  // OK, '[]' operator 'gives' variable value
-            c = &b;                    // OK, '&'  operator 'gives' address that is constant
-            a = *(c);                  // OK, '*' operator 'gives' variable by pointer
+            a = c[1];                  // OK, '[]' operator 'gives' value from array
+            c = &b;                    // OK, '&'  operator 'gives' address
+            a = *(c);                  // OK, '*' operator 'gives' value by pointer
 
         At the other hand left side can be only other variable. It's because you can't
         assing anything to constant value. 
@@ -210,8 +212,8 @@ Suported operators
             var ptr;
 
             ptr = &(c);                     // OK
-            c[1] = a;                       // OK, '[]' operator 'gives' variable value
-            *(c) = a;                       // OK, '*' operator 'gives' variable by pointer
+            c[1] = a;                       // OK, '[]' operator means array assignmeny
+            *(c) = a;                       // OK, '*' operator means assignment by pointer
 
             &b = c;                         // ERROR, '&'  operator 'gives' address that is constant
             12 = a;                         // ERROR, can't assing to number
@@ -250,7 +252,7 @@ Suported operators
 
             tmp = arr1[someFunction()];       // ERROR, can't use functions as index
             tmp = arr1[&a];                   // ERROR, can't mix other opertors
-            tmp = arr1[*a];                   // ERROR, can't mix other opertors
+            tmp = arr1[*(a)];                 // ERROR, can't mix other opertors
             tmp = arr1[a[0]];                 // ERROR, can't mix other opertors
 
         Remember that there is not range test. If you go outside array range you can even read 
@@ -271,7 +273,7 @@ Suported operators
         Address operator returns real memory location of the variable. You can grab this value
         and store it in another variable to have some kind of pointer. It pretty similar to C 
         language but in SimpleC there is no pointer type. You should track witch variables are 
-        pointers by your own.
+        pointers on your own.
 
             // global scope
                                            // [memAddress]: value
@@ -301,8 +303,8 @@ Suported operators
             p = &(b[2]);               // ERROR, can't mix other operators
             p = &(2);                  // ERROR, can't get address to constant
             p = &(someFunction());     // ERROR, can't use functions
-            p = &(&b);                 // ERROR, can't mix other operators
-            p = &(*b);                 // ERROR, can't mix other operators
+            p = &(&(b));               // ERROR, can't mix other operators
+            p = &(*(b));               // ERROR, can't mix other operators
             p = &b;                    // ERROR, always use brackets '()'
 
         Address operator cannot be used at the left side of assign operator. It's quite reasonable
