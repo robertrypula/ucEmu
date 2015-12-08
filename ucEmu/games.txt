@@ -12,3 +12,33 @@ bradley trainer, atari czolgi 3d
 space wars deluxe 3d
 
 proste demo z zegarem analogowym w 3d
+
+
+
+-----------
+Gra z fizyka na bazie 'land on moon'
+
+    Obiekty:
+        - punkt (masa, predkosc)
+        - polaczenie wezlów, linia
+            - kolizyjne (sprezystosc, wspolczynnik tarcia statyczniego/kinetycznego)
+            - aerodynamiczne (sila z ruchu w powietrzu)
+            - sprezyste (laczy wezly, tlumienie jak w amortyzatorze)
+            
+    Sily zewnetrzne
+        - wiatr
+        - grawitacja
+
+    Prawa fizyki
+        1. Nacisk z reakcja podloza (punkt jest kolizyjne z linia, sila przekazywana jest na wezly proporcjonalnie)
+        2. Tarcie statyczne i kinetyczne (tarcie wplywa na punkt oraz na wezly proporcjonalnie)
+        3. Opor aerodynamiczny, zalezy od powierzchni linii
+        4. Sila miedzy wezlami
+        
+Uproszczenie:
+    - Wszystkie operacje na linii wykonywane sa po transformacji reszty obiektow tak by 
+    dana linia lezala na osi X. Takie podejscie umozliwia latwe okreslenie czy punkt jest w kolizji czy nie
+        
+        
+        
+        
