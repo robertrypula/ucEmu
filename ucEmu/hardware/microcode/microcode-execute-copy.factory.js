@@ -23,7 +23,7 @@ var MicrocodeExecuteCopy = (function () {
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequencerExecuteCopy');
                 Logger.log(3, 'regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
-                Logger.log(3, 'regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2) + " (COPY, save regIn0Value at regOut)");
+                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2) + " (COPY, save regIn0Value at regOut)");
             }
 
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;

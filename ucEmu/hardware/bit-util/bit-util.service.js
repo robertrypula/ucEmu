@@ -1,9 +1,9 @@
-var BitUtils = (function () {
+var BitUtil = (function () {
     'use strict';
 
-    _BitUtils.$inject = [];
+    _BitUtil.$inject = [];
 
-    function _BitUtils() {
+    function _BitUtil() {
 
         function getMask(size) {
             var mask = 0xFFFFFFFF;   // 32 bits
@@ -117,6 +117,6 @@ var BitUtils = (function () {
         };
     }
 
-    return new _BitUtils();        // TODO change it to dependency injection
+    return new _BitUtil();        // TODO change it to dependency injection
 
 })();

@@ -63,7 +63,7 @@ var ControlUnit = (function () {
 
             this.$$getMicrocodeFromControlStore().goToNextState();
 
-            this.$$cpu.core.regTimer = BitUtils.mask(this.$$cpu.core.regTimer + 1, BitUtils.BYTE_4);
+            this.$$cpu.core.regTimer = BitUtil.mask(this.$$cpu.core.regTimer + 1, BitUtil.BYTE_4);
         };
 
         CU.prototype.updateOutput = function () {

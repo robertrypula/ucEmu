@@ -15,18 +15,16 @@
                         + STATE@sequencerBuilder -> moved to ControlUnit
                         + state param @sequencerBuilder.build() -> microcode
             + [1.00h] change structure of dumping cpu state
-                + create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
-                + ability to pass previous dumpState to mark changes values - changed = true/false/null
-                + move Instructon State and Microcode State to separate file (also method for fetching key by value)
-                + return instr/microcode state at extra field in cpu dump
-
-            - [0.25h] change log messages order (oldState, clockEdge, newState)
+                        + create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
+                        + ability to pass previous dumpState to mark changes values - changed = true/false/null
+                        + move Instructon State and Microcode State to separate file (also method for fetching key by value)
+                        + return instr/microcode state at extra field in cpu dump
+            - [0.25h] change log messages order (oldState, clockEdge, newState) and replace existing logCpu method
             - [0.25h] WE and with clock (B positive clock, C negative clock)
             - [0.25h] fix load instruction to access Timer
             - [0.50h] create new MemoryUnit and move all code related to col/row/shift/mask manipulation
+            - [1.00h] implement Store instruction
              
-               still needed total: 1.25h
-
                 :: fun starts here ::
             - [2.00h] create MainBoard factory instead boot.js - first step only move existing functionality
             - [2.00h] signal class?
@@ -37,10 +35,6 @@
 
         Integrate IO with existing code for dot matrix and keyboard
             - [x.xxh] MainBoard should expose programming interface and events when input/output was changed
-              ...
-                mainBoard = new MainBoard();
-
-                mainBoard.output.portRow00
 
  */
 
@@ -130,7 +124,7 @@ function runCpu()
             Logger.log(
                 0, 
                 '                                                      ' +
-                '                               clockTicks: ' + BitUtils.hex(clockTicks, BitUtils.BYTE_4)
+                '                               clockTicks: ' + BitUtil.hex(clockTicks, BitUtil.BYTE_4)
             );
 
             Logger.log(
@@ -151,7 +145,7 @@ function programStaticRamAndSync(memoryState)
         staticRam.setWriteEnable(false);
 
         staticRam.setRow(ms.row);
-        staticRam.setDataIn(BitUtils.byteRowTo32bit(ms.data));
+        staticRam.setDataIn(BitUtil.byteRowTo32bit(ms.data));
 
         staticRam.setWriteEnable(true);
         staticRam.setWriteEnable(false);
@@ -200,41 +194,41 @@ function cpuLog()
     Logger.log(
         1,
         'in.clock: ' + cpu.input.clock + ' | ' +
-        'in.memoryRead = ' + BitUtils.hex(cpu.input.memoryRead, BitUtils.BYTE_4) + ' | ' +
-        'in.reset = ' + BitUtils.hex(cpu.input.reset, BitUtils.BIT_1) + '      ' +
-        'out.memoryRowAddress = ' + BitUtils.hex(cpu.output.memoryRowAddress, BitUtils.BYTE_4 - BitUtils.BIT_2) + ' | ' +
-        'out.memoryWrite = ' + BitUtils.hex(cpu.output.memoryWrite, BitUtils.BYTE_4) + ' | ' +
-        'out.memoryWE = ' + BitUtils.hex(cpu.output.memoryWE, BitUtils.BIT_1) + ' | '
+        'in.memoryRead = ' + BitUtil.hex(cpu.input.memoryRead, BitUtil.BYTE_4) + ' | ' +
+        'in.reset = ' + BitUtil.hex(cpu.input.reset, BitUtil.BIT_1) + '      ' +
+        'out.memoryRowAddress = ' + BitUtil.hex(cpu.output.memoryRowAddress, BitUtil.BYTE_4 - BitUtil.BIT_2) + ' | ' +
+        'out.memoryWrite = ' + BitUtil.hex(cpu.output.memoryWrite, BitUtil.BYTE_4) + ' | ' +
+        'out.memoryWE = ' + BitUtil.hex(cpu.output.memoryWE, BitUtil.BIT_1) + ' | '
     );
     Logger.log(
         1,
-        'regMemory = ' + BitUtils.hex(c.regMemory, BitUtils.BYTE_4) + ' | ' +
-        'regSequencer = ' + BitUtils.hex(c.regSequencer, BitUtils.BYTE_HALF) + ' | ' +
-        'regInstruction = ' + BitUtils.hex(c.regInstruction, BitUtils.BYTE_4) + ' | ' +
-        'regTimer = ' + BitUtils.hex(c.regTimer, BitUtils.BYTE_4) + ' | ' +
-        'regReset = ' + BitUtils.hex(c.regReset, BitUtils.BIT_1)
+        'regMemory = ' + BitUtil.hex(c.regMemory, BitUtil.BYTE_4) + ' | ' +
+        'regSequencer = ' + BitUtil.hex(c.regSequencer, BitUtil.BYTE_HALF) + ' | ' +
+        'regInstruction = ' + BitUtil.hex(c.regInstruction, BitUtil.BYTE_4) + ' | ' +
+        'regTimer = ' + BitUtil.hex(c.regTimer, BitUtil.BYTE_4) + ' | ' +
+        'regReset = ' + BitUtil.hex(c.regReset, BitUtil.BIT_1)
     );
     Logger.log(
         1,
-        'reg00 = ' + BitUtils.hex(rs.read(0), BitUtils.BYTE_2) + ' | ' +
-        'reg01 = ' + BitUtils.hex(rs.read(1), BitUtils.BYTE_2) + ' | ' +
-        'reg02 = ' + BitUtils.hex(rs.read(2), BitUtils.BYTE_2) + ' | ' +
-        'reg03 = ' + BitUtils.hex(rs.read(3), BitUtils.BYTE_2) + ' | ' +
-        'reg04 = ' + BitUtils.hex(rs.read(4), BitUtils.BYTE_2) + ' | ' +
-        'reg05 = ' + BitUtils.hex(rs.read(5), BitUtils.BYTE_2) + ' | ' +
-        'reg06 = ' + BitUtils.hex(rs.read(6), BitUtils.BYTE_2) + ' | ' +
-        'reg07 = ' + BitUtils.hex(rs.read(7), BitUtils.BYTE_2) + ' | '
+        'reg00 = ' + BitUtil.hex(rs.read(0), BitUtil.BYTE_2) + ' | ' +
+        'reg01 = ' + BitUtil.hex(rs.read(1), BitUtil.BYTE_2) + ' | ' +
+        'reg02 = ' + BitUtil.hex(rs.read(2), BitUtil.BYTE_2) + ' | ' +
+        'reg03 = ' + BitUtil.hex(rs.read(3), BitUtil.BYTE_2) + ' | ' +
+        'reg04 = ' + BitUtil.hex(rs.read(4), BitUtil.BYTE_2) + ' | ' +
+        'reg05 = ' + BitUtil.hex(rs.read(5), BitUtil.BYTE_2) + ' | ' +
+        'reg06 = ' + BitUtil.hex(rs.read(6), BitUtil.BYTE_2) + ' | ' +
+        'reg07 = ' + BitUtil.hex(rs.read(7), BitUtil.BYTE_2) + ' | '
     );
     Logger.log(
         1,
-        'reg08 = ' + BitUtils.hex(rs.read(8), BitUtils.BYTE_2) + ' | ' +
-        'reg09 = ' + BitUtils.hex(rs.read(9), BitUtils.BYTE_2) + ' | ' +
-        'reg10 = ' + BitUtils.hex(rs.read(10), BitUtils.BYTE_2) + ' | ' +
-        'reg11 = ' + BitUtils.hex(rs.read(11), BitUtils.BYTE_2) + ' | ' +
-        'reg12 = ' + BitUtils.hex(rs.read(12), BitUtils.BYTE_2) + ' | ' +
-        'reg13 = ' + BitUtils.hex(rs.read(13), BitUtils.BYTE_2) + ' | ' +
-        'regMA = ' + BitUtils.hex(rs.getMemoryAccess(), BitUtils.BYTE_2) + ' | ' +
-        'regPC = ' + BitUtils.hex(rs.getProgramCounter(), BitUtils.BYTE_2) + ' | '
+        'reg08 = ' + BitUtil.hex(rs.read(8), BitUtil.BYTE_2) + ' | ' +
+        'reg09 = ' + BitUtil.hex(rs.read(9), BitUtil.BYTE_2) + ' | ' +
+        'reg10 = ' + BitUtil.hex(rs.read(10), BitUtil.BYTE_2) + ' | ' +
+        'reg11 = ' + BitUtil.hex(rs.read(11), BitUtil.BYTE_2) + ' | ' +
+        'reg12 = ' + BitUtil.hex(rs.read(12), BitUtil.BYTE_2) + ' | ' +
+        'reg13 = ' + BitUtil.hex(rs.read(13), BitUtil.BYTE_2) + ' | ' +
+        'regMA = ' + BitUtil.hex(rs.getMemoryAccess(), BitUtil.BYTE_2) + ' | ' +
+        'regPC = ' + BitUtil.hex(rs.getProgramCounter(), BitUtil.BYTE_2) + ' | '
     );
 
     var dump;

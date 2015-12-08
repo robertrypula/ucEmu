@@ -17,7 +17,7 @@ var RegisterSet = (function () {
 
         RS.prototype.$$initialize = function () {
             for (var i = 0; i < this.REGISTERS_SIZE; i++) {
-                this.register[i] = BitUtils.random(BitUtils.BYTE_2);
+                this.register[i] = BitUtil.random(BitUtil.BYTE_2);
             }
         };
 
@@ -57,7 +57,7 @@ var RegisterSet = (function () {
 
         RS.prototype.save = function (number, value) {
             //this.$$checkRange(number, 'save');
-            this.register[number] = BitUtils.mask(value, BitUtils.BYTE_2);
+            this.register[number] = BitUtil.mask(value, BitUtil.BYTE_2);
         };
 
         return RS;

@@ -1,40 +1,41 @@
 <html>
     <head>
-        <script src="logger.service.js"></script>
-        <script src="alu-builder.service.js"></script>
-        <script src="opcode.service.js"></script>
-        <script src="microcode.service.js"></script>
-        <script src="instruction-decoder-builder.service.js"></script>
-        <script src="register-set-builder.service.js"></script>
-        <script src="control-unit-builder.service.js"></script>
-        <script src="microcode/microcode-builder.service.js"></script>
-        <script src="signal/signal-factory.service.js"></script>
-        <script src="signal/signal.factory.js"></script>
-        <script src="cpu-aware.factory.js"></script>
+        <script src="cpu/cpu-aware.factory.js"></script>
+        <script src="cpu/cpu.factory.js"></script>
         <script src="microcode/abstract-microcode.factory.js"></script>
-        <script src="bit-utils.service.js"></script>
-        <script src="alu.factory.js"></script>
+        <script src="alu/alu.factory.js"></script>
+        <script src="alu/alu-builder.service.js"></script>
+        <script src="bit-util/bit-util.service.js"></script>
+        <script src="control-unit/control-unit.factory.js"></script>
+        <script src="control-unit/control-unit-builder.service.js"></script>
+        <script src="instruction-decoder/instruction-decoder.factory.js"></script>
+        <script src="instruction-decoder/instruction-decoder-builder.service.js"></script>
+        <script src="logger/logger.service.js"></script>
+        <script src="microcode/microcode.service.js"></script>
+        <script src="microcode/microcode-builder.service.js"></script>
+        <script src="microcode/microcode-execute-add.factory.js"></script>
+        <script src="microcode/microcode-execute-copy.factory.js"></script>
+        <script src="microcode/microcode-execute-imm.factory.js"></script>
+        <script src="microcode/microcode-execute-jnz.factory.js"></script>
         <script src="microcode/microcode-execute-ld-first.factory.js"></script>
         <script src="microcode/microcode-execute-ld-second.factory.js"></script>
+        <script src="microcode/microcode-execute-nand.factory.js"></script>
+        <script src="microcode/microcode-execute-sh.factory.js"></script>
         <script src="microcode/microcode-execute-st-first-a.factory.js"></script>
         <script src="microcode/microcode-execute-st-first-b.factory.js"></script>
         <script src="microcode/microcode-execute-st-first-c.factory.js"></script>
         <script src="microcode/microcode-execute-st-second-a.factory.js"></script>
         <script src="microcode/microcode-execute-st-second-b.factory.js"></script>
         <script src="microcode/microcode-execute-st-second-c.factory.js"></script>
-        <script src="microcode/microcode-execute-imm.factory.js"></script>
-        <script src="microcode/microcode-execute-nand.factory.js"></script>
-        <script src="microcode/microcode-execute-add.factory.js"></script>
-        <script src="microcode/microcode-execute-copy.factory.js"></script>
-        <script src="microcode/microcode-execute-jnz.factory.js"></script>
-        <script src="microcode/microcode-execute-sh.factory.js"></script>
         <script src="microcode/microcode-fetch-first.factory.factory.js"></script>
         <script src="microcode/microcode-fetch-second-and-decode.factory.js"></script>
-        <script src="control-unit.factory.js"></script>
-        <script src="instruction-decoder.factory.js"></script>
-        <script src="register-set.factory.js"></script>
-        <script src="cpu.factory.js"></script>
-        <script src="static-ram.factory.js"></script>
+        <script src="opcode/opcode.service.js"></script>
+        <script src="register-set/register-set.factory.js"></script>
+        <script src="register-set/register-set-builder.service.js"></script>
+        <script src="signal/signal.factory.js"></script>
+        <script src="signal/signal-factory.service.js"></script>
+        <script src="static-ram/static-ram.factory.js"></script>
+
         <script src="boot.js"></script>
     </head>
 

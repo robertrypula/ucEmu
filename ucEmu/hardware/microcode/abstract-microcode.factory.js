@@ -1,4 +1,4 @@
-var AbstractMicrocode = (function () {
+ var AbstractMicrocode = (function () {
     'use strict';
 
     _AbstractMicrocode.$inject = [];
@@ -54,7 +54,7 @@ var AbstractMicrocode = (function () {
         };
 
         AM.prototype.$$updateOutputMemoryRowAddress = function () {
-            this.$$out.memoryRowAddress = BitUtils.shiftRight(this.$$regSet.getProgramCounter(), BitUtils.BIT_2);
+            this.$$out.memoryRowAddress = BitUtil.shiftRight(this.$$regSet.getProgramCounter(), BitUtil.BIT_2);
         };
 
         AM.prototype.$$updateOutputMemoryWrite = function () {

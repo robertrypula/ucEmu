@@ -29,8 +29,8 @@ var StaticRam = (function () {
                     Logger.log(
                         0,
                         ' StaticRam:  ' +
-                        BitUtils.hex(i, BitUtils.BYTE_2) + ' | ' +
-                        BitUtils.hex(this.data[i], BitUtils.BYTE_4)
+                        BitUtil.hex(i, BitUtil.BYTE_2) + ' | ' +
+                        BitUtil.hex(this.data[i], BitUtil.BYTE_4)
                     );
                 }
             }
@@ -46,12 +46,12 @@ var StaticRam = (function () {
         };
 
         SR.prototype.setRow = function (row) {
-            this.input.row = BitUtils.mask(row, BitUtils.BYTE_2 - BitUtils.BIT_2);
+            this.input.row = BitUtil.mask(row, BitUtil.BYTE_2 - BitUtil.BIT_2);
             this.$$update();
         };
 
         SR.prototype.setDataIn = function (dataIn) {
-            this.input.dataIn = BitUtils.mask(dataIn, BitUtils.BYTE_4);
+            this.input.dataIn = BitUtil.mask(dataIn, BitUtil.BYTE_4);
             this.$$update();
         };
 
@@ -63,7 +63,7 @@ var StaticRam = (function () {
 
         SR.prototype.$$initialize = function () {
             for (var i = 0; i < this.ROWS_COUNT; i++) {
-                this.data[i] = BitUtils.random(BitUtils.BYTE_4);
+                this.data[i] = BitUtil.random(BitUtil.BYTE_4);
             }
             this.$$update();
         };

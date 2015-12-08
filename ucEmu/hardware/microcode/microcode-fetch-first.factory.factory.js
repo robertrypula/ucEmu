@@ -16,14 +16,14 @@ var MicrocodeFetchFirst = (function () {
         MFF.prototype.$$goToNextState = function () {
             var memoryColumn, memoryReadShifted;
 
-            memoryColumn = BitUtils.mask(this.$$regSet.getProgramCounter(), BitUtils.BIT_2);
-            memoryReadShifted = BitUtils.shiftLeft(this.$$in.memoryRead, memoryColumn * BitUtils.BYTE_1);
+            memoryColumn = BitUtil.mask(this.$$regSet.getProgramCounter(), BitUtil.BIT_2);
+            memoryReadShifted = BitUtil.shiftLeft(this.$$in.memoryRead, memoryColumn * BitUtil.BYTE_1);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequenceFetchFirst');
                 Logger.log(3, 'memoryColumn = ' + memoryColumn);
-                Logger.log(3, 'input.memoryRead = ' + BitUtils.hex(this.$$in.memoryRead, BitUtils.BYTE_4));
-                Logger.log(3, 'memoryReadShifted = ' + BitUtils.hex(memoryReadShifted, BitUtils.BYTE_4));
+                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(this.$$in.memoryRead, BitUtil.BYTE_4));
+                Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
             }
 
             this.$$core.regMemory = memoryReadShifted;

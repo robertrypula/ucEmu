@@ -68,36 +68,36 @@ var InstructionDecoder = (function () {
         ID.prototype.getOpcode = function () {
             //this.$$checkCpu();
 
-            return BitUtils.shiftRight(
+            return BitUtil.shiftRight(
                 this.$$cpu.core.regInstruction & 0x70000000,
-                BitUtils.BYTE_3 + BitUtils.BYTE_HALF
+                BitUtil.BYTE_3 + BitUtil.BYTE_HALF
             );
         };
 
         ID.prototype.getRegOut = function () {
             //this.$$checkCpu();
 
-            return BitUtils.shiftRight(
+            return BitUtil.shiftRight(
                 this.$$cpu.core.regInstruction & 0x0F000000,
-                BitUtils.BYTE_3
+                BitUtil.BYTE_3
             );
         };
 
         ID.prototype.getRegIn0 = function () {
             //this.$$checkCpu();
 
-            return BitUtils.shiftRight(
+            return BitUtil.shiftRight(
                 this.$$cpu.core.regInstruction & 0x00F00000,
-                BitUtils.BYTE_2 + BitUtils.BYTE_HALF
+                BitUtil.BYTE_2 + BitUtil.BYTE_HALF
             );
         };
 
         ID.prototype.getRegIn1 = function () {
             //this.$$checkCpu();
 
-            return BitUtils.shiftRight(
+            return BitUtil.shiftRight(
                 this.$$cpu.core.regInstruction & 0x000F0000,
-                BitUtils.BYTE_2
+                BitUtil.BYTE_2
             );
         };
 

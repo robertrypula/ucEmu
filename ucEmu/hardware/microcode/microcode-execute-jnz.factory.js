@@ -27,10 +27,10 @@ var MicrocodeExecuteJnz = (function () {
             if (Logger.isEnabled()) {
                 Logger.log(2, ':: sequencerExecuteJnz');
                 Logger.log(3, 'regIn0, regIn1 <-> ' + regIn0 + ', ' + regIn1);
-                Logger.log(3, 'regIn0Value = ' + BitUtils.hex(regIn0Value, BitUtils.BYTE_2));
-                Logger.log(3, 'regIn1Value = ' + BitUtils.hex(regIn1Value, BitUtils.BYTE_2));
+                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
+                Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));
                 Logger.log(3, 'notZeroFlag = ' + (notZeroFlag ? "true (regIn1Value NOT EQUAL zero - jump)" : "false (regIn1Value EQUAL zero - no jump)"));
-                Logger.log(3, 'regPCNext = ' + BitUtils.hex(regPCNext, BitUtils.BYTE_2));
+                Logger.log(3, 'regPCNext = ' + BitUtil.hex(regPCNext, BitUtil.BYTE_2));
             }
 
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
