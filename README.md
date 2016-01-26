@@ -14,4 +14,4 @@ Audio network development (carrier recovery service tests) [here](http://codebui
 
 TBC...
 
-(c) Robert Rypu³a 2015-2016
+(c) Robert Rypula 2015-2016
