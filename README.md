@@ -11,7 +11,7 @@ SimpleC doc draft [here](http://codebuild.pl/ucEmu/docs/SimpleC.html).
 
 Audio network development [here](http://codebuild.pl/ucEmu/ucEmu/device/audio-network/index.html)
 
-Audio network development (carrier recovery service tests) [here](http://codebuild.pl/ucEmu/ucEmu/device/audio-network/carrier-recovery/index.html)
+Audio network development (carrier recovery service tests) [here](http://codebuild.pl/ucEmu/ucEmu/device/audio-network/carrier.html)
 
 
 TBC...
