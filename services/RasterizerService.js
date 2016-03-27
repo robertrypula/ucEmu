@@ -205,3 +205,45 @@ function rasterizerDrawLine(x1, y1, x2, y2)
         xMode ? fbSet(fastPos, slowPos) : fbSet(slowPos, fastPos);
     }
 }
+
+// ----------------- filled triangle attempt -----------
+
+function sign(p1, p2, p3) {
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
+function pointInTriangle(pt, v1, v2, v3) {
+    var b1, b2, b3;
+
+    b1 = sign(pt, v1, v2) < 0.0;
+    b2 = sign(pt, v2, v3) < 0.0;
+    b3 = sign(pt, v3, v1) < 0.0;
+
+    return ((b1 == b2) && (b2 == b3));
+}
+
+
+function rasterizerDrawTriangleFilled(x1, y1, x2, y2, x3, y3) {
+    var xMin, xMax, yMin, yMax, y, x;
+
+    xMin = x1 < x2 ? x1 : x2;
+    xMin = x3 < xMin ? x3 : xMin;
+    xMax = x1 > x2 ? x1 : x2;
+    xMax = x3 > xMax ? x3 : xMax;
+
+    yMin = y1 < y2 ? y1 : y2;
+    yMin = y3 < yMin ? y3 : yMin;
+    yMax = y1 > y2 ? y1 : y2;
+    yMax = y3 > yMax ? y3 : yMax;
+
+    rasterizerDrawLine(xMin, yMin, xMin, yMax);
+    rasterizerDrawLine(xMax, yMin, xMax, yMax);
+
+    for (y = 0; y < yMax - yMin; y++) {
+        for (x = 0; x < xMax - xMin; x++) {
+            if (pointInTriangle(pt, v1, v2, v3) {
+
+            }
+        }
+    }
+}

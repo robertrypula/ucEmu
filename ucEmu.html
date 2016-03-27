@@ -152,6 +152,11 @@
                     round(interpolationLinear([trXYprev[2], trXY[2]], t1)), round(interpolationLinear([trXYprev[3], trXY[3]], t1)),
                     round(interpolationLinear([trXYprev[4], trXY[4]], t1)), round(interpolationLinear([trXYprev[5], trXY[5]], t1))
                 );
+                rasterizerDrawTriangleFilled(
+                        round(interpolationLinear([trXYprev[0], trXY[0]], t1)), round(interpolationLinear([trXYprev[1], trXY[1]], t1)),
+                        round(interpolationLinear([trXYprev[2], trXY[2]], t1)), round(interpolationLinear([trXYprev[3], trXY[3]], t1)),
+                        round(interpolationLinear([trXYprev[4], trXY[4]], t1)), round(interpolationLinear([trXYprev[5], trXY[5]], t1))
+                );
 
                 if (header !== "") {
                     rasterizerDrawText(round(0.5 * (fbWidth - header.length * 6) + sinMul(0.5 * fbWidth, t1)), round(0.5 * (fbHeight - 8)), header);
@@ -223,7 +228,7 @@
                 if (demo === -1) {
                     demo = randomInt(0, 3);
                 }
-                // demo = 3;
+                demo = 1;
                 switch (demo) {
                     case 0:
                         demo0();
