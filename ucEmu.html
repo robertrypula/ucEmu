@@ -46,9 +46,11 @@
         <script>
             'use strict';
 
+            /*
             console.log(
                 div(32000, 21)
             );
+            */
 
             var timerOne = 0;
             var timerOneMs = 5500;
@@ -139,6 +141,7 @@
             var trXY = [-1, -1, -1, -1, -1, -1];
             var trXYprev = [-1, -1, -1, -1, -1, -1];
             var header = "triangle test";
+            var triangleFillColor = 0;
 
             function demo1()
             {
@@ -146,7 +149,8 @@
 
                 fbSetColor(7);
                 fbClear();
-                fbSetColor( Math.round(Math.random() * 7) );
+
+                fbSetColor( triangleFillColor );
                 rasterizerDrawTriangleFilled(
                     round(interpolationLinear([trXYprev[0], trXY[0]], t1)), round(interpolationLinear([trXYprev[1], trXY[1]], t1)),
                     round(interpolationLinear([trXYprev[2], trXY[2]], t1)), round(interpolationLinear([trXYprev[3], trXY[3]], t1)),
@@ -170,6 +174,7 @@
                         trXYprev[i] = trXY[i];
                         trXY[i] = (i % 2 === 0) ? randomInt(-0.25 * fbWidth, 1.25 * fbWidth) : randomInt(-0.25 * fbHeight, 1.25 * fbHeight)
                     }
+                    triangleFillColor = Math.round(Math.random() * 7);
                     header = "";
 
                     timerOne = timerOne % timerOneMs;
