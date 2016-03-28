@@ -224,7 +224,7 @@ function pointInTriangle(pt, v1, v2, v3) {
 
 
 function rasterizerDrawTriangleFilled(x1, y1, x2, y2, x3, y3) {
-    var xMin, xMax, yMin, yMax, y, x;
+    var xMin, xMax, yMin, yMax, y, x, t;
 
     xMin = x1 < x2 ? x1 : x2;
     xMin = x3 < xMin ? x3 : xMin;
@@ -236,13 +236,20 @@ function rasterizerDrawTriangleFilled(x1, y1, x2, y2, x3, y3) {
     yMax = y1 > y2 ? y1 : y2;
     yMax = y3 > yMax ? y3 : yMax;
 
-    rasterizerDrawLine(xMin, yMin, xMin, yMax);
-    rasterizerDrawLine(xMax, yMin, xMax, yMax);
+    // rasterizerDrawLine(xMin, yMin, xMin, yMax);
+    // rasterizerDrawLine(xMax, yMin, xMax, yMax);
 
     for (y = 0; y < yMax - yMin; y++) {
         for (x = 0; x < xMax - xMin; x++) {
-            if (pointInTriangle(pt, v1, v2, v3) {
+            t = pointInTriangle(
+                { x: xMin + x, y: yMin + y }, 
+                { x: x1, y: y1 }, 
+                { x: x2, y: y2 }, 
+                { x: x3, y: y3 }
+            );
 
+            if (t) {
+                fbSet(xMin + x, yMin + y);
             }
         }
     }
