@@ -34,10 +34,42 @@ function shaderVertex(vertex, normal) {
 function shaderFragment(vertex, normal, uv, distanceToEdge) {
     var color;
 
-    color = /* apply lightning, texture etc */
+    color = 0/* apply lightning, texture etc */
 
     return color;
 }
+
+
+px = i*v1x + j*v2x;
+py = i*v1y + j*v2y;
+
+px - j*v2x = i*v1x;
+i = (px - j*v2x) / v1x;
+py = i*v1y + j*v2y;
+py = ((px*v1y - j*v2x*v1y) / v1x) + j*v2y;
+py*v1x = px*v1y - j*v2x*v1y + j*v2y*v1x;
+py*v1x = px*v1y - j*(v2x*v1y + v2y*v1x);
+j*(v2x*v1y + v2y*v1x) = px*v1y - py*v1x;
+j = (px*v1y - py*v1x) / (v2x*v1y + v2y*v1x);
+
+
+    i = (px - j*v2x) / v1x;
+    i * v1x = px - j*v2x;
+    i * v1x = px - (px*v1y*v2x - py*v1x*v2x) / (v2x*v1y + v2y*v1x);
+    i = px/v1x - (px*v1y*v2x - py*v1x*v2x) / (v2x*v1y + v2y*v1x)*v1x;
+
+px = i*v1x + j*v2x;
+px - i*v1x = j*v2x;
+j = (px - i*v1x) / v2x;
+py = i*v1y + ((px - i*v1x) / v2x)*v2y;
+py = i*v1y + (px*v2y - i*v1x*v2y) / v2x;
+py*v2x = i*v1y*v2x + px*v2y - i*v1x*v2y;
+py*v2x = i*v1y*v2x - i*v1x*v2y + px*v2y;
+py*v2x = i*(v1y*v2x - v1x*v2y) + px*v2y;
+py*v2x - px*v2y = i*(v1y*v2x - v1x*v2y);
+i = (py*v2x - px*v2y) / (v1y*v2x - v1x*v2y);
+
+
 
 // --------------------------
 // internals
