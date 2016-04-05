@@ -915,6 +915,34 @@ SIMPLEC CODE EXAMPLE
 
     testLength = strlen(&test);
 
+
+--------------------------------------------------
+2016.04.05 - CAN WE ALSO RUN FUNCTION VIA POINTER?
+--------------------------------------------------
+
+var fnPointer;
+
+function foo(a) {
+    
+}
+
+function bar(a) {
+    a(1);
+}
+
+fnPointer = &foo;
+
+foo(1);
+fnPointer(1);
+
+foo = 123;        // ERROR, can't assign to function itentifier
+fnPointer = 123;  // OK, normal variable assignment
+
+bar(&foo);        // OK, we can pass function as parameter
+
+
+
+
 </pre>
 </body>
 </html>
