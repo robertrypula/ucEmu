@@ -3,7 +3,7 @@
 <pre style="width: 1000px;">
                             SimpleC language documentation
 
-                            (c) Robert Rypula 2015
+                            (c) Robert Rypula 2015-2016
 
 ------------
 Introduction
@@ -125,9 +125,9 @@ Variable initialization
                 var arr1 = { <byteReserve[2]>, 3, 6 };       // ERROR, 3 and 6 will trigger error
                 var arr2 = { <byteReserve[2]> };             // OK, no predefined values, it will give 0x??, 0x??
                 var arr3 = { <wordReserve[2]> };             // OK, no predefined values, it will give 0x????, 0x????
-                var arr4 = { <wordReserve[2]>, <byte[3]> };  // Also OK, no predefined values, it will give 0x????, 
-                                                             //   0x????. <byte[3]> changes internal state but 
-                                                             //   doesn't put any data
+                var arr4 = { <wordReserve[2]>, <byte[3]> };  // ERROR, technically <byte[3]> doesn't put any data but 
+                                                             //        for simplicity this keyword is forbidden at functions
+                                                             //        (as well as word[x])
             }
             
         Reserve keywords (<byteReserve[x]>/<wordReserve[x]>) doesn't change any internal state 
@@ -203,13 +203,13 @@ Suported operators
             
         Variable values after above three assignment will look like this.
         
-            a:     4
-            b:    -1
-            arr1: -1, 2, 3
-            arr2: 4, 3, 6
+            a      equal to: 4
+            b      equal to: -1
+            arr1   items equal to: -1, 2, 3
+            arr2   itesm equal to: 4, 3, 6
 
         Right side can be constant, other variable or function. Operators that 'returns' 
-        data also is OK ('[]', '*', '&').
+        data are also OK ('[]', '*', '&').
 
             var a;
             var b = 3;
@@ -224,7 +224,7 @@ Suported operators
             c = &(b);                  // OK, '&'  operator 'gives' address
             a = *(c);                  // OK, '*' operator 'gives' value by pointer
 
-        At the other hand left side can be only other variable. It's because you can't
+        Left side can be only other variable. It's because you can't
         assing anything to constant value. 
 
             var a;
@@ -236,7 +236,7 @@ Suported operators
             c[1] = a;                       // OK, '[]' operator means array assignmeny
             *(c) = a;                       // OK, '*' operator means assignment by pointer
 
-            &(b) = c;                       // ERROR, '&'  operator 'gives' address that is constant
+            &(b) = c;                       // ERROR, '&'  operator 'gives' address which is constant
             12 = a;                         // ERROR, can't assing to number
             someFunction() = a;             // ERROR, can't assign to function 
             someFunctionWithParam(b) = a;   // ERROR, can't assign to function
@@ -341,7 +341,7 @@ Suported operators
 
         With indirect operator you can access variable via address stored in other variable. The is
         also posibility to add offset to address in a single line of code. You should always use
-        round brackets - '(' and ')'. You can ommit offset if you want. Ommited offset is always zero.
+        round brackets - '(' and ')' but you can ommit offset if you want. Ommited offset is always zero.
 
             var i = 2;              // [0x0000]: 0x0002
             var a = { 128, 129 };   // [0x0002]: 0x0080, [0x0004]: 0x0081
@@ -377,18 +377,23 @@ Suported operators
 
             ...
             tmp = *(prt + 1);     // tmp equals to 0x0a00 - it's half of element at index 0 and half of element at index 1
-                                  // How variables are stored inside memory
+            ...
 
         You can put any address to pointer variable. It means that you can access every memory 
-        location that you want. You can even read machine code of your own program. In below example 
-        address of 'test' was assigned manually to 'ptr' variable.
+        location that you want. In below example address of 'test' was assigned manually to 'ptr' variable.
 
-            // ... 
+            ...
             ptr = 0x000A;       // load 'test' variable address
             *(ptr) = 111;       // assing 111 to 'test' variable via pointer
 
             i = 0;
             *(ptr + i) = 111;   // assing 111 to 'test' variable via pointer too (with zero offset)
+
+        You can even read machine code of your own program.
+
+            ...
+            TODO example of reading own machine code
+            ...
 
 
         You might notice that there is only one place in SimpleC language where addition with '+' 
@@ -396,8 +401,9 @@ Suported operators
         you need to manually change 'ptr' every time you need to access another element in array.
         In aproach with '+' ptr will remain stationary. Idea of SimpleC was to create language
         that is easy to create compillers for it and with syntax clean enough to write easy to 
-        read programs. Be aware that you can't use substraction with '-' sign. SimpleC is designed 
-        to be simple so there is as less language structures as possible :)
+        read programs. That's the reason why '+' was added in this case. 
+        Be aware that you can't use offset substraction with '-' sign. SimpleC is designed to be simple 
+        so there is as less language structures as possible! Minus would be just heating... :)
 
             var tmp;
             var a = { 1, 2 };
@@ -426,9 +432,12 @@ Suported operators
             p = *(someFunction());     // ERROR, can't use functions
             p = *(&(b));               // ERROR, can't mix other operators
             p = *(*(b));               // ERROR, can't mix other operators
+
+        And for reminder you should always use brackets.
+
             p = *b;                    // ERROR, always use brackets '()'
 
-        You can use '*()' operator at both sides of the assign operator.
+        You can use '*()' operator at both sides of the assign operator - left side and right side.
 
 
 ---------
@@ -437,7 +446,7 @@ Functions
 
     1. [ ## TODO ## ]
         
-        [ ## TODO ## Functions return singleval, main() ]
+        [ ## TODO ## Functions return single val, main() ]
         [ ## TODO ## variables in functions before code ]
 
 
@@ -518,11 +527,12 @@ Miscellaneous
             while (ne(c, 0)) {}   // same as:    while (c != 0) {}
 
         With this approach we don't need to worry about all operator combinations. It leads to 
-        much simpler compiller code. That was the main goal to achevie for SimpleC. But wait, if we don't
-        have any operator even as simple as '+' then how we can even add two numbers? You're right, we 
-        need to have some way to tell compiller that we want to add. That's why SimpleC has three
-        build in functions with very basic operations that touches almost directly instruction set 
-        of underlying CPU.
+        much simpler compiller code. That was the main goal to achevie for SimpleC. 
+
+        But wait, if we don't have any operator even as simple as '+' then how we can even add two 
+        numbers? You're right, we need to have some way to tell compiller that we want to add. That's 
+        why SimpleC has three build in functions with very basic operations that touches almost directly 
+        instruction set of underlying CPU.
 
             result = __ASM_nand(a, b);       // binary NAND of 'a' and 'b'
             result = __ASM_shift(v, left);   // binary SHIFT of 'v', << then ('left' != 0), >> then ('left' == 0)
@@ -702,6 +712,7 @@ Flow controll
             // # next line after break
             
         Above code use 'break' keyword. It can be used to immediatelly exit parent loop.
+
         To simplify things there is no 'continue' keyword from C language. To skip code
         in current iteration use ifs instead. 
 
@@ -895,7 +906,7 @@ SIMPLEC CODE EXAMPLE
 
     var ASCII_NULL = 0x00;
 
-    var test = { <byte[1]>, "test", ASCII_NULL };  // TODO fix this
+    var test = { <byte[1]>, "test", ASCII_NULL };  // TODO fix this, can't use variables in other vars declarations
     var testLength;
 
     function strlen(s)
@@ -904,7 +915,7 @@ SIMPLEC CODE EXAMPLE
         var c;
 
         i = -1;
-        do {
+        do {                           // TODO fix loop - current docs allows only while loops
             c = *(s + i);
             c = bAnd(0xFF, c);
             i = inc(i);
@@ -913,7 +924,7 @@ SIMPLEC CODE EXAMPLE
         return i;
     }
 
-    testLength = strlen(&test);
+    testLength = strlen(&(test));
 
 
 --------------------------------------------------
@@ -939,6 +950,23 @@ foo = 123;        // ERROR, can't assign to function itentifier
 fnPointer = 123;  // OK, normal variable assignment
 
 bar(&foo);        // OK, we can pass function as parameter
+
+
+---------------------------------------------------
+2016.04.26 all keywords
+---------------------------------------------------
+
+var a = 2;  var a = { 1, 2 }  var a = { "test" }  var a = { <byte[1]> 0x61, 0x62 }  var a = { <byteReserve[999]> }
+if (cond) { } else { }
+while (cond) { break; }
+&(a) &(testFunction)
+*(a) *(a + 1) *(a + i)
+a[0] a[i]
+a
+function testFunction(a, b) { return 3; } function testFunction(a, b) { var i; return i; }
+testFunction(1, 3) testFunction(i, 3)
+.. = ..
+/* comment */  // comment
 
 
 
