@@ -448,6 +448,33 @@ Functions
         
         [ ## TODO ## Functions return single val, main() ]
         [ ## TODO ## variables in functions before code ]
+        [ ## TODO ## parameters that can be passed ONLY: constans '1', variables 'variable', address of variable '&(variable)' ]
+
+    ------ 2016.04.05 - CAN WE ALSO RUN FUNCTION VIA POINTER? ------
+
+    var fnPointer;           // it will hold function address
+
+    function foo(a) {
+        
+    }
+
+    function bar(a) {
+        *(a)(1);
+    }
+
+    fnPointer = foo;        // function identifier is constant adress
+
+    foo(1);                 // to call function we just that address directly
+    *(fnPointer)(1);        // from points we need to first retrievie that address, otherwise we we call memory location of fnPointer variable!
+
+    foo = 123;        // ERROR, can't assign to function itentifier - it's constant address!!
+    fnPointer = 123;  // OK, normal variable assignment
+
+    bar(foo);        // OK, we can pass function as parameter, address will be copied by default
+
+    Summary:
+        - variable name is treated as actual value from memory location address
+        - function name is treated as memory location address
 
 
 -------------
@@ -927,44 +954,20 @@ SIMPLEC CODE EXAMPLE
     testLength = strlen(&(test));
 
 
---------------------------------------------------
-2016.04.05 - CAN WE ALSO RUN FUNCTION VIA POINTER?
---------------------------------------------------
-
-var fnPointer;
-
-function foo(a) {
-    
-}
-
-function bar(a) {
-    a(1);
-}
-
-fnPointer = &foo;
-
-foo(1);
-fnPointer(1);
-
-foo = 123;        // ERROR, can't assign to function itentifier
-fnPointer = 123;  // OK, normal variable assignment
-
-bar(&foo);        // OK, we can pass function as parameter
-
 
 ---------------------------------------------------
 2016.04.26 all keywords
 ---------------------------------------------------
 
-var a = 2;  var a = { 1, 2 }  var a = { "test" }  var a = { <byte[1]> 0x61, 0x62 }  var a = { <byteReserve[999]> }
+var a = 2;  var a = { 1, 2 }  var a = { "test" }  var a = { <byte[1]>, 0x61, 0x62 }  var a = { <byteReserve[999]> }
 if (cond) { } else { }
 while (cond) { break; }
-&(a) &(testFunction)
+&(a)
 *(a) *(a + 1) *(a + i)
 a[0] a[i]
 a
 function testFunction(a, b) { return 3; } function testFunction(a, b) { var i; return i; }
-testFunction(1, 3) testFunction(i, 3)
+testFunction(1, 3) testFunction(i, 3) *(pointerToFunction)(i, 3)
 .. = ..
 /* comment */  // comment
 
