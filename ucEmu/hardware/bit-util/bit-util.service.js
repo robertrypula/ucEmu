@@ -18,7 +18,7 @@ var BitUtil = (function () {
         }
 
         function getMaskOneBit(size) {
-            var mask = 0x80000000;   // one at most left posision
+            var mask = 0x80000000;   // one at most left position
 
             if (size <= 0 || size > 32) {
                 throw 'Wrong bit size: ' + size;
