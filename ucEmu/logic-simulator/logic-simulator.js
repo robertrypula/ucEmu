@@ -1,11 +1,7 @@
 /*
-    - propagation counter will be on the update() call (update will return true/false)
-    - refresh method at simulator
-
-    simulator.getClock().toggle();
-    while (!simulator.allPropagated()) {
-        simulator.refresh();
-    }
+    - add spliter and merger
+    - disable fan-out (only one connection per signal) + fix existing modules
+    - add two ways relation at connect method
 */
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -34,11 +30,11 @@ var BitUtil = new _BitUtil();
 
 var Signal;
 
-Signal = function (parentModule, simulator, width, isInput) {
+Signal = function (parentModule, simulator, width, parentModuleInput) {
     this.parentModule = parentModule;
     this.simulator = simulator;
     this.width = width;
-    this.isInput = isInput;
+    this.parentModuleInput = parentModuleInput;
     this.value = null;
     this.connectList = [];
     this.connected = 0;
@@ -53,16 +49,23 @@ Signal.prototype.setValue = function (value) {
 
     value = BitUtil.getMask(this.width) & value;
     changed = value !== this.value;
-    if (changed) {
-        this.value = value;
 
-        for (i = 0; i < this.connectList.length; i++) {
-            this.connectList[i].setValue(value);
-        }
+    if (!changed) {
+        return;
+    }
 
-        if (this.isInput && this.parentModule) {
-            console.log('update', this);
-            this.parentModule.update();
+    this.value = value;
+
+    for (i = 0; i < this.connectList.length; i++) {
+        this.connectList[i].setValue(value);
+    }
+
+    if (this.parentModuleInput && this.parentModule) {
+        this.parentModule.resetPropagationDelay();
+        if (!this.parentModule.update()) {
+            if (simulator) {
+                simulator.propagateLater(this.parentModule);
+            }
         }
     }
 };
@@ -100,6 +103,8 @@ AbstractModule = function (parentModule, simulator) {
     this.simulator = simulator;
     this.signalCollection = [];
     this.moduleCollection = [];
+    this.propagationDelayInitial = 0;
+    this.propagationDelay = null;
 };
 
 AbstractModule.prototype.getSignalCollection = function () {
@@ -110,8 +115,23 @@ AbstractModule.prototype.getModuleCollection = function () {
     return this.moduleCollection;
 };
 
-AbstractModule.prototype.getUpdate = function () {
+AbstractModule.prototype.update = function () {
+    if (this.propagationDelay > 0) {
+        this.propagationDelay--;
+        return false;
+    }
+
+    this.calculateOutputFromInput();
+
     return true;
+};
+
+AbstractModule.prototype.calculateOutputFromInput = function () {
+    // implement it in derived class
+};
+
+AbstractModule.prototype.resetPropagationDelay = function () {
+    this.propagationDelay = this.propagationDelayInitial;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -121,11 +141,35 @@ var AbstractSimulator;
 AbstractSimulator = function () {
     AbstractModule.apply(this, arguments);
 
-    this.updateList = [];
+    this.propagateLaterList = [];
 };
 
 AbstractSimulator.prototype = Object.create(AbstractModule.prototype);
 AbstractSimulator.prototype.constructor = AbstractSimulator;
+
+AbstractSimulator.prototype.propagateLater = function (module) {
+    this.propagateLaterList.push(module);
+};
+
+AbstractSimulator.prototype.allPropagated = function () {
+    return this.propagateLaterList.length === 0;
+}
+
+AbstractSimulator.prototype.propagate = function () {
+    var i, initialLength, removeIndexList;
+
+    removeIndexList = [];
+    initialLength = this.propagateLaterList.length;    // this line is imporant because array length may change in the loop
+    for (i = 0; i < initialLength; i++) {
+        if (this.propagateLaterList[i].update()) {
+            removeIndexList.push(i);
+        }
+    }
+
+    for (i = removeIndexList - 1; i >= 0; i--) {
+        this.propagateLaterList.splice(removeIndexList[i], 1);
+    }
+};
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -133,6 +177,8 @@ var Nand;
 
 Nand = function (parentModule, simulator) {
     AbstractModule.apply(this, arguments);
+
+    this.propagationDelayInitial = 10;
 
     this.signalCollection.push(
         this.inA = new Signal(this, simulator, 1, true),
@@ -144,7 +190,7 @@ Nand = function (parentModule, simulator) {
 Nand.prototype = Object.create(AbstractModule.prototype);
 Nand.prototype.constructor = Nand;
 
-Nand.prototype.update = function () {
+Nand.prototype.calculateOutputFromInput = function () {
     if (!(this.inA.getValue() && this.inB.getValue())) {
         this.out.setValue(1);
     } else {
@@ -161,6 +207,40 @@ Nand.prototype.getInB = function () {
 };
 
 Nand.prototype.getOut = function () {
+    return this.out;
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+var Not;
+
+Not = function (parentModule, simulator) {
+    AbstractModule.apply(this, arguments);
+
+    this.propagationDelayInitial = 10;
+
+    this.signalCollection.push(
+        this.in = new Signal(this, simulator, 1, true),
+        this.out = new Signal(this, simulator, 1, false)
+    );
+};
+
+Not.prototype = Object.create(AbstractModule.prototype);
+Not.prototype.constructor = Not;
+
+Not.prototype.calculateOutputFromInput = function () {
+    if (this.in.getValue()) {
+        this.out.setValue(0);
+    } else {
+        this.out.setValue(1);
+    }
+};
+
+Not.prototype.getIn = function () {
+    return this.in;
+};
+
+Not.prototype.getOut = function () {
     return this.out;
 };
 
@@ -260,59 +340,50 @@ Simulator = function () {
     AbstractSimulator.apply(this, arguments);
 
     this.moduleCollection.push(
-        this.dLatch = new DLatch(this, this)
+        // this.dLatch = new DLatch(this, this)
+        this.not1 = new Not(this, this),
+        this.not2 = new Not(this, this),
+        this.not3 = new Not(this, this),
+        this.not4 = new Not(this, this)
     );
     this.signalCollection.push(
-        this.s1 = new Signal(this, this, 1, false),
-        this.s2 = new Signal(this, this, 1, false)
+        // this.s1 = new Signal(this, this, 1, false),
+        // this.s2 = new Signal(this, this, 1, false)
     );
+
+    this.not1.getOut().connect(this.not2.getIn());
+    this.not2.getOut().connect(this.not3.getIn());
+    this.not3.getOut().connect(this.not4.getIn());
+    this.not4.getOut().connect(this.not1.getIn());
 };
 
 Simulator.prototype = Object.create(AbstractSimulator.prototype);
 Simulator.prototype.constructor = Simulator;
 
 Simulator.prototype.run = function () {
-    this.dLatch.getInput().setValue(1);
-    this.dLatch.getClock().setValue(0);
-    console.log(this.dLatch.getQ().getValue());
+    var limit = 100;
 
-    this.dLatch.getInput().setValue(0);
-    // this.dLatch.getClock().setValue(0);
-    console.log(this.dLatch.getQ().getValue());
+    // this.dLatch.getInput().setValue(1);
+    // this.dLatch.getClock().setValue(1);
 
-    this.dLatch.getInput().setValue(1);
-    // dLatch.getClock().setValue(0);
-    console.log(this.dLatch.getQ().getValue());
+    this.not1.getIn().setValue(0);
 
+    while (!this.allPropagated() && limit >= 0) {
+        console.log(
+            'Value: ' +
+            // this.dLatch.getQ().getValue()
+            this.not4.getOut().getValue()
+        );
+        this.propagate();
 
-    this.dLatch.getInput().setValue(1);
-    this.dLatch.getClock().setValue(1);
-    console.log(this.dLatch.getQ().getValue());
+        limit--;
+    }
 
-    this.dLatch.getInput().setValue(1);
-    this.dLatch.getClock().setValue(0);
-    console.log(this.dLatch.getQ().getValue());
-
-    this.dLatch.getInput().setValue(0);
-    this.dLatch.getClock().setValue(0);
-    console.log(this.dLatch.getQ().getValue());
-
-    console.log('-----');
-    console.log( this.s1.getValue() );
-    console.log( this.s2.getValue() );
-
-    this.s1.connect(this.s2);
-    this.s1.setValue(1);
-    console.log( this.s1.getValue() );
-    console.log( this.s2.getValue() );
-
-    this.s1.toggle();
-    console.log( this.s1.getValue() );
-    console.log( this.s2.getValue() );
-
-    this.s1.toggle();
-    console.log( this.s1.getValue() );
-    console.log( this.s2.getValue() );
+    console.log(
+        'Value: ' +
+        // this.dLatch.getQ().getValue()
+        this.not4.getOut().getValue()
+    );
 
 };
 
@@ -322,7 +393,7 @@ var simulator = new Simulator();
 
 simulator.run();
 
-
+console.log('--------');
 console.log(simulator.getModuleCollection());
 
 
