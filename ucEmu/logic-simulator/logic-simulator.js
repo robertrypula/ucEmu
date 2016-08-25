@@ -1,7 +1,6 @@
 /*
     - add spliter and merger
-    - disable fan-out (only one connection per signal) + fix existing modules
-    - add two ways relation at connect method
+    - disable fan-out (only one connection per signal) + Connection class (two-way relation) + fix existing modules
 */
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -28,6 +27,23 @@ var BitUtil = new _BitUtil();
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+var Connection;
+
+Connection = function (signalFrom, signalTo) {
+    this.signalFrom = signalFrom;
+    this.signalTo = signalTo;
+};
+
+Connection.prototype.getSignalFrom = function () {
+    return this.signalFrom;
+};
+
+Connection.prototype.getSignalTo = function () {
+    return this.signalTo;
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 var Signal;
 
 Signal = function (parentModule, simulator, width, parentModuleInput) {
@@ -38,6 +54,8 @@ Signal = function (parentModule, simulator, width, parentModuleInput) {
     this.value = null;
     this.connectList = [];
     this.connected = 0;
+    this.connectionFrom = null;
+    this.connectionTo = null;
 };
 
 Signal.CONNECTION_LIMIT = 4;
@@ -92,6 +110,16 @@ Signal.prototype.connect = function (signal) {
 
     this.connectList.push(signal);
     this.connected++;
+    /*
+    if (this === signal) {
+        throw 'Cannot connect signal to itself!';
+    }
+
+    var connection = new Connection(this, signal);
+
+    this.connectionTo = connection;
+    signal.connectionFrom = connection;
+    */
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -242,6 +270,64 @@ Not.prototype.getIn = function () {
 
 Not.prototype.getOut = function () {
     return this.out;
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+var FanOut1To2;
+
+FanOut1To2 = function (parentModule, simulator) {
+    AbstractModule.apply(this, arguments);
+
+    this.signalCollection.push(
+        this.in = new Signal(this, simulator, 1, true),
+        this.out1 = new Signal(this, simulator, 1, false),
+        this.out2 = new Signal(this, simulator, 1, false)
+    );
+};
+
+FanOut1To2.prototype = Object.create(AbstractModule.prototype);
+FanOut1To2.prototype.constructor = FanOut1To2;
+
+FanOut1To2.prototype.calculateOutputFromInput = function () {
+    this.out1.setValue(this.in.getValue());
+    this.out2.setValue(this.in.getValue());
+};
+
+FanOut1To2.prototype.getIn = function () {
+    return this.in;
+};
+
+FanOut1To2.prototype.getOut1 = function () {
+    return this.out1;
+};
+
+FanOut1To2.prototype.getOut2 = function () {
+    return this.out2;
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+var FanOut1To3;
+
+FanOut1To3 = function (parentModule, simulator) {
+    FanOut1To2.apply(this, arguments);
+
+    this.signalCollection.push(
+        this.out3 = new Signal(this, simulator, 1, false)
+    );
+};
+
+FanOut1To3.prototype = Object.create(FanOut1To2.prototype);
+FanOut1To3.prototype.constructor = FanOut1To3;
+
+FanOut1To3.prototype.calculateOutputFromInput = function () {
+    FanOut1To2.prototype.calculateOutputFromInput.class(this);         // TODO check it
+    this.out3.setValue(this.in.getValue());
+};
+
+FanOut1To3.prototype.getOut3 = function () {
+    return this.out3;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
