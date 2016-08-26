@@ -65,17 +65,42 @@ Connection.prototype.getSignalFrom = function () {
 
 Connection.prototype.getSignalTo = function () {
     return this.signalTo;
-};
+}
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+function _SignalRole() {
+    return {
+        NONE: 0,
+        MODULE_INPUT: 1,
+        MODULE_OUTPUT: 2
+    }
+}
+
+var SignalRole = new _SignalRole();
+
+// ---------------------------------------------------------------------------------------------------------------------\
+
+function _SignalOnChangeAction() {
+    return {
+        NONE: 0,
+        UPDATE_MODULE: 1
+    }
+}
+
+var SignalOnChangeAction = new _SignalOnChangeAction();
+
+// ---------------------------------------------------------------------------------------------------------------------\
+
 var Signal;
 
-Signal = function (parentModule, simulator, width, updateParentModuleAtChange) {
+Signal = function (parentModule, simulator, name, width, signalRole, onChangeAction) {
     this.parentModule = parentModule;
     this.simulator = simulator;
-    this.width = width;
-    this.updateParentModuleAtChange = !!updateParentModuleAtChange;
+    this.name = name;
+    this.width = typeof width === 'undefined' ? 1 : width;
+    this.signalRole = typeof signalRole === 'undefined' ? SignalRole.NONE : signalRole;
+    this.onChangeAction = typeof onChangeAction === 'undefined' ? SignalOnChangeAction.NONE : onChangeAction;
     this.value = null;
     this.connectionFrom = null;
     this.connectionTo = null;
@@ -100,7 +125,7 @@ Signal.prototype.setValue = function (value) {
         this.connectionTo.getSignalTo().setValue(value);
     }
 
-    if (this.updateParentModuleAtChange && this.parentModule) {
+    if (this.onChangeAction === SignalOnChangeAction.UPDATE_MODULE && this.parentModule) {
         this.parentModule.resetPropagationDelay();
         if (!this.parentModule.update()) {
             if (simulator) {
@@ -125,6 +150,21 @@ Signal.prototype.toggle = function () {
 Signal.prototype.connect = function (signal) {
     var connection;
 
+    console.log(this.parentModule.parentModule.getName() + '/' + this.name + ' -> ' + signal.parentModule.parentModule.getName() + '/' + signal.name);
+
+    if (this.parentModule.parentModule === signal.parentModule.parentModule) {
+        console.log('    OKEJ');
+    } else {
+        console.log('    ...');
+    }
+
+    console.log(this.parentModule.getName() + '/' + this.name + ' -> ' + signal.parentModule.parentModule.getName() + '/' + signal.name);
+    if (this.parentModule === signal.parentModule.parentModule) {
+        console.log('    OKEJ');
+    } else {
+        console.log('    ...');
+    }
+
     if (this.connectionTo || signal.connectionFrom) {
         throw Signal.CONNECTION_ALREADY_EXISTS_EXCEPTION;
     }
@@ -145,7 +185,8 @@ Signal.prototype.connect = function (signal) {
 
 var AbstractModule;
 
-AbstractModule = function (parentModule, simulator) {
+AbstractModule = function (parentModule, simulator, name) {
+    this.name = name;
     this.parentModule = parentModule;
     this.simulator = simulator;
     this.signalCollection = [];
@@ -153,6 +194,10 @@ AbstractModule = function (parentModule, simulator) {
     this.propagationDelayInitial = 0;
     this.propagationDelay = 0;
     this.moduleGiveSignal = false;
+};
+
+AbstractModule.prototype.getName = function () {
+    return this.name;
 };
 
 AbstractModule.prototype.getSignalCollection = function () {
@@ -264,7 +309,7 @@ High = function (parentModule, simulator) {
     this.moduleGiveSignal = true;
 
     this.signalCollection.push(
-        this.out = new Signal(this, simulator, 1, false)
+        this.out = new Signal(this, simulator, 'out', 1, SignalRole.MODULE_OUTPUT)
     );
 };
 
@@ -289,7 +334,7 @@ Low = function (parentModule, simulator) {
     this.moduleGiveSignal = true;
 
     this.signalCollection.push(
-        this.out = new Signal(this, simulator, 1, false)
+        this.out = new Signal(this, simulator, 'out', 1, SignalRole.MODULE_OUTPUT)
     );
 };
 
@@ -315,9 +360,9 @@ Nand = function (parentModule, simulator) {
     this.moduleGiveSignal = true;
 
     this.signalCollection.push(
-        this.inA = new Signal(this, simulator, 1, true),
-        this.inB = new Signal(this, simulator, 1, true),
-        this.out = new Signal(this, simulator, 1, false)
+        this.inA = new Signal(this, simulator, 'inA', 1, SignalRole.MODULE_INPUT, SignalOnChangeAction.UPDATE_MODULE),
+        this.inB = new Signal(this, simulator, 'inB', 1, SignalRole.MODULE_INPUT, SignalOnChangeAction.UPDATE_MODULE),
+        this.out = new Signal(this, simulator, 'out', 1, SignalRole.MODULE_OUTPUT)
     );
 };
 
@@ -355,8 +400,8 @@ Not = function (parentModule, simulator) {
     this.moduleGiveSignal = true;
 
     this.signalCollection.push(
-        this.in = new Signal(this, simulator, 1, true),
-        this.out = new Signal(this, simulator, 1, false)
+        this.in = new Signal(this, simulator, 'in', 1, SignalRole.MODULE_INPUT, SignalOnChangeAction.UPDATE_MODULE),
+        this.out = new Signal(this, simulator, 'out', 1, SignalRole.MODULE_OUTPUT)
     );
 };
 
@@ -387,9 +432,9 @@ FanOut1To2 = function (parentModule, simulator) {
     AbstractModule.apply(this, arguments);
 
     this.signalCollection.push(
-        this.in = new Signal(this, simulator, 1, true),
-        this.out1 = new Signal(this, simulator, 1, false),
-        this.out2 = new Signal(this, simulator, 1, false)
+        this.in = new Signal(this, simulator, 'in', 1, SignalRole.MODULE_INPUT, SignalOnChangeAction.UPDATE_MODULE),
+        this.out1 = new Signal(this, simulator, 'out1', 1, SignalRole.MODULE_OUTPUT),
+        this.out2 = new Signal(this, simulator, 'out2', 1, SignalRole.MODULE_OUTPUT)
     );
 };
 
@@ -421,7 +466,7 @@ FanOut1To3 = function (parentModule, simulator) {
     FanOut1To2.apply(this, arguments);
 
     this.signalCollection.push(
-        this.out3 = new Signal(this, simulator, 1, false)
+        this.out3 = new Signal(this, simulator, 'out3', 1, SignalRole.MODULE_OUTPUT)
     );
 };
 
@@ -429,7 +474,7 @@ FanOut1To3.prototype = Object.create(FanOut1To2.prototype);
 FanOut1To3.prototype.constructor = FanOut1To3;
 
 FanOut1To3.prototype.calculateOutputFromInput = function () {
-    FanOut1To2.prototype.calculateOutputFromInput.call(this);         // TODO check it
+    FanOut1To2.prototype.calculateOutputFromInput.call(this);
     this.out3.setValue(this.in.getValue());
 };
 
@@ -445,35 +490,35 @@ FlipFlopSR = function (parentModule, simulator) {
     AbstractModule.apply(this, arguments);
 
     this.moduleCollection.push(
-        this.nand1 = new Nand(this, simulator),
-        this.nand2 = new Nand(this, simulator)
+        this.nandQ = new Nand(this, simulator, 'nandQ'),
+        this.nandNotQ = new Nand(this, simulator, 'nandNotQ')
     );
 
-    this.nand1.getOut().connect(this.nand2.getInA());
-    this.nand2.getOut().connect(this.nand1.getInB());
+    this.nandQ.getOut().connect(this.nandNotQ.getInA());
+    this.nandNotQ.getOut().connect(this.nandQ.getInB());
 };
 
 FlipFlopSR.prototype = Object.create(AbstractModule.prototype);
 FlipFlopSR.prototype.constructor = FlipFlopSR;
 
-FlipFlopSR.prototype.getNand1 = function () {
-    return this.nand1;
+FlipFlopSR.prototype.getNandQ = function () {
+    return this.nandQ;
 };
 
-FlipFlopSR.prototype.getNand2 = function () {
-    return this.nand2;
+FlipFlopSR.prototype.getNandNotQ = function () {
+    return this.nandNotQ;
 };
 
 FlipFlopSR.prototype.getNotSet = function () {
-    return this.nand1.getInA();
+    return this.nandQ.getInA();
 };
 
 FlipFlopSR.prototype.getNotReset = function () {
-    return this.nand2.getInB();
+    return this.nandNotQ.getInB();
 };
 
 FlipFlopSR.prototype.getQ = function () {
-    return this.nand1.getOut();
+    return this.nandQ.getOut();
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -484,21 +529,21 @@ DLatch = function (parentModule, simulator) {
     AbstractModule.apply(this, arguments);
 
     this.moduleCollection.push(
-        this.clockFanOut = new FanOut1To2(this, simulator),
-        this.nand1 = new Nand(this, simulator),
-        this.nand1FanOut = new FanOut1To2(this, simulator),
-        this.nand2 = new Nand(this, simulator),
-        this.flipFlopSR = new FlipFlopSR(this, simulator)
+        this.clockFanOut = new FanOut1To2(this, simulator, 'clockFanOut'),
+        this.nandNotSet = new Nand(this, simulator, 'nandNotSet'),
+        this.nandNotSetFanOut = new FanOut1To2(this, simulator, 'nandNotSetFanOut'),
+        this.nandNotReset = new Nand(this, simulator, 'nandNotReset'),
+        this.flipFlopSR = new FlipFlopSR(this, simulator, 'flipFlopSR')
     );
 
-    this.clockFanOut.getOut1().connect(this.nand1.getInB());
-    this.clockFanOut.getOut2().connect(this.nand2.getInB());
+    this.clockFanOut.getOut1().connect(this.nandNotSet.getInB());
+    this.clockFanOut.getOut2().connect(this.nandNotReset.getInB());
 
-    this.nand1.getOut().connect(this.nand1FanOut.getIn());
-    this.nand1FanOut.getOut1().connect(this.flipFlopSR.getNotSet());
-    this.nand1FanOut.getOut2().connect(this.nand2.getInA());
+    this.nandNotSet.getOut().connect(this.nandNotSetFanOut.getIn());
+    this.nandNotSetFanOut.getOut1().connect(this.flipFlopSR.getNotSet());
+    this.nandNotSetFanOut.getOut2().connect(this.nandNotReset.getInA());
 
-    this.nand2.getOut().connect(this.flipFlopSR.getNotReset());
+    this.nandNotReset.getOut().connect(this.flipFlopSR.getNotReset());
 };
 
 DLatch.prototype = Object.create(AbstractModule.prototype);
@@ -512,20 +557,20 @@ DLatch.prototype.getFlipFlopSR = function () {
     return this.flipFlopSR;
 };
 
-DLatch.prototype.getNand1 = function () {
-    return this.nand1;
+DLatch.prototype.getNandNotSet = function () {
+    return this.nandNotSet;
 };
 
-DLatch.prototype.getNand1FanOut = function () {
-    return this.nand1FanOut;
+DLatch.prototype.getNandNotSetFanOut = function () {
+    return this.nandNotSetFanOut;
 };
 
-DLatch.prototype.getNand2 = function () {
-    return this.nand2;
+DLatch.prototype.getNandNotReset = function () {
+    return this.nandNotReset;
 };
 
 DLatch.prototype.getInput = function () {
-    return this.nand1.getInA();
+    return this.nandNotSet.getInA();
 };
 
 DLatch.prototype.getClock = function () {
@@ -546,12 +591,12 @@ Simulator = function () {
     AbstractSimulator.apply(this, arguments);
 
     this.moduleCollection.push(
-        this.dLatch = new DLatch(this, this),
-        this.low = new High(this, this),
-        this.fanOut = new FanOut1To3(this, this)
+        this.dLatch = new DLatch(this, this, 'dLatch'),
+        this.signal = new High(this, this, 'signal'),
+        this.fanOut = new FanOut1To3(this, this, 'fanout')
     );
 
-    this.low.getOut().connect(this.fanOut.getIn());
+    this.signal.getOut().connect(this.fanOut.getIn());
     this.fanOut.getOut1().connect(this.dLatch.getClock());
     this.fanOut.getOut2().connect(this.dLatch.getInput());
 
@@ -563,16 +608,15 @@ Simulator.prototype.constructor = Simulator;
 
 Simulator.prototype.propagationLoop = function () {
     while (!this.allPropagated()) {
-        console.log('Value: ' + this.dLatch.getQ().getValue());
+        console.log('Value: ' + this.dLatch.getQ().getValue() + ' ' + this.fanOut.getOut3().getValue());
         this.propagate();
     }
-    console.log('Value: ' + this.dLatch.getQ().getValue());
+    console.log('Value: ' + this.dLatch.getQ().getValue() + ' ' + this.fanOut.getOut3().getValue());
     console.log('--');
 };
 
 Simulator.prototype.run = function () {
     console.log(this);
-    console.log('Value: ' + this.dLatch.getQ().getValue());
     this.propagationLoop();
     console.log(this);
 
