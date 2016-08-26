@@ -2,26 +2,33 @@
 
 /*
     TODO:
-    - IMPORTANT check if module already exists in propagateLaterList before adding
     - can connect only when one signal acts as input and seconds acts as output
     - can connect signalA only when signalB belongs to module that is kid of signalA's module
-    - add HIGH and LOW module that gives const signal
-    +/- add all Nand/Not/High/Low modules inside simulator to propagateLater loop and shuffle array before and call propagate() with FORCE flag
-    - add random value to propagationDelay at reset (+/- 10% of nominal value)
  */
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-function shuffle(a) {
-    var j, x, i;
 
-    for (i = a.length; i; i--) {
-        j = Math.floor(Math.random() * i);
-        x = a[i - 1];
-        a[i - 1] = a[j];
-        a[j] = x;
+function _Util() {
+    function shuffle(a) {
+        var j, x, i;
+
+        for (i = a.length; i; i--) {
+            j = Math.floor(Math.random() * i);
+            x = a[i - 1];
+            a[i - 1] = a[j];
+            a[j] = x;
+        }
+    }
+
+    return {
+        shuffle: shuffle
     }
 }
+
+var Util = new _Util();
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 function _BitUtil() {
     function getMask(size) {
@@ -68,7 +75,7 @@ Signal = function (parentModule, simulator, width, updateParentModuleAtChange) {
     this.parentModule = parentModule;
     this.simulator = simulator;
     this.width = width;
-    this.updateParentModuleAtChange = updateParentModuleAtChange;
+    this.updateParentModuleAtChange = !!updateParentModuleAtChange;
     this.value = null;
     this.connectionFrom = null;
     this.connectionTo = null;
@@ -184,7 +191,9 @@ AbstractModule.prototype.fillWithModuleThatGiveSignal = function (list) {
 };
 
 AbstractModule.prototype.resetPropagationDelay = function () {
-    this.propagationDelay = this.propagationDelayInitial;
+    this.propagationDelay = Math.round(
+        this.propagationDelayInitial * (1 + Math.random() * 0.1)
+    );
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -201,7 +210,11 @@ AbstractSimulator.prototype = Object.create(AbstractModule.prototype);
 AbstractSimulator.prototype.constructor = AbstractSimulator;
 
 AbstractSimulator.prototype.propagateLater = function (module) {
-    this.propagateLaterList.push(module);
+    var index = this.propagateLaterList.indexOf(module);
+
+    if (index < 0) {
+        this.propagateLaterList.push(module);
+    }
 };
 
 AbstractSimulator.prototype.allPropagated = function () {
@@ -212,7 +225,7 @@ AbstractSimulator.prototype.initializate = function () {
     var i, moduleThatGivesSignalList = [];
 
     this.fillWithModuleThatGiveSignal(moduleThatGivesSignalList);
-    shuffle(moduleThatGivesSignalList);
+    Util.shuffle(moduleThatGivesSignalList);
 
     for (i = 0; i < moduleThatGivesSignalList.length; i++) {
         this.propagateLater(moduleThatGivesSignalList[i]);
@@ -239,6 +252,56 @@ AbstractSimulator.prototype.propagate = function (forceCalculateOutputFromInput)
     for (i = removeIndexList.length - 1; i >= 0; i--) {
         this.propagateLaterList.splice(removeIndexList[i], 1);
     }
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+var High;
+
+High = function (parentModule, simulator) {
+    AbstractModule.apply(this, arguments);
+
+    this.moduleGiveSignal = true;
+
+    this.signalCollection.push(
+        this.out = new Signal(this, simulator, 1, false)
+    );
+};
+
+High.prototype = Object.create(AbstractModule.prototype);
+High.prototype.constructor = High;
+
+High.prototype.calculateOutputFromInput = function () {
+    this.out.setValue(1);
+};
+
+High.prototype.getOut = function () {
+    return this.out;
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+var Low;
+
+Low = function (parentModule, simulator) {
+    AbstractModule.apply(this, arguments);
+
+    this.moduleGiveSignal = true;
+
+    this.signalCollection.push(
+        this.out = new Signal(this, simulator, 1, false)
+    );
+};
+
+Low.prototype = Object.create(AbstractModule.prototype);
+Low.prototype.constructor = Low;
+
+Low.prototype.calculateOutputFromInput = function () {
+    this.out.setValue(0);
+};
+
+Low.prototype.getOut = function () {
+    return this.out;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -366,7 +429,7 @@ FanOut1To3.prototype = Object.create(FanOut1To2.prototype);
 FanOut1To3.prototype.constructor = FanOut1To3;
 
 FanOut1To3.prototype.calculateOutputFromInput = function () {
-    FanOut1To2.prototype.calculateOutputFromInput.class(this);         // TODO check it
+    FanOut1To2.prototype.calculateOutputFromInput.call(this);         // TODO check it
     this.out3.setValue(this.in.getValue());
 };
 
@@ -483,8 +546,14 @@ Simulator = function () {
     AbstractSimulator.apply(this, arguments);
 
     this.moduleCollection.push(
-        this.dLatch = new DLatch(this, this)
+        this.dLatch = new DLatch(this, this),
+        this.low = new High(this, this),
+        this.fanOut = new FanOut1To3(this, this)
     );
+
+    this.low.getOut().connect(this.fanOut.getIn());
+    this.fanOut.getOut1().connect(this.dLatch.getClock());
+    this.fanOut.getOut2().connect(this.dLatch.getInput());
 
     this.initializate();
 };
