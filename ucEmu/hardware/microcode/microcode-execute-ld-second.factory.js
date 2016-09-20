@@ -22,7 +22,7 @@ var MicrocodeExecuteLdSecond = (function () {
             memoryColumn = BitUtil.mask(regIn0Value, BitUtil.BIT_2);
             shiftAmount = (4 - memoryColumn) * BitUtil.BYTE_1;
             memoryReadShifted = BitUtil.shiftRight(this.$$in.memoryRead, shiftAmount);
-            regMANext = BitUtil.shiftRight(memoryReadShifted | this.$$core.regMemory, BitUtil.BYTE_2);
+            regMANext = BitUtil.shiftRight(memoryReadShifted | this.$$core.regRamBuffer, BitUtil.BYTE_2);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, '[ACTION] sequencerExecuteLdSecond');

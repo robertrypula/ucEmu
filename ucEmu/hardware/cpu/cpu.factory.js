@@ -5,14 +5,14 @@
     Instruction set:
 
         -----------+----------------------+----+---------------------------------------+-----------------------------------------------
-        cycles     | memory               | nr | instuction                            | action
+        cycles     | memory               | nr | instruction                           | action
         -----------+----------------------+----+---------------------------------------+-----------------------------------------------
         ? cycles   | 0x0R 0xRR            | 00 | add     regOut, regIn0, regIn1        | regOut = regIn0 + regIn1
         ? cycles   | 0x1R 0xRR            | 01 | nand    regOut, regIn0, regIn1        | regOut = regIn0 nand regIn1
         ? cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1>=0) ? (regIn0 << regIn1) : (regIn0 >>> abs(regIn1))
         ? cycles   | 0x3_ 0xRR            | 03 | jnz     regIn0, regIn1                | if (regIn1!=0) jump to address from regIn0
         ? cycles   | 0x4R 0xR_            | 04 | copy    regOut, regIn0                | regOut = regIn0
-        ? cycles   | 0x5R 0x__ 0xCC 0xCC  | 05 | imm     regOut, _constans16bit_       | regOut = _constans16bit_
+        ? cycles   | 0x5R 0x__ 0xCC 0xCC  | 05 | imm     regOut, _constant16bit_       | regOut = _constant16bit_
         ? cycles   | 0x6_ 0xR_            | 06 | ld      regIn0                        | regMem = MemoryAt[regIn0]
         ? cycles   | 0x7_ 0xR_            | 07 | st      regIn0                        | MemoryAt[regIn0] = regMem
         -----------+----------------------+----+---------------------------------------+-----------------------------------------------
@@ -39,7 +39,7 @@
 
         Addresses used in the code are 16 bits wide so CPU can access up to 65536 bytes (64 KB). Each memory transfer 16 bits wide 
         so if you address 0x0010 memory row you will get 0x0010 and 0x0011 byte inside register. Memory connected to CPU is 32 bits
-        wide so it contains 16384 rows 4 bytes each. It means that we can reduce adress bus bits from 16 to 14. In total we will
+        wide so it contains 16384 rows 4 bytes each. It means that we can reduce address bus bits from 16 to 14. In total we will
         still have 64KB of memory.
 
         0000: 00 00 00 00
@@ -66,7 +66,7 @@
 
         192 bits of out ports (display)  PORT out 24 bytes
         11 bits in ports (keyboard)      PORT in  1.375 bytes
-        2 bits power and ground          in - not nesesary in emulator
+        2 bits power and ground          in - not necessary in emulator
         1 bit clock                      in
         1 bit reset                      in
         32 bits memory data in           in
@@ -124,6 +124,7 @@ var Cpu = (function () {
                 instructionDecoder: InstructionDecoderBuilder.build(this),
                 controlUnit: ControlUnitBuilder.build(this),
                 alu: AluBuilder.build(),
+                memoryController: MemoryControllerBuilder.build(this),
 
                 // general purpose registers
                 registerSet: RegisterSetBuilder.build(),
@@ -132,7 +133,7 @@ var Cpu = (function () {
                 regSequencer: BitUtil.random(BitUtil.BYTE_HALF),
                 regInstruction: BitUtil.random(BitUtil.BYTE_4),
                 regReset: BitUtil.random(BitUtil.BIT_1),
-                regMemory: BitUtil.random(BitUtil.BYTE_4),
+                regRamBuffer: BitUtil.random(BitUtil.BYTE_4),
                 regTimer: BitUtil.random(BitUtil.BYTE_4)
             };
 
@@ -195,7 +196,7 @@ var Cpu = (function () {
             this.core.regSequencer = 0;
             this.core.regInstruction = 0;
 
-            this.core.regMemory = 0;
+            this.core.regRamBuffer = 0;
             this.core.regTimer = 0;
 
             // !!! regReset register is excluded from reset !!!
@@ -234,7 +235,7 @@ var Cpu = (function () {
                     memoryWE: { value: o.memoryWE, bitSize: BitUtil.BIT_1, changed: null }
                 },
                 registerSpecialPurpose: {
-                    regMemory: { value: c.regMemory, bitSize: BitUtil.BYTE_4, changed: null },
+                    regRamBuffer: { value: c.regRamBuffer, bitSize: BitUtil.BYTE_4, changed: null },
                     regSequencer: { value: c.regSequencer, bitSize: BitUtil.BYTE_HALF, changed: null },
                     regInstruction: { value: c.regInstruction, bitSize: BitUtil.BYTE_4, changed: null },
                     regTimer: { value: c.regTimer, bitSize: BitUtil.BYTE_4, changed: null },

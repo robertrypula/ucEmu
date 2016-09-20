@@ -46,6 +46,7 @@
             this.$$insDec = this.$$cpu.core.instructionDecoder;
             this.$$regSet = this.$$cpu.core.registerSet;
             this.$$alu = this.$$cpu.core.alu;
+            this.$$mc = this.$$cpu.core.memoryController;
             this.$$core = this.$$cpu.core;
             this.$$out = this.$$cpu.output;
             this.$$in = this.$$cpu.input;

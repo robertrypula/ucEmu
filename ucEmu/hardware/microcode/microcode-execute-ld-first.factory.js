@@ -30,7 +30,7 @@ var MicrocodeExecuteLdFirst = (function () {
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
             }
 
-            this.$$core.regMemory = memoryReadShifted;
+            this.$$core.regRamBuffer = memoryReadShifted;
             this.$$core.regSequencer = this.$$MICROCODE.EXECUTE_LD_SECOND;
         };
 

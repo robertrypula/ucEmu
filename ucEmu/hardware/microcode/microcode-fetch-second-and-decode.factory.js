@@ -26,14 +26,14 @@ var MicrocodeFetchSecondAndDecode = (function () {
         MFSAD.prototype.constructor = MFSAD;
 
         MFSAD.prototype.$$goToNextState = function () {
-            var memoryColumn, shiftAmount, memoryReadShifted, memoryFinal,
+            var memoryColumn, rightShiftAmount, memoryReadShifted, memoryFinal,
                 opcode, instructionByteWidth,
                 regPCNext, regSequencerNext;
 
-            memoryColumn = BitUtil.mask(this.$$regSet.getProgramCounter(), BitUtil.BIT_2);
-            shiftAmount = (4 - memoryColumn) * BitUtil.BYTE_1;
-            memoryReadShifted = BitUtil.shiftRight(this.$$in.memoryRead, shiftAmount);
-            memoryFinal = memoryReadShifted | this.$$core.regMemory;
+            memoryColumn = this.$$mc.getColumn(this.$$regSet.getProgramCounter());
+            rightShiftAmount = this.$$mc.getRightShiftAmount(memoryColumn);
+            memoryReadShifted = BitUtil.shiftRight(this.$$in.memoryRead, rightShiftAmount);
+            memoryFinal = memoryReadShifted | this.$$core.regRamBuffer;
             opcode = this.$$insDec.getOpcode();
             // instruction = this.$$insDec.getInstruction(opcode);
             instructionByteWidth = this.$$insDec.getByteWidth(opcode);
@@ -44,7 +44,7 @@ var MicrocodeFetchSecondAndDecode = (function () {
                 Logger.log(2, '[ACTION] sequenceFetchSecondAndDecode');
                 Logger.log(3, 'memoryColumn = ' + memoryColumn);
                 Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(this.$$in.memoryRead, BitUtil.BYTE_4));
-                Logger.log(3, 'shiftAmount = ' + shiftAmount);
+                Logger.log(3, 'rightShiftAmount = ' + rightShiftAmount);
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
                 Logger.log(3, 'memoryFinal = ' + BitUtil.hex(memoryFinal, BitUtil.BYTE_4));
                 Logger.log(3, 'opcode = ' + opcode);

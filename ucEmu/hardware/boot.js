@@ -18,7 +18,7 @@ TODO list:
                 + ability to pass previous dumpState to mark changes values - changed = true/false/null
                 + move Instructon State and Microcode State to separate file (also method for fetching key by value)
                 + return instr/microcode state at extra field in cpu dump
-    - [0.50h] timer register should be deleted and functinality moved to RegisterSet
+    - [0.50h] figure out what to do with regTimer
     - [1.50h] create new MemoryController and move all code related to col/row/shift/mask manipulation
     - [1.00h] add 'buses' to core
     - [1.50h] implement Store instruction
@@ -47,7 +47,7 @@ CPU outputs:
  ? cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1>=0) ? (regIn0 << regIn1) : (regIn0 >>> abs(regIn1))
  ? cycles   | 0x3_ 0xRR            | 03 | jnz     regIn0, regIn1                | if (regIn1!=0) jump to address from regIn0
  ? cycles   | 0x4R 0xR_            | 04 | copy    regOut, regIn0                | regOut = regIn0
- ? cycles   | 0x5R 0x__ 0xCC 0xCC  | 05 | imm     regOut, _constans16bit_       | regOut = _constans16bit_
+ ? cycles   | 0x5R 0x__ 0xCC 0xCC  | 05 | imm     regOut, _constant16bit_       | regOut = _constant16bit_
  ? cycles   | 0x6_ 0xR_            | 06 | ld      regIn0                        | regMem = MemoryAt[regIn0]
  ? cycles   | 0x7_ 0xR_            | 07 | st      regIn0                        | MemoryAt[regIn0] = regMem
  */
@@ -231,7 +231,7 @@ function cpuLog(hideCpuClockInfo)
 
     Logger.log(
         1,
-        'regMemory = ' + BitUtil.hex(c.regMemory, BitUtil.BYTE_4) + ' | ' +
+        'regRamBuffer = ' + BitUtil.hex(c.regRamBuffer, BitUtil.BYTE_4) + ' | ' +
         'regSequencer = ' + BitUtil.hex(c.regSequencer, BitUtil.BYTE_HALF) + ' | ' +
         'regInstruction = ' + BitUtil.hex(c.regInstruction, BitUtil.BYTE_4) + ' | ' +
         'regTimer = ' + BitUtil.hex(c.regTimer, BitUtil.BYTE_4) + ' | ' +
