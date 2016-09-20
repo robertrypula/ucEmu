@@ -20,7 +20,7 @@ var MicrocodeExecuteImm = (function () {
             imm = this.$$insDec.getImm();
 
             if (Logger.isEnabled()) {
-                Logger.log(2, ':: sequencerExecuteImm');
+                Logger.log(2, '[ACTION] sequencerExecuteImm');
                 Logger.log(3, 'regOut = ' + regOut);
                 Logger.log(3, 'imm = ' + BitUtil.hex(imm, BitUtil.BYTE_2) + " (store immediate value at regOut)");
             }

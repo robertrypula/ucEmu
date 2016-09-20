@@ -16,7 +16,7 @@ var MicrocodeExecuteStSecondA = (function () {
         MESSA.prototype.$$goToNextState = function () {
 
             if (Logger.isEnabled()) {
-                Logger.log(2, ':: sequencerExecuteStSecondA');
+                Logger.log(2, '[ACTION] sequencerExecuteStSecondA');
             }
 
             this.$$core.regSequencer = this.$$MICROCODE.EXECUTE_ST_SECOND_B;

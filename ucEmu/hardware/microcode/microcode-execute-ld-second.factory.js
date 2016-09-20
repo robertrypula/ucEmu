@@ -25,7 +25,7 @@ var MicrocodeExecuteLdSecond = (function () {
             regMANext = BitUtil.shiftRight(memoryReadShifted | this.$$core.regMemory, BitUtil.BYTE_2);
 
             if (Logger.isEnabled()) {
-                Logger.log(2, ':: sequencerExecuteLdSecond');
+                Logger.log(2, '[ACTION] sequencerExecuteLdSecond');
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'memoryColumn = ' + memoryColumn);

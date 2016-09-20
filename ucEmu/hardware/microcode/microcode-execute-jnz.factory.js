@@ -25,7 +25,7 @@ var MicrocodeExecuteJnz = (function () {
             regPCNext = notZeroFlag ? regIn0Value : this.$$regSet.getProgramCounter();
 
             if (Logger.isEnabled()) {
-                Logger.log(2, ':: sequencerExecuteJnz');
+                Logger.log(2, '[ACTION] sequencerExecuteJnz');
                 Logger.log(3, 'regIn0, regIn1 <-> ' + regIn0 + ', ' + regIn1);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));

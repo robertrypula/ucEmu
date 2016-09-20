@@ -22,7 +22,7 @@ var MicrocodeExecuteLdFirst = (function () {
             memoryReadShifted = BitUtil.shiftLeft(this.$$in.memoryRead, memoryColumn * BitUtil.BYTE_1);
 
             if (Logger.isEnabled()) {
-                Logger.log(2, ':: sequencerExecuteLdFirst');
+                Logger.log(2, '[ACTION] sequencerExecuteLdFirst');
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'memoryColumn = ' + memoryColumn);

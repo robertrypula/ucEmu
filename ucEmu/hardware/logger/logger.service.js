@@ -10,7 +10,7 @@ var Logger = (function () {
             var strParsed, i;
             
             for (i = 0; i < verbose * 4; i++) {
-                document.write("&nbsp;");
+                // document.write("&nbsp;");
             }
             strParsed = str.replace(/\n/g, '<br/>');
             strParsed = strParsed.replace(/ /g, '&nbsp;');

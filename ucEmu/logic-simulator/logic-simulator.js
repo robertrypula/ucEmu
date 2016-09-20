@@ -4,6 +4,9 @@
     TODO:
     - can connect only when one signal acts as input and seconds acts as output
     - can connect signalA only when signalB belongs to module that is kid of signalA's module
+    - there should be NOT output module like LED, only input module that gives signal with variable width
+    - check initialization, it might not delete modules at remove list when force flag is set to true
+    - remove fanOut1to3, design should be as simple as possible
  */
 
 // ---------------------------------------------------------------------------------------------------------------------

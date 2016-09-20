@@ -41,7 +41,7 @@ var MicrocodeFetchSecondAndDecode = (function () {
             regSequencerNext = this.$$insDec.getMicrocodeJump(opcode);
 
             if (Logger.isEnabled()) {
-                Logger.log(2, ':: sequenceFetchSecondAndDecode');
+                Logger.log(2, '[ACTION] sequenceFetchSecondAndDecode');
                 Logger.log(3, 'memoryColumn = ' + memoryColumn);
                 Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(this.$$in.memoryRead, BitUtil.BYTE_4));
                 Logger.log(3, 'shiftAmount = ' + shiftAmount);

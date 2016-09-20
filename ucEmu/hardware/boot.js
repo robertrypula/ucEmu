@@ -1,40 +1,43 @@
 /*
-    TODO:
-        Code refactor:
-            + [0.50h] move output computing to handlers (default value at abstract)
-            + [0.25h] remember to update output when cpu boots because we dont have faling edge at thus point
-            + [1.00h] remove dumpHex and use hex
-            + [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
-            + [0.75h] service for logging with verbose levels
-            + [0.50h] add aliases for cpu internals at abstract-sequencer-handler, CHECK PERFORNANCE -> no change :/
-            + [0.50h] rename sequencer handler to some microCode blabla?
-                        + sequencer -> ControlUnit
-                        + serquencer-handler -> microcode
-                        + handler@sequencer -> controlStore
-                        + STATE@seqauencer -> MICROCODE
-                        + STATE@sequencerBuilder -> moved to ControlUnit
-                        + state param @sequencerBuilder.build() -> microcode
-            + [1.00h] change structure of dumping cpu state
-                        + create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
-                        + ability to pass previous dumpState to mark changes values - changed = true/false/null
-                        + move Instructon State and Microcode State to separate file (also method for fetching key by value)
-                        + return instr/microcode state at extra field in cpu dump
-            - [0.25h] change log messages order (oldState, clockEdge, newState) and replace existing logCpu method
-            - [0.25h] WE and with clock (B positive clock, C negative clock)
-            - [0.25h] fix load instruction to access Timer
-            - [0.50h] create new MemoryUnit and move all code related to col/row/shift/mask manipulation
-            - [1.00h] implement Store instruction
-             
-                :: fun starts here ::
-            - [2.00h] create MainBoard factory instead boot.js - first step only move existing functionality
-            - [2.00h] signal class?
-            - [x.xxh] module approach with update and input changed checking
-                        - Signals at module.input[] should have reference to parent module to run update() method
-                        - for CPU factory it means that we could remove manual update() calling - we could only watch clock input signal
-                        - module aproach is about refresing output after input is changed (internals are not important)
+TODO list:
+    + [0.50h] move output computing to handlers (default value at abstract)
+    + [0.25h] remember to update output when cpu boots because we dont have faling edge at thus point
+    + [1.00h] remove dumpHex and use hex
+    + [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
+    + [0.75h] service for logging with verbose levels
+    + [0.50h] add aliases for cpu internals at abstract-sequencer-handler, CHECK PERFORNANCE -> no change :/
+    + [0.50h] rename sequencer handler to some microCode blabla?
+                + sequencer -> ControlUnit
+                + serquencer-handler -> microcode
+                + handler@sequencer -> controlStore
+                + STATE@seqauencer -> MICROCODE
+                + STATE@sequencerBuilder -> moved to ControlUnit
+                + state param @sequencerBuilder.build() -> microcode
+    + [1.00h] change structure of dumping cpu state
+                + create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
+                + ability to pass previous dumpState to mark changes values - changed = true/false/null
+                + move Instructon State and Microcode State to separate file (also method for fetching key by value)
+                + return instr/microcode state at extra field in cpu dump
+    - [0.50h] timer register should be deleted and functinality moved to RegisterSet
+    - [1.50h] create new MemoryController and move all code related to col/row/shift/mask manipulation
+    - [1.00h] add 'buses' to core
+    - [1.50h] implement Store instruction
+    - LOGGER: move cpu inputs at the top of each section
+     
+        :: fun starts here ::
+    - [1.5h] add DI
+    - [1.0h] move project to separate GitHub repo ('SimpleCPU')
+    - [2.0h] integrate CPU core (ALU, RegisterSet, MemoryController, ControlLogic) with Module/Signal class from other repo
 
-        Integrate IO with existing code for dot matrix and keyboard
-            - [x.xxh] MainBoard should expose programming interface and events when input/output was changed
+CPU inputs:
+    - [1 bit] clock
+    - [1 bit] reset
+    - [32 bit] memoryRead
+
+CPU outputs:
+    - [14 bit] memoryRowAddress
+    - [32 bit] memoryWrite
+    - [1 bit] memoryWE
 
  */
 
@@ -67,7 +70,9 @@ var staticRam = new StaticRam(
 );
 syncCpuWithStaticRam();
 cpu.setClock(false);
-cpuLog();
+staticRam.log(0, 3);
+cpuLog(true);
+Logger.log(1, "\n");
 
 triggerCpuResetAndProgramStaticRam();
 cpu.setClock(false);
@@ -80,25 +85,40 @@ document.write('START<br/>');
 runCpu();
 
 var secondsEnd = new Date().getTime();
-document.write('STOP<br/> ' + (secondsEnd - secondsStart) + ' ms');
+document.write('STOP<br/> ' + (secondsEnd - secondsStart) + ' ms' + '<br/>');
 
 
 function triggerCpuResetAndProgramStaticRam()
 {
-    Logger.log(1, ':: trigger RESET AND PROGRAM STARTS');
+    var i;
 
-    cpu.input.reset = true;
-    clockHigh();
-    clockLow();
+    Logger.log(1, '------------------------------------------------------------------------------------------------------------');
+    Logger.log(1, '                                                                                       reset & program BEGIN');    
+    Logger.log(1, '\n');
 
+    for (i = 0; i < 2; i++) {
+        Logger.log(2, '[ACTION] reset enable #' + i);
+        cpu.input.reset = true;
+        clockHigh();
+        clockLow();
+        Logger.log(1, "\n");        
+    }
+
+    Logger.log(2, '[ACTION] program loop');
     programStaticRamAndSync(memoryState);
+    staticRam.log(0, 3);
+    cpuLog(true);
+    Logger.log(1, "\n");
 
+    Logger.log(2, '[ACTION] reset disable');
     cpu.input.reset = false;
     clockHigh();
     clockLow();
+    Logger.log(1, "\n");
 
-    Logger.log(1, ':: trigger RESET AND PROGRAM ENDS');
-    Logger.log(1, "\n\n");
+    Logger.log(1, '                                                                                         reset & program END');    
+    Logger.log(1, '------------------------------------------------------------------------------------------------------------');
+    Logger.log(1, "\n");
 }
 
 function runCpu()
@@ -167,11 +187,11 @@ function clockHigh()
     cpu.setClock(true);
     syncCpuWithStaticRam();
 
-    /*
+    
     if (Logger.isEnabled()) {
-        cpuLog();
+        // cpuLog();        // this shouldn't be enabled because it shows internal CPU ACTION in wrong order in the log
     }
-    */
+    
 }
 
 function clockLow()
@@ -186,20 +206,29 @@ function clockLow()
 
 var dumpPrevious;
 
-function cpuLog()
+function cpuLog(hideCpuClockInfo)
 {
     var rs = cpu.core.registerSet,
         c = cpu.core;
 
+    if (!hideCpuClockInfo) {
+        if (cpu.input.clock) {
+            Logger.log(1, '----> CPU state after rising edge of the clock');  // same as abowe: this shouldn't be enabled because it shows internal CPU ACTION in wrong order in the log
+        } else {
+            Logger.log(1, '----> CPU state after faling edge of the clock (results/inputs latched in flipflops)');
+        }
+    }
+    
     Logger.log(
         1,
         'in.clock: ' + cpu.input.clock + ' | ' +
         'in.memoryRead = ' + BitUtil.hex(cpu.input.memoryRead, BitUtil.BYTE_4) + ' | ' +
         'in.reset = ' + BitUtil.hex(cpu.input.reset, BitUtil.BIT_1) + '      ' +
-        'out.memoryRowAddress = ' + BitUtil.hex(cpu.output.memoryRowAddress, BitUtil.BYTE_4 - BitUtil.BIT_2) + ' | ' +
+        'out.memoryRowAddress = ' + BitUtil.hex(cpu.output.memoryRowAddress, BitUtil.BYTE_2 - BitUtil.BIT_2) + ' | ' +
         'out.memoryWrite = ' + BitUtil.hex(cpu.output.memoryWrite, BitUtil.BYTE_4) + ' | ' +
         'out.memoryWE = ' + BitUtil.hex(cpu.output.memoryWE, BitUtil.BIT_1) + ' | '
     );
+
     Logger.log(
         1,
         'regMemory = ' + BitUtil.hex(c.regMemory, BitUtil.BYTE_4) + ' | ' +

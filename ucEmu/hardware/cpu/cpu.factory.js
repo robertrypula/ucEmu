@@ -182,7 +182,8 @@ var Cpu = (function () {
 
             this.core.regReset = this.input.reset;         // store current input
             if (resetOccurred) {
-                return;
+                return;            // TODO maybe we should remove it because when reset is disabled first opoce is ready to execute immediately
+                                   // UPDATE: 80% that this is needed
             }
 
             this.core.controlUnit.goToNextState();
@@ -228,7 +229,7 @@ var Cpu = (function () {
                     reset: { value: i.reset, bitSize: BitUtil.BIT_1, changed: null }
                 },
                 output: {
-                    memoryRowAddress: { value: o.memoryRowAddress, bitSize: BitUtil.BYTE_4 - BitUtil.BIT_2, changed: null },
+                    memoryRowAddress: { value: o.memoryRowAddress, bitSize: BitUtil.BYTE_2 - BitUtil.BIT_2, changed: null },
                     memoryWrite: { value: o.memoryWrite, bitSize: BitUtil.BYTE_4, changed: null },
                     memoryWE: { value: o.memoryWE, bitSize: BitUtil.BIT_1, changed: null }
                 },

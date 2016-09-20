@@ -16,7 +16,7 @@ var MicrocodeExecuteStFirstB = (function () {
         MESFB.prototype.$$goToNextState = function () {
 
             if (Logger.isEnabled()) {
-                Logger.log(2, ':: sequencerExecuteStFirstB');
+                Logger.log(2, '[ACTION] sequencerExecuteStFirstB');
             }
 
             this.$$core.regSequencer = this.$$MICROCODE.EXECUTE_ST_FIRST_C;
