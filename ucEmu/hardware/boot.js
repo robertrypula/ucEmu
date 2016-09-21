@@ -22,7 +22,7 @@ TODO list:
     - [1.50h] create new MemoryController and move all code related to col/row/shift/mask manipulation
     - [1.00h] add 'buses' to core
     - [1.50h] implement Store instruction
-    - LOGGER: move cpu inputs at the top of each section
+    - rename regSet to regFile
      
         :: fun starts here ::
     - [1.5h] add DI

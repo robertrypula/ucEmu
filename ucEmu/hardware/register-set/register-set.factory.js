@@ -10,7 +10,7 @@ var RegisterSet = (function () {
             this.REGISTERS_SIZE = 16;
             this.PROGRAM_COUNTER_INDEX = this.REGISTERS_SIZE - 1;
             this.MEMORY_ACCESS_INDEX = this.REGISTERS_SIZE - 2;
-            this.register = new Uint32Array(this.REGISTERS_SIZE);   // accually we need only 16bits
+            this.register = new Uint32Array(this.REGISTERS_SIZE);   // actually we need only 16bits
 
             this.$$initialize();
         };

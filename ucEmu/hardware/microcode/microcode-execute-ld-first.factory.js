@@ -14,18 +14,18 @@ var MicrocodeExecuteLdFirst = (function () {
         MELF.prototype.constructor = MELF;
 
         MELF.prototype.$$goToNextState = function () {
-            var regIn0, regIn0Value, memoryColumn, memoryReadShifted;
+            var regIn0, regIn0Value, column, memoryReadShifted;
 
             regIn0 = this.$$insDec.getRegIn0();
             regIn0Value = this.$$regSet.read(regIn0);
-            memoryColumn = BitUtil.mask(regIn0Value, BitUtil.BIT_2);
-            memoryReadShifted = BitUtil.shiftLeft(this.$$in.memoryRead, memoryColumn * BitUtil.BYTE_1);
+            column = this.$$mc.getColumn(regIn0Value);
+            memoryReadShifted = this.$$mc.getMemoryReadShiftedLeft(column);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, '[ACTION] sequencerExecuteLdFirst');
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
-                Logger.log(3, 'memoryColumn = ' + memoryColumn);
+                Logger.log(3, 'column = ' + column);
                 Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(this.$$in.memoryRead, BitUtil.BYTE_4));
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
             }
@@ -40,7 +40,7 @@ var MicrocodeExecuteLdFirst = (function () {
             regIn0 = this.$$insDec.getRegIn0();
             regIn0Value = this.$$regSet.read(regIn0);
 
-            this.$$out.memoryRowAddress = BitUtil.shiftRight(regIn0Value, BitUtil.BIT_2);
+            this.$$out.memoryRowAddress = this.$$mc.getMemoryRowAddress(regIn0Value);
         };
 
         return MELF;

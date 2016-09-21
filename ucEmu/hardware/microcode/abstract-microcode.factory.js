@@ -8,7 +8,7 @@
 
         AM = function (cpu) {
             CpuAware.apply(this, arguments);
-            this.$$cpuShorthandReady = false;
+            this.$$cpuAliasesReady = false;
         };
 
         AM.prototype = Object.create(CpuAware.prototype);
@@ -17,8 +17,8 @@
         AM.prototype.goToNextState = function () {
             //this.$$checkCpu();
 
-            if (!this.$$cpuShorthandReady) {
-                this.$$generateCpuShorthand();
+            if (!this.$$cpuAliasesReady) {
+                this.$$generateCpuAliases();
             }
 
             this.$$goToNextState();               // polymorphic call TODO change name of method
@@ -27,8 +27,8 @@
         AM.prototype.updateOutput = function () {
             //this.$$checkCpu();
 
-            if (!this.$$cpuShorthandReady) {
-                this.$$generateCpuShorthand();
+            if (!this.$$cpuAliasesReady) {
+                this.$$generateCpuAliases();
             }
 
             this.$$updateOutputMemoryRowAddress();
@@ -40,7 +40,7 @@
             throw 'Abstract method called!';
         };
 
-        AM.prototype.$$generateCpuShorthand = function () {
+        AM.prototype.$$generateCpuAliases = function () {
             this.$$MICROCODE = Microcode.MICROCODE;
 
             this.$$insDec = this.$$cpu.core.instructionDecoder;
@@ -51,11 +51,11 @@
             this.$$out = this.$$cpu.output;
             this.$$in = this.$$cpu.input;
 
-            this.$$cpuShorthandReady = true;
+            this.$$cpuAliasesReady = true;
         };
 
         AM.prototype.$$updateOutputMemoryRowAddress = function () {
-            this.$$out.memoryRowAddress = BitUtil.shiftRight(this.$$regSet.getProgramCounter(), BitUtil.BIT_2);
+            this.$$out.memoryRowAddress = this.$$mc.getMemoryRowAddress(this.$$regSet.getProgramCounter());
         };
 
         AM.prototype.$$updateOutputMemoryWrite = function () {
