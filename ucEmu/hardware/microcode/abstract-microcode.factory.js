@@ -15,19 +15,8 @@
         AM.prototype.constructor = AM;
 
         AM.prototype.goToNextState = function () {
-            //this.$$checkCpu();
             this.$$generateCpuAliases();
-
             this.$$goToNextState();               // polymorphic call TODO change name of method
-        };
-
-        AM.prototype.updateOutput = function () {
-            //this.$$checkCpu();
-            this.$$generateCpuAliases();
-
-            this.$$updateOutputMemoryRowAddress();
-            this.$$updateOutputMemoryWrite();
-            this.$$updateOutputMemoryWE();
         };
 
         AM.prototype.$$goToNextState = function () {
@@ -51,18 +40,6 @@
             this.$$in = this.$$cpu.input;
 
             this.$$cpuAliasesReady = true;
-        };
-
-        AM.prototype.$$updateOutputMemoryRowAddress = function () {
-            this.$$out.memoryRowAddress = this.$$mc.getMemoryRowAddress(this.$$regFile.getProgramCounter());
-        };
-
-        AM.prototype.$$updateOutputMemoryWrite = function () {
-            this.$$out.memoryWrite = 0;                            // floating bus - pulled down by resistors
-        };
-
-        AM.prototype.$$updateOutputMemoryWE = function () {
-            this.$$out.memoryWE = 0;                               // floating bus - pulled down by resistors
         };
 
         return AM;

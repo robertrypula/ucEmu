@@ -32,8 +32,8 @@ var MicrocodeExecuteAdd = (function () {
                 Logger.log(3, 'result = ' + BitUtil.hex(regResult, BitUtil.BYTE_2) + ' (sum)');
             }
 
-            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
             this.$$regFile.save(regOut, regResult);
+            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
         return MEA;

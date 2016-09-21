@@ -27,9 +27,9 @@ var MicrocodeFetchFirst = (function () {
             }
 
             this.$$core.regMemoryBuffer = memoryReadShifted;
-            this.$$core.regInstruction = memoryReadShifted;  // TODO check it, this may be redundant with regMemoryBuffer
-                                                             // UPDATE maybe not because first part allows to read instruction opcode
+            this.$$core.regMemoryRowAddress = this.$$mc.getMemoryRowAddressNext(this.$$regFile.getProgramCounter());
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_SECOND_AND_DECODE;
+            this.$$core.regInstruction = memoryReadShifted;
         };
 
         return MFF;

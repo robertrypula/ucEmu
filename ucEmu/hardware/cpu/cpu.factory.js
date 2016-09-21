@@ -9,15 +9,15 @@
         -----------+----------------------+----+---------------------------------------+-----------------------------------------------
         ? cycles   | 0x0R 0xRR            | 00 | add     regOut, regIn0, regIn1        | regOut = regIn0 + regIn1
         ? cycles   | 0x1R 0xRR            | 01 | nand    regOut, regIn0, regIn1        | regOut = regIn0 nand regIn1
-        ? cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1>=0) ? (regIn0 << regIn1) : (regIn0 >>> abs(regIn1))
-        ? cycles   | 0x3_ 0xRR            | 03 | jnz     regIn0, regIn1                | if (regIn1!=0) jump to address from regIn0
+        ? cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1 >= 0) ? (regIn0 << regIn1) : (regIn0 >>> abs(regIn1))
+        ? cycles   | 0x3_ 0xRR            | 03 | jnz     regIn0, regIn1                | if (regIn1 != 0) jump to address from regIn0
         ? cycles   | 0x4R 0xR_            | 04 | copy    regOut, regIn0                | regOut = regIn0
         ? cycles   | 0x5R 0x__ 0xCC 0xCC  | 05 | imm     regOut, _constant16bit_       | regOut = _constant16bit_
         ? cycles   | 0x6_ 0xR_            | 06 | ld      regIn0                        | regMem = MemoryAt[regIn0]
         ? cycles   | 0x7_ 0xR_            | 07 | st      regIn0                        | MemoryAt[regIn0] = regMem
         -----------+----------------------+----+---------------------------------------+-----------------------------------------------
 
-        Alternative version of last three INSTRUCTIONS. It can save lot of space in memory after program compilation.
+        Alternative version of last three instructions. It can save lot of space in memory after program compilation.
 
         ...        | ...                  | .. | ...                                   | ...
         ? cycles   | 0x4R 0xCC 0xCC       | 05 | imm     regOut, _constant16bit_       | regOut = _constant16bit_
@@ -92,7 +92,7 @@
         | ******** ****** | * | ******** ******** ******** ******** |
         64 rows * 4 bytes = 256 bytes
 
-        You need 256 cars for 64KB
+        You need 256 cards for 64KB
 
 */
 
@@ -130,13 +130,13 @@ var Cpu = (function () {
                 registerFile: RegisterFileBuilder.build(),
 
                 // special purpose registers
+                regReset: BitUtil.random(BitUtil.BIT_1),
                 regSequencer: BitUtil.random(BitUtil.BYTE_HALF),
                 regInstruction: BitUtil.random(BitUtil.BYTE_4),
-                regReset: BitUtil.random(BitUtil.BIT_1),
-                regMemoryBuffer: BitUtil.random(BitUtil.BYTE_4),
                 regTimer: BitUtil.random(BitUtil.BYTE_4),
-                regMemoryWrite: BitUtil.random(BitUtil.BYTE_4),
-                regMemoryRowAddress: BitUtil.random(BitUtil.BYTE_2 - BitUtil.BIT_2)
+                regMemoryBuffer: BitUtil.random(BitUtil.BYTE_4),
+                regMemoryRowAddress: BitUtil.random(BitUtil.BYTE_2 - BitUtil.BIT_2),
+                regMemoryWrite: BitUtil.random(BitUtil.BYTE_4)
             };
 
             this.input = {
@@ -191,13 +191,15 @@ var Cpu = (function () {
         };
 
         C.prototype.$$performRegistersReset = function () {
-            this.core.registerFile.reset();
-
             this.core.regSequencer = 0;
             this.core.regInstruction = 0;
+            this.core.regTimer = 0;
 
             this.core.regMemoryBuffer = 0;
-            this.core.regTimer = 0;
+            this.core.regMemoryRowAddress = 0;
+            this.core.regMemoryWrite = 0;
+
+            this.core.registerFile.reset();
 
             // !!! regReset register is excluded from reset !!!
         };
@@ -235,11 +237,13 @@ var Cpu = (function () {
                     memoryWE: { value: o.memoryWE, bitSize: BitUtil.BIT_1, changed: null }
                 },
                 registerSpecialPurpose: {
-                    regMemoryBuffer: { value: c.regMemoryBuffer, bitSize: BitUtil.BYTE_4, changed: null },
+                    regReset: { value: c.regReset, bitSize: BitUtil.BIT_1, changed: null },
                     regSequencer: { value: c.regSequencer, bitSize: BitUtil.BYTE_HALF, changed: null },
                     regInstruction: { value: c.regInstruction, bitSize: BitUtil.BYTE_4, changed: null },
                     regTimer: { value: c.regTimer, bitSize: BitUtil.BYTE_4, changed: null },
-                    regReset: { value: c.regReset, bitSize: BitUtil.BIT_1, changed: null }
+                    regMemoryBuffer: { value: c.regMemoryBuffer, bitSize: BitUtil.BYTE_4, changed: null },
+                    regMemoryRowAddress: { value: c.regMemoryRowAddress, bitSize: BitUtil.BYTE_2 - BitUtil.BIT_2, changed: null },
+                    regMemoryWrite: { value: c.regMemoryWrite, bitSize: BitUtil.BYTE_4, changed: null }
                 },
                 registerGeneralPurpose: {
                     reg00: { value: rf.read(0), bitSize: BitUtil.BYTE_2, changed: null },

@@ -50,7 +50,6 @@ var ControlUnit = (function () {
             //this.$$checkState(state);
 
             return this.$$controlStore[state];
-
         };
 
         CU.prototype.setCpu = function (cpu) {
@@ -59,17 +58,22 @@ var ControlUnit = (function () {
         };
 
         CU.prototype.goToNextState = function () {
-            //this.$$checkCpu();
-
             this.$$getMicrocodeFromControlStore().goToNextState();
 
             this.$$cpu.core.regTimer = BitUtil.mask(this.$$cpu.core.regTimer + 1, BitUtil.BYTE_4);
         };
 
         CU.prototype.updateOutput = function () {
-            //this.$$checkCpu();
+            var
+                microcode = this.$$getMicrocodeFromControlStore(),
+                c = this.$$cpu.core,
+                o = this.$$cpu.output;
 
-            this.$$getMicrocodeFromControlStore().updateOutput();
+            o.memoryWrite = c.regMemoryWrite;
+            o.memoryRowAddress = c.regMemoryRowAddress;
+
+            // TODO write WE
+            // console.log(microcode);
         };
 
         return CU;

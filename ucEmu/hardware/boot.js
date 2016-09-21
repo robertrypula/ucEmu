@@ -230,11 +230,16 @@ function cpuLog(hideCpuClockInfo) {
 
     Logger.log(
         1,
-        'regMemoryBuffer = ' + BitUtil.hex(c.regMemoryBuffer, BitUtil.BYTE_4) + ' | ' +
+        'regReset = ' + BitUtil.hex(c.regReset, BitUtil.BIT_1) + ' | ' +
         'regSequencer = ' + BitUtil.hex(c.regSequencer, BitUtil.BYTE_HALF) + ' | ' +
         'regInstruction = ' + BitUtil.hex(c.regInstruction, BitUtil.BYTE_4) + ' | ' +
-        'regTimer = ' + BitUtil.hex(c.regTimer, BitUtil.BYTE_4) + ' | ' +
-        'regReset = ' + BitUtil.hex(c.regReset, BitUtil.BIT_1)
+        'regTimer = ' + BitUtil.hex(c.regTimer, BitUtil.BYTE_4)
+    );
+    Logger.log(
+        1,
+        'regMemoryBuffer = ' + BitUtil.hex(c.regMemoryBuffer, BitUtil.BYTE_4) + ' | ' +
+        'regMemoryRowAddress = ' + BitUtil.hex(c.regMemoryRowAddress, BitUtil.BYTE_2 - BitUtil.BIT_2) + ' | ' +
+        'regMemoryWrite = ' + BitUtil.hex(c.regMemoryWrite, BitUtil.BYTE_4)
     );
     Logger.log(
         1,

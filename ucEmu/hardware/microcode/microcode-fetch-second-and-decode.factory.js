@@ -54,13 +54,11 @@ var MicrocodeFetchSecondAndDecode = (function () {
                 Logger.log(3, 'regSequencerNext = ' + BitUtil.hex(regSequencerNext, BitUtil.BYTE_HALF));
             }
 
-            this.$$core.regInstruction = memoryReadFinal;
+
             this.$$regFile.setProgramCounter(regProgramCounterNext);
+            this.$$core.regMemoryRowAddress = this.$$mc.getMemoryRowAddress(regProgramCounterNext);
             this.$$core.regSequencer = regSequencerNext;
-        };
-        
-        MFSAD.prototype.$$updateOutputMemoryRowAddress = function () {
-            this.$$out.memoryRowAddress = this.$$mc.getMemoryRowAddressNext(this.$$regFile.getProgramCounter());
+            this.$$core.regInstruction = memoryReadFinal;
         };
 
         return MFSAD;
