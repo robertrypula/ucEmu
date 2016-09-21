@@ -18,7 +18,7 @@ var MicrocodeExecuteCopy = (function () {
 
             regOut = this.$$insDec.getRegOut();
             regIn0 = this.$$insDec.getRegIn0();
-            regIn0Value = this.$$regSet.read(regIn0);
+            regIn0Value = this.$$regFile.read(regIn0);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, '[ACTION] sequencerExecuteCopy');
@@ -27,7 +27,7 @@ var MicrocodeExecuteCopy = (function () {
             }
 
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
-            this.$$regSet.save(regOut, regIn0Value);
+            this.$$regFile.save(regOut, regIn0Value);
         };
 
         return MEC;

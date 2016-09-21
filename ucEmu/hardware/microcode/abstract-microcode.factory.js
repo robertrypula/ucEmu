@@ -16,20 +16,14 @@
 
         AM.prototype.goToNextState = function () {
             //this.$$checkCpu();
-
-            if (!this.$$cpuAliasesReady) {
-                this.$$generateCpuAliases();
-            }
+            this.$$generateCpuAliases();
 
             this.$$goToNextState();               // polymorphic call TODO change name of method
         };
 
         AM.prototype.updateOutput = function () {
             //this.$$checkCpu();
-
-            if (!this.$$cpuAliasesReady) {
-                this.$$generateCpuAliases();
-            }
+            this.$$generateCpuAliases();
 
             this.$$updateOutputMemoryRowAddress();
             this.$$updateOutputMemoryWrite();
@@ -41,12 +35,17 @@
         };
 
         AM.prototype.$$generateCpuAliases = function () {
+            if (this.$$cpuAliasesReady) {
+                return;
+            }
+            
             this.$$MICROCODE = Microcode.MICROCODE;
 
             this.$$insDec = this.$$cpu.core.instructionDecoder;
-            this.$$regSet = this.$$cpu.core.registerSet;
+            this.$$regFile = this.$$cpu.core.registerFile;
             this.$$alu = this.$$cpu.core.alu;
             this.$$mc = this.$$cpu.core.memoryController;
+
             this.$$core = this.$$cpu.core;
             this.$$out = this.$$cpu.output;
             this.$$in = this.$$cpu.input;
@@ -55,7 +54,7 @@
         };
 
         AM.prototype.$$updateOutputMemoryRowAddress = function () {
-            this.$$out.memoryRowAddress = this.$$mc.getMemoryRowAddress(this.$$regSet.getProgramCounter());
+            this.$$out.memoryRowAddress = this.$$mc.getMemoryRowAddress(this.$$regFile.getProgramCounter());
         };
 
         AM.prototype.$$updateOutputMemoryWrite = function () {

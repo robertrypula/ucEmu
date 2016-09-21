@@ -20,8 +20,8 @@ var MicrocodeExecuteSh = (function () {
             regOut = this.$$insDec.getRegOut();
             regIn0 = this.$$insDec.getRegIn0();
             regIn1 = this.$$insDec.getRegIn1();
-            regIn0Value = this.$$regSet.read(regIn0);
-            regIn1Value = this.$$regSet.read(regIn1);
+            regIn0Value = this.$$regFile.read(regIn0);
+            regIn1Value = this.$$regFile.read(regIn1);
             regResult = this.$$alu.sh(regIn0Value, regIn1Value);
 
             if (Logger.isEnabled()) {
@@ -33,7 +33,7 @@ var MicrocodeExecuteSh = (function () {
             }
 
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
-            this.$$regSet.save(regOut, regResult);
+            this.$$regFile.save(regOut, regResult);
         };
 
         return MES;

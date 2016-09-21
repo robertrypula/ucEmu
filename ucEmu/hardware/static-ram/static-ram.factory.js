@@ -19,8 +19,10 @@ var StaticRam = (function () {
         };
 
         SR.prototype.log = function (startRow, stopRow) {
+            var i;
+
             startRow = startRow < 0 ? 0 : startRow;
-            for (var i = startRow; i < this.ROWS_COUNT; i++) {
+            for (i = startRow; i < this.ROWS_COUNT; i++) {
                 if (i > stopRow) {
                     return;
                 }

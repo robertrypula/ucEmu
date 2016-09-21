@@ -8,7 +8,6 @@ var MemoryController = (function () {
 
         MC = function (cpu) {
             CpuAware.apply(this, arguments);
-
         };
 
         MC.prototype = Object.create(CpuAware.prototype);
@@ -19,6 +18,7 @@ var MemoryController = (function () {
         };
 
         MC.prototype.getMemoryReadShiftedLeft = function (column) {
+            // don't need to mask because JavaScript logic operators returns 32 bit long value
             return BitUtil.shiftLeft(this.$$cpu.input.memoryRead, column * BitUtil.BYTE_1);
         };
 
@@ -31,15 +31,21 @@ var MemoryController = (function () {
         };
 
         MC.prototype.getMemoryReadFinal = function (memoryReadShifted) {
-            return memoryReadShifted | this.$$cpu.core.regRamBuffer;
+            return memoryReadShifted | this.$$cpu.core.regMemoryBuffer;
         };
 
         MC.prototype.getMemoryRowAddress = function (address) {
-            return BitUtil.shiftRight(address, BitUtil.BIT_2);
+            return BitUtil.mask(
+                BitUtil.shiftRight(address, BitUtil.BIT_2),
+                BitUtil.BYTE_2 - BitUtil.BIT_2
+            );
         };
 
         MC.prototype.getMemoryRowAddressNext = function (address) {
-            return this.getMemoryRowAddress(address) + 1;
+            return BitUtil.mask(
+                this.getMemoryRowAddress(address) + 1,
+                BitUtil.BYTE_2 - BitUtil.BIT_2
+            );
         };
 
         return MC;

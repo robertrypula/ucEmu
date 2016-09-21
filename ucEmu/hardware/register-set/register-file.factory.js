@@ -1,9 +1,9 @@
-var RegisterSet = (function () {
+var RegisterFile = (function () {
     'use strict';
 
-    _RegisterSet.$inject = [];
+    _RegisterFile.$inject = [];
 
-    function _RegisterSet() {
+    function _RegisterFile() {
         var RS;
 
         RS = function () {
@@ -16,19 +16,17 @@ var RegisterSet = (function () {
         };
 
         RS.prototype.$$initialize = function () {
-            for (var i = 0; i < this.REGISTERS_SIZE; i++) {
+            var i;
+
+            for (i = 0; i < this.REGISTERS_SIZE; i++) {
                 this.register[i] = BitUtil.random(BitUtil.BYTE_2);
             }
         };
 
-        RS.prototype.$$checkRange = function(number, method) {
-            if (number < 0 || number >= this.REGISTERS_SIZE) {
-                throw 'RegisterSet.' + method + '() - bad register number: ' + number;
-            }
-        };
-
         RS.prototype.reset = function () {
-            for (var i = 0; i < this.REGISTERS_SIZE; i++) {
+            var i;
+
+            for (i = 0; i < this.REGISTERS_SIZE; i++) {
                 this.save(i, 0);
             }
         };
@@ -50,19 +48,16 @@ var RegisterSet = (function () {
         };
 
         RS.prototype.read = function (number) {
-            //this.$$checkRange(number, 'read');
-
             return this.register[number];
         };
 
         RS.prototype.save = function (number, value) {
-            //this.$$checkRange(number, 'save');
             this.register[number] = BitUtil.mask(value, BitUtil.BYTE_2);
         };
 
         return RS;
     }
 
-    return _RegisterSet();       // TODO change it to dependency injection
+    return _RegisterFile();       // TODO change it to dependency injection
 
 })();

@@ -16,7 +16,7 @@ var MicrocodeFetchFirst = (function () {
         MFF.prototype.$$goToNextState = function () {
             var column, memoryReadShifted;
             
-            column = this.$$mc.getColumn(this.$$regSet.getProgramCounter());
+            column = this.$$mc.getColumn(this.$$regFile.getProgramCounter());
             memoryReadShifted = this.$$mc.getMemoryReadShiftedLeft(column);
 
             if (Logger.isEnabled()) {
@@ -26,8 +26,8 @@ var MicrocodeFetchFirst = (function () {
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
             }
 
-            this.$$core.regRamBuffer = memoryReadShifted;
-            this.$$core.regInstruction = memoryReadShifted;  // TODO check it, this may be redundant with regRamBuffer
+            this.$$core.regMemoryBuffer = memoryReadShifted;
+            this.$$core.regInstruction = memoryReadShifted;  // TODO check it, this may be redundant with regMemoryBuffer
                                                              // UPDATE maybe not because first part allows to read instruction opcode
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_SECOND_AND_DECODE;
         };

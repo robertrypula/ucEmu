@@ -19,10 +19,10 @@ var MicrocodeExecuteJnz = (function () {
 
             regIn0 = this.$$insDec.getRegIn0();
             regIn1 = this.$$insDec.getRegIn1();
-            regIn0Value = this.$$regSet.read(regIn0);
-            regIn1Value = this.$$regSet.read(regIn1);
+            regIn0Value = this.$$regFile.read(regIn0);
+            regIn1Value = this.$$regFile.read(regIn1);
             notZeroFlag = regIn1Value !== 0;
-            regPCNext = notZeroFlag ? regIn0Value : this.$$regSet.getProgramCounter();
+            regPCNext = notZeroFlag ? regIn0Value : this.$$regFile.getProgramCounter();
 
             if (Logger.isEnabled()) {
                 Logger.log(2, '[ACTION] sequencerExecuteJnz');
@@ -34,7 +34,7 @@ var MicrocodeExecuteJnz = (function () {
             }
 
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
-            this.$$regSet.setProgramCounter(regPCNext);
+            this.$$regFile.setProgramCounter(regPCNext);
         };
 
         return MEJ;

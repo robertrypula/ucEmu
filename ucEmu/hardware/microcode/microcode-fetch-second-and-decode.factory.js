@@ -30,7 +30,7 @@ var MicrocodeFetchSecondAndDecode = (function () {
                 opcode, byteWidth,
                 regProgramCounterNext, regSequencerNext;
 
-            column = this.$$mc.getColumn(this.$$regSet.getProgramCounter());
+            column = this.$$mc.getColumn(this.$$regFile.getProgramCounter());
             columnFromTheBack = this.$$mc.getColumnFromTheBack(column);
             memoryReadShifted = this.$$mc.getMemoryReadShiftedRight(columnFromTheBack);
             memoryReadFinal = this.$$mc.getMemoryReadFinal(memoryReadShifted);
@@ -55,12 +55,12 @@ var MicrocodeFetchSecondAndDecode = (function () {
             }
 
             this.$$core.regInstruction = memoryReadFinal;
-            this.$$regSet.setProgramCounter(regProgramCounterNext);
+            this.$$regFile.setProgramCounter(regProgramCounterNext);
             this.$$core.regSequencer = regSequencerNext;
         };
         
         MFSAD.prototype.$$updateOutputMemoryRowAddress = function () {
-            this.$$out.memoryRowAddress = this.$$mc.getMemoryRowAddressNext(this.$$regSet.getProgramCounter());
+            this.$$out.memoryRowAddress = this.$$mc.getMemoryRowAddressNext(this.$$regFile.getProgramCounter());
         };
 
         return MFSAD;

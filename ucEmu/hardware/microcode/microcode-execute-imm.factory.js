@@ -26,7 +26,7 @@ var MicrocodeExecuteImm = (function () {
             }
 
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
-            this.$$regSet.save(regOut, imm);
+            this.$$regFile.save(regOut, imm);
         };
 
         return MEI;

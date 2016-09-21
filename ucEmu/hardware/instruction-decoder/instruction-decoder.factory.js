@@ -118,7 +118,7 @@ var InstructionDecoder = (function () {
         ID.prototype.getProgramCounterNext = function (opcode) {
             var byteWidth = this.getByteWidth(opcode);
 
-            return BitUtil.mask(this.$$cpu.core.registerSet.getProgramCounter() + byteWidth, BitUtil.BYTE_2);
+            return BitUtil.mask(this.$$cpu.core.registerFile.getProgramCounter() + byteWidth, BitUtil.BYTE_2);
         };
 
         ID.prototype.getInstruction = function (opcode) {

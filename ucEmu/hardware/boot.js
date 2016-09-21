@@ -5,7 +5,7 @@ TODO list:
     + [1.00h] remove dumpHex and use hex
     + [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
     + [0.75h] service for logging with verbose levels
-    + [0.50h] add aliases for cpu internals at abstract-sequencer-handler, CHECK PERFORNANCE -> no change :/
+    + [0.50h] add aliases for cpu internals at abstract-sequencer-handler, CHECK PERFORMANCE -> no change :/
     + [0.50h] rename sequencer handler to some microCode blabla?
                 + sequencer -> ControlUnit
                 + serquencer-handler -> microcode
@@ -16,18 +16,21 @@ TODO list:
     + [1.00h] change structure of dumping cpu state
                 + create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
                 + ability to pass previous dumpState to mark changes values - changed = true/false/null
-                + move Instructon State and Microcode State to separate file (also method for fetching key by value)
+                + move Instruction State and Microcode State to separate file (also method for fetching key by value)
                 + return instr/microcode state at extra field in cpu dump
-    - [0.50h] figure out what to do with regTimer
-    - [1.50h] create new MemoryController and move all code related to col/row/shift/mask manipulation
-    - [1.00h] add 'buses' to core
-    - [1.50h] implement Store instruction
-    - rename regSet to regFile
+    + [1.50h] create new MemoryController and move all code related to col/row/shift/mask manipulation
+    + [0.25h] rename registerSet to registerFile
+
+    - [0.25h] introduce registers for memoryWrite and memoryRowAddress
+    - [0.50h] refactor all output computing, they should use newly created registers
+    - [0.50h] figure out how to load regTimer (check row address 0xFFF at memory controller?)
+    - [1.50h] implement store instruction
+    - [0.25h] rename regTimer to regCycleCounter
      
         :: fun starts here ::
-    - [1.5h] add DI
+    - [1.5h] add DI and clean up
     - [1.0h] move project to separate GitHub repo ('SimpleCPU')
-    - [2.0h] integrate CPU core (ALU, RegisterSet, MemoryController, ControlLogic) with Module/Signal class from other repo
+    - [2.0h] integrate CPU (without static memory) class with Module/Signal class from other repo
 
 CPU inputs:
     - [1 bit] clock
@@ -52,16 +55,20 @@ CPU outputs:
  ? cycles   | 0x7_ 0xR_            | 07 | st      regIn0                        | MemoryAt[regIn0] = regMem
  */
 
+// 3.95 emulated MHz / second @ 3.6 GHz real cpu      # old score
+// 2.35 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-21
+var benchmarkMode = 2.35;
+
 var memoryState = [
-    {row: 0x0000, data: [0x00, 0x00, 0x10, 0x00]},
-    {row: 0x0001, data: [0x20, 0x00, 0x30, 0x07]},
-    {row: 0x0002, data: [0x45, 0x00, 0x50, 0x00]},
-    {row: 0x0003, data: [0xff, 0xff, 0x60, 0x10]},
-    {row: 0x0004, data: [0x70, 0x10, 0x55, 0x00]},
-    {row: 0x0005, data: [0x00, 0x01, 0x56, 0x00]},
-    {row: 0x0006, data: [0x00, 0x12, 0x30, 0x65]}
+    { row: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },
+    { row: 0x0001, data: [0x20, 0x00, 0x30, 0x07] },
+    { row: 0x0002, data: [0x45, 0x00, 0x50, 0x00] },
+    { row: 0x0003, data: [0xff, 0xff, 0x60, 0x10] },
+    { row: 0x0004, data: [0x70, 0x10, 0x55, 0x00] },
+    { row: 0x0005, data: [0x00, 0x01, 0x56, 0x00] },
+    { row: 0x0006, data: [0x00, 0x12, 0x30, 0x65] }
 ];
-Logger.setVerbose(4);
+Logger.setVerbose(benchmarkMode ? -1 : 4);
 var cpu = new Cpu();
 var staticRam = new StaticRam(
     cpu.output.memoryRowAddress,
@@ -75,21 +82,24 @@ cpuLog(true);
 Logger.log(1, "\n");
 
 triggerCpuResetAndProgramStaticRam();
+
+// TODO does those lines are really needed?
+/*
 cpu.setClock(false);
 syncCpuWithStaticRam();
 cpu.setClock(false);
 syncCpuWithStaticRam();
+*/
 
 var secondsStart = new Date().getTime();
 document.write('START<br/>');
+
 runCpu();
 
 var secondsEnd = new Date().getTime();
 document.write('STOP<br/> ' + (secondsEnd - secondsStart) + ' ms' + '<br/>');
 
-
-function triggerCpuResetAndProgramStaticRam()
-{
+function triggerCpuResetAndProgramStaticRam() {
     var i;
 
     Logger.log(1, '------------------------------------------------------------------------------------------------------------');
@@ -121,14 +131,14 @@ function triggerCpuResetAndProgramStaticRam()
     Logger.log(1, "\n");
 }
 
-function runCpu()
-{
-    var clockTicks = 0;
+function runCpu() {
+    var
+        clockTicks = 0,
+        clockTicksToDo;
 
-    // 3.95 emulated MHz @ 3.6 GHz real cpu    
-    //         -> JavaScript requires ~1000 cycler per each emulated cycle
+    clockTicksToDo = benchmarkMode ? Math.round(benchmarkMode * 1000 * 1000) : 30;
 
-    while (clockTicks < /*Math.round(3.95 * 1000 * 1000)*/30) {      // 30
+    while (clockTicks < clockTicksToDo) {
         clockTicks++;
         clockHigh();
         clockLow();
@@ -157,8 +167,7 @@ function runCpu()
     }
 }
 
-function programStaticRamAndSync(memoryState)
-{
+function programStaticRamAndSync(memoryState) {
     for (var i = 0; i < memoryState.length; i++) {
         var ms = memoryState[i];
 
@@ -173,8 +182,7 @@ function programStaticRamAndSync(memoryState)
     syncCpuWithStaticRam();
 }
 
-function syncCpuWithStaticRam()
-{
+function syncCpuWithStaticRam() {
     staticRam.setRow(cpu.output.memoryRowAddress);
     staticRam.setDataIn(cpu.output.memoryWrite);
     staticRam.setWriteEnable(cpu.output.memoryWE);
@@ -182,20 +190,12 @@ function syncCpuWithStaticRam()
     cpu.input.memoryRead = staticRam.getDataOut();
 }
 
-function clockHigh()
-{
+function clockHigh() {
     cpu.setClock(true);
     syncCpuWithStaticRam();
-
-    
-    if (Logger.isEnabled()) {
-        // cpuLog();        // this shouldn't be enabled because it shows internal CPU ACTION in wrong order in the log
-    }
-    
 }
 
-function clockLow()
-{
+function clockLow() {
     cpu.setClock(false);
     syncCpuWithStaticRam();
 
@@ -206,9 +206,8 @@ function clockLow()
 
 var dumpPrevious;
 
-function cpuLog(hideCpuClockInfo)
-{
-    var rs = cpu.core.registerSet,
+function cpuLog(hideCpuClockInfo) {
+    var rf = cpu.core.registerFile,
         c = cpu.core;
 
     if (!hideCpuClockInfo) {
@@ -226,12 +225,12 @@ function cpuLog(hideCpuClockInfo)
         'in.reset = ' + BitUtil.hex(cpu.input.reset, BitUtil.BIT_1) + '      ' +
         'out.memoryRowAddress = ' + BitUtil.hex(cpu.output.memoryRowAddress, BitUtil.BYTE_2 - BitUtil.BIT_2) + ' | ' +
         'out.memoryWrite = ' + BitUtil.hex(cpu.output.memoryWrite, BitUtil.BYTE_4) + ' | ' +
-        'out.memoryWE = ' + BitUtil.hex(cpu.output.memoryWE, BitUtil.BIT_1) + ' | '
+        'out.memoryWE = ' + BitUtil.hex(cpu.output.memoryWE, BitUtil.BIT_1)
     );
 
     Logger.log(
         1,
-        'regRamBuffer = ' + BitUtil.hex(c.regRamBuffer, BitUtil.BYTE_4) + ' | ' +
+        'regMemoryBuffer = ' + BitUtil.hex(c.regMemoryBuffer, BitUtil.BYTE_4) + ' | ' +
         'regSequencer = ' + BitUtil.hex(c.regSequencer, BitUtil.BYTE_HALF) + ' | ' +
         'regInstruction = ' + BitUtil.hex(c.regInstruction, BitUtil.BYTE_4) + ' | ' +
         'regTimer = ' + BitUtil.hex(c.regTimer, BitUtil.BYTE_4) + ' | ' +
@@ -239,32 +238,34 @@ function cpuLog(hideCpuClockInfo)
     );
     Logger.log(
         1,
-        'reg00 = ' + BitUtil.hex(rs.read(0), BitUtil.BYTE_2) + ' | ' +
-        'reg01 = ' + BitUtil.hex(rs.read(1), BitUtil.BYTE_2) + ' | ' +
-        'reg02 = ' + BitUtil.hex(rs.read(2), BitUtil.BYTE_2) + ' | ' +
-        'reg03 = ' + BitUtil.hex(rs.read(3), BitUtil.BYTE_2) + ' | ' +
-        'reg04 = ' + BitUtil.hex(rs.read(4), BitUtil.BYTE_2) + ' | ' +
-        'reg05 = ' + BitUtil.hex(rs.read(5), BitUtil.BYTE_2) + ' | ' +
-        'reg06 = ' + BitUtil.hex(rs.read(6), BitUtil.BYTE_2) + ' | ' +
-        'reg07 = ' + BitUtil.hex(rs.read(7), BitUtil.BYTE_2) + ' | '
+        'reg00 = ' + BitUtil.hex(rf.read(0), BitUtil.BYTE_2) + ' | ' +
+        'reg01 = ' + BitUtil.hex(rf.read(1), BitUtil.BYTE_2) + ' | ' +
+        'reg02 = ' + BitUtil.hex(rf.read(2), BitUtil.BYTE_2) + ' | ' +
+        'reg03 = ' + BitUtil.hex(rf.read(3), BitUtil.BYTE_2) + ' | ' +
+        'reg04 = ' + BitUtil.hex(rf.read(4), BitUtil.BYTE_2) + ' | ' +
+        'reg05 = ' + BitUtil.hex(rf.read(5), BitUtil.BYTE_2) + ' | ' +
+        'reg06 = ' + BitUtil.hex(rf.read(6), BitUtil.BYTE_2) + ' | ' +
+        'reg07 = ' + BitUtil.hex(rf.read(7), BitUtil.BYTE_2)
     );
     Logger.log(
         1,
-        'reg08 = ' + BitUtil.hex(rs.read(8), BitUtil.BYTE_2) + ' | ' +
-        'reg09 = ' + BitUtil.hex(rs.read(9), BitUtil.BYTE_2) + ' | ' +
-        'reg10 = ' + BitUtil.hex(rs.read(10), BitUtil.BYTE_2) + ' | ' +
-        'reg11 = ' + BitUtil.hex(rs.read(11), BitUtil.BYTE_2) + ' | ' +
-        'reg12 = ' + BitUtil.hex(rs.read(12), BitUtil.BYTE_2) + ' | ' +
-        'reg13 = ' + BitUtil.hex(rs.read(13), BitUtil.BYTE_2) + ' | ' +
-        'regMA = ' + BitUtil.hex(rs.getMemoryAccess(), BitUtil.BYTE_2) + ' | ' +
-        'regPC = ' + BitUtil.hex(rs.getProgramCounter(), BitUtil.BYTE_2) + ' | '
+        'reg08 = ' + BitUtil.hex(rf.read(8), BitUtil.BYTE_2) + ' | ' +
+        'reg09 = ' + BitUtil.hex(rf.read(9), BitUtil.BYTE_2) + ' | ' +
+        'reg10 = ' + BitUtil.hex(rf.read(10), BitUtil.BYTE_2) + ' | ' +
+        'reg11 = ' + BitUtil.hex(rf.read(11), BitUtil.BYTE_2) + ' | ' +
+        'reg12 = ' + BitUtil.hex(rf.read(12), BitUtil.BYTE_2) + ' | ' +
+        'reg13 = ' + BitUtil.hex(rf.read(13), BitUtil.BYTE_2) + ' | ' +
+        'regMA = ' + BitUtil.hex(rf.getMemoryAccess(), BitUtil.BYTE_2) + ' | ' +
+        'regPC = ' + BitUtil.hex(rf.getProgramCounter(), BitUtil.BYTE_2)
     );
 
-    var dump;
+    if (!benchmarkMode) {
+        var dump;
 
-    dump = cpu.dumpState(dumpPrevious);
-    console.log(dump);
-    dumpPrevious = dump;
+        dump = cpu.dumpState(dumpPrevious);
+        console.log(dump);
+        dumpPrevious = dump;
+    }
 }
 
 staticRam.log(0, 3);

@@ -18,7 +18,7 @@ var MicrocodeExecuteLdSecond = (function () {
                 memoryReadShifted, memoryReadFinal;
             
             regIn0 = this.$$insDec.getRegIn0();
-            regIn0Value = this.$$regSet.read(regIn0);
+            regIn0Value = this.$$regFile.read(regIn0);
             column = this.$$mc.getColumn(regIn0Value);
             columnFromTheBack = this.$$mc.getColumnFromTheBack(column);
             memoryReadShifted = this.$$mc.getMemoryReadShiftedRight(columnFromTheBack);
@@ -35,7 +35,7 @@ var MicrocodeExecuteLdSecond = (function () {
                 Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitUtil.BYTE_2));
             }
 
-            this.$$regSet.setMemoryAccess(memoryReadFinal);
+            this.$$regFile.setMemoryAccess(memoryReadFinal);
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
@@ -43,7 +43,7 @@ var MicrocodeExecuteLdSecond = (function () {
             var regIn0, regIn0Value;
 
             regIn0 = this.$$insDec.getRegIn0();
-            regIn0Value = this.$$regSet.read(regIn0);
+            regIn0Value = this.$$regFile.read(regIn0);
 
             this.$$out.memoryRowAddress = this.$$mc.getMemoryRowAddressNext(regIn0Value);
         };
