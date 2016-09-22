@@ -13,7 +13,7 @@ var MicrocodeExecuteLdFirst = (function () {
         MELF.prototype = Object.create(AbstractMicrocode.prototype);
         MELF.prototype.constructor = MELF;
 
-        MELF.prototype.goToNextState = function () {
+        MELF.prototype.finalizePropagationAndStoreResults = function () {
             var regIn0, regIn0Value, column, memoryReadShifted;
 
             regIn0 = this.$$insDec.getRegIn0();
@@ -22,7 +22,7 @@ var MicrocodeExecuteLdFirst = (function () {
             memoryReadShifted = this.$$memCtrl.getMemoryReadShiftedLeft(column);
 
             if (Logger.isEnabled()) {
-                Logger.log(2, '[ACTION] sequencerExecuteLdFirst');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteLdFirst');
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'column = ' + column);

@@ -69,10 +69,10 @@ var MicrocodeExecuteStFirstA = (function () {
         MESFA.prototype = Object.create(AbstractMicrocode.prototype);
         MESFA.prototype.constructor = MESFA;
 
-        MESFA.prototype.goToNextState = function () {
+        MESFA.prototype.finalizePropagationAndStoreResults = function () {
 
             if (Logger.isEnabled()) {
-                Logger.log(2, '[ACTION] sequencerExecuteStFirstA');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteStFirstA');
             }
 
             this.$$core.regClockTick = this.$$cc.getClockTickNext();

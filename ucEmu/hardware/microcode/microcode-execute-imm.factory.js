@@ -13,14 +13,14 @@ var MicrocodeExecuteImm = (function () {
         MEI.prototype = Object.create(AbstractMicrocode.prototype);
         MEI.prototype.constructor = MEI;
 
-        MEI.prototype.goToNextState = function () {
+        MEI.prototype.finalizePropagationAndStoreResults = function () {
             var regOut, imm;
 
             regOut = this.$$insDec.getRegOut();
             imm = this.$$insDec.getImm();
 
             if (Logger.isEnabled()) {
-                Logger.log(2, '[ACTION] sequencerExecuteImm');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteImm');
                 Logger.log(3, 'regOut = ' + regOut);
                 Logger.log(3, 'imm = ' + BitUtil.hex(imm, BitUtil.BYTE_2) + " (store immediate value at regOut)");
             }

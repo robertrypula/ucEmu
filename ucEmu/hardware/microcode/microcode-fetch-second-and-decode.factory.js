@@ -25,7 +25,7 @@ var MicrocodeFetchSecondAndDecode = (function () {
         MFSAD.prototype = Object.create(AbstractMicrocode.prototype);
         MFSAD.prototype.constructor = MFSAD;
 
-        MFSAD.prototype.goToNextState = function () {
+        MFSAD.prototype.finalizePropagationAndStoreResults = function () {
             var column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
                 opcode, byteWidth,
                 regProgramCounterNext, regMemoryRowAddressNext, regSequencerNext,
@@ -47,7 +47,7 @@ var MicrocodeFetchSecondAndDecode = (function () {
             regMemoryRowAddressNext = this.$$insDec.isLoadOrStoreOpcode(opcode) ? regIn0Value : regProgramCounterNext;
 
             if (Logger.isEnabled()) {
-                Logger.log(2, '[ACTION] sequenceFetchSecondAndDecode');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequenceFetchSecondAndDecode');
                 Logger.log(3, 'column = ' + column);
                 Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(this.$$in.memoryRead, BitUtil.BYTE_4));
                 Logger.log(3, 'columnFromTheBack = ' + columnFromTheBack);

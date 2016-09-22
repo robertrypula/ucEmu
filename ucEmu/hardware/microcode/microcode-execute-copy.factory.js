@@ -13,7 +13,7 @@ var MicrocodeExecuteCopy = (function () {
         MEC.prototype = Object.create(AbstractMicrocode.prototype);
         MEC.prototype.constructor = MEC;
 
-        MEC.prototype.goToNextState = function () {
+        MEC.prototype.finalizePropagationAndStoreResults = function () {
             var regOut, regIn0, regIn0Value;
 
             regOut = this.$$insDec.getRegOut();
@@ -21,7 +21,7 @@ var MicrocodeExecuteCopy = (function () {
             regIn0Value = this.$$regFile.read(regIn0);
 
             if (Logger.isEnabled()) {
-                Logger.log(2, '[ACTION] sequencerExecuteCopy');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteCopy');
                 Logger.log(3, 'regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2) + " (COPY, save regIn0Value at regOut)");
             }

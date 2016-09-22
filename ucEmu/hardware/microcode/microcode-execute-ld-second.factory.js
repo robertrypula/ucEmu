@@ -13,7 +13,7 @@ var MicrocodeExecuteLdSecond = (function () {
         MELS.prototype = Object.create(AbstractMicrocode.prototype);
         MELS.prototype.constructor = MELS;
 
-        MELS.prototype.goToNextState = function () {
+        MELS.prototype.finalizePropagationAndStoreResults = function () {
             var regIn0, regIn0Value, column, columnFromTheBack,
                 memoryReadShifted, memoryReadFinal;
             
@@ -25,7 +25,7 @@ var MicrocodeExecuteLdSecond = (function () {
             memoryReadFinal = this.$$memCtrl.getMemoryReadFinal(memoryReadShifted);
 
             if (Logger.isEnabled()) {
-                Logger.log(2, '[ACTION] sequencerExecuteLdSecond');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteLdSecond');
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'column = ' + column);

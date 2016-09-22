@@ -58,16 +58,15 @@ CPU outputs:
 
 // 3.95 emulated MHz / second @ 3.6 GHz real cpu      # old score
 // 2.35 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-21
-var benchmarkMode = null;//2.35;
+// 4.50 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-22
+var benchmarkMode = null;//4.5;
 
 var memoryState = [
     { row: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },
     { row: 0x0001, data: [0x20, 0x00, 0x30, 0x07] },
     { row: 0x0002, data: [0x45, 0x00, 0x50, 0x00] },
     { row: 0x0003, data: [0xff, 0xff, 0x60, 0x10] },
-    { row: 0x0004, data: [0x70, 0x10, 0x55, 0x00] },
-    { row: 0x0005, data: [0x00, 0x01, 0x56, 0x00] },
-    { row: 0x0006, data: [0x00, 0x12, 0x30, 0x65] }
+    { row: 0x0004, data: [0x70, 0x10, 0x00, 0x00] }
 ];
 Logger.setVerbose(benchmarkMode ? -1 : 4);
 var cpu = new Cpu();
@@ -78,9 +77,9 @@ var staticRam = new StaticRam(
 );
 syncCpuWithStaticRam();
 cpu.setClock(false);
-staticRam.log(0, 3);
+staticRam.log(0, 4);
 cpuLog(true);
-Logger.log(1, "\n");
+Logger.log(0, "\n");
 
 triggerCpuResetAndProgramStaticRam();
 
@@ -108,28 +107,28 @@ function triggerCpuResetAndProgramStaticRam() {
     Logger.log(1, '\n');
 
     for (i = 0; i < 2; i++) {
-        Logger.log(2, '[ACTION] reset enable #' + i);
+        Logger.log(1, '[ACTION] reset enable #' + i);
         cpu.input.reset = true;
         clockHigh();
         clockLow();
         Logger.log(1, "\n");        
     }
 
-    Logger.log(2, '[ACTION] program loop');
+    Logger.log(1, '[ACTION] program loop');
     programStaticRamAndSync(memoryState);
-    staticRam.log(0, 3);
+    staticRam.log(0, 4);
     cpuLog(true);
     Logger.log(1, "\n");
 
-    Logger.log(2, '[ACTION] reset disable');
+    Logger.log(1, '[ACTION] reset disable');
     cpu.input.reset = false;
     clockHigh();
     clockLow();
     Logger.log(1, "\n");
 
-    Logger.log(1, '                                                                                         reset & program END');    
-    Logger.log(1, '------------------------------------------------------------------------------------------------------------');
-    Logger.log(1, "\n");
+    Logger.log(0, '                                                                                         reset & program END');
+    Logger.log(0, '------------------------------------------------------------------------------------------------------------');
+    Logger.log(0, "\n");
 }
 
 function runCpu() {
@@ -194,6 +193,11 @@ function syncCpuWithStaticRam() {
 function clockHigh() {
     cpu.setClock(true);
     syncCpuWithStaticRam();
+
+    if (Logger.isEnabled()) {
+        cpuLog();  // not needed that much - we can comment it
+    }
+
 }
 
 function clockLow() {
@@ -213,7 +217,7 @@ function cpuLog(hideCpuClockInfo) {
 
     if (!hideCpuClockInfo) {
         if (cpu.input.clock) {
-            Logger.log(1, '----> CPU state after rising edge of the clock');  // same as abowe: this shouldn't be enabled because it shows internal CPU ACTION in wrong order in the log
+            Logger.log(1, '----> CPU state after rising edge of the clock (signals are still propagating thought the CPU)');
         } else {
             Logger.log(1, '----> CPU state after faling edge of the clock (results/inputs latched in flipflops)');
         }
@@ -274,4 +278,5 @@ function cpuLog(hideCpuClockInfo) {
     }
 }
 
-staticRam.log(0, 3);
+staticRam.log(0, 4);
+staticRam.log(0x100, 0x102);

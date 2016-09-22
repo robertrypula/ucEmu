@@ -13,7 +13,7 @@ var MicrocodeExecuteNand = (function () {
         MEN.prototype = Object.create(AbstractMicrocode.prototype);
         MEN.prototype.constructor = MEN;
 
-        MEN.prototype.goToNextState = function () {
+        MEN.prototype.finalizePropagationAndStoreResults = function () {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
@@ -25,7 +25,7 @@ var MicrocodeExecuteNand = (function () {
             regResult = this.$$alu.nand(regIn0Value, regIn1Value);
 
             if (Logger.isEnabled()) {
-                Logger.log(2, '[ACTION] sequencerExecuteNand');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteNand');
                 Logger.log(3, 'regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));

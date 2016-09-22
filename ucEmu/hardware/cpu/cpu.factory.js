@@ -189,7 +189,7 @@ var Cpu = (function () {
             this.core.regReset = this.input.reset;         // store current input
 
             if (!resetOccurred) {
-                this.core.controlUnit.goToNextState();
+                this.core.controlUnit.finalizePropagationAndStoreResults();
             }
         };
 

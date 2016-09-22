@@ -13,14 +13,14 @@ var MicrocodeFetchFirst = (function () {
         MFF.prototype = Object.create(AbstractMicrocode.prototype);
         MFF.prototype.constructor = MFF;
 
-        MFF.prototype.goToNextState = function () {
+        MFF.prototype.finalizePropagationAndStoreResults = function () {
             var column, memoryReadShifted;
             
             column = this.$$memCtrl.getColumn(this.$$regFile.getProgramCounter());
             memoryReadShifted = this.$$memCtrl.getMemoryReadShiftedLeft(column);
 
             if (Logger.isEnabled()) {
-                Logger.log(2, '[ACTION] sequenceFetchFirst');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequenceFetchFirst');
                 Logger.log(3, 'column = ' + column);
                 Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(this.$$in.memoryRead, BitUtil.BYTE_4));
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));

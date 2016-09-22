@@ -13,10 +13,10 @@ var MicrocodeExecuteStSecondA = (function () {
         MESSA.prototype = Object.create(AbstractMicrocode.prototype);
         MESSA.prototype.constructor = MESSA;
 
-        MESSA.prototype.goToNextState = function () {
+        MESSA.prototype.finalizePropagationAndStoreResults = function () {
 
             if (Logger.isEnabled()) {
-                Logger.log(2, '[ACTION] sequencerExecuteStSecondA');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteStSecondA');
             }
 
             this.$$core.regClockTick = this.$$cc.getClockTickNext();

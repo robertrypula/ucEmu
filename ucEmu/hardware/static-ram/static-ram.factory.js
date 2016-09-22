@@ -24,18 +24,20 @@ var StaticRam = (function () {
             startRow = startRow < 0 ? 0 : startRow;
             for (i = startRow; i < this.ROWS_COUNT; i++) {
                 if (i > stopRow) {
-                    return;
+                    break;
                 }
 
                 if (Logger.isEnabled()) {
                     Logger.log(
                         0,
-                        ' StaticRam:  ' +
+                        'StaticRam:  ' +
                         BitUtil.hex(i, BitUtil.BYTE_2) + ' | ' +
                         BitUtil.hex(this.data[i], BitUtil.BYTE_4)
                     );
                 }
             }
+
+            Logger.log(0, '\n');
         };
 
         SR.prototype.getDataOut = function () {

@@ -58,8 +58,8 @@ var ControlUnit = (function () {
             this.$$setCpuAtControlStore(cpu);
         };
 
-        CU.prototype.goToNextState = function () {
-            this.$$getMicrocodeFromControlStore().goToNextState();
+        CU.prototype.finalizePropagationAndStoreResults = function () {
+            this.$$getMicrocodeFromControlStore().finalizePropagationAndStoreResults();
         };
 
         CU.prototype.isWriteEnableFlagActive = function () {

@@ -13,10 +13,10 @@ var MicrocodeExecuteStFirstC = (function () {
         MESFC.prototype = Object.create(AbstractMicrocode.prototype);
         MESFC.prototype.constructor = MESFC;
 
-        MESFC.prototype.goToNextState = function () {
+        MESFC.prototype.finalizePropagationAndStoreResults = function () {
 
             if (Logger.isEnabled()) {
-                Logger.log(2, '[ACTION] sequencerExecuteStFirstC');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteStFirstC');
             }
 
             this.$$core.regClockTick = this.$$cc.getClockTickNext();

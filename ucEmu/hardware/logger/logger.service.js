@@ -9,8 +9,8 @@ var Logger = (function () {
         function $$logHtml(verbose, str) {
             var strParsed, i;
             
-            for (i = 0; i < verbose * 4; i++) {
-                // document.write("&nbsp;");
+            for (i = 0; i < verbose * 1; i++) {
+                document.write("&nbsp;");
             }
             strParsed = str.replace(/\n/g, '<br/>');
             strParsed = strParsed.replace(/ /g, '&nbsp;');

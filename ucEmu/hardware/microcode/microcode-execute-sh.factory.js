@@ -13,7 +13,7 @@ var MicrocodeExecuteSh = (function () {
         MES.prototype = Object.create(AbstractMicrocode.prototype);
         MES.prototype.constructor = MES;
 
-        MES.prototype.goToNextState = function () {
+        MES.prototype.finalizePropagationAndStoreResults = function () {
             var regOut, regIn0, regIn1, 
                 regIn0Value, regIn1Value, regResult;
 
@@ -25,7 +25,7 @@ var MicrocodeExecuteSh = (function () {
             regResult = this.$$alu.sh(regIn0Value, regIn1Value);
 
             if (Logger.isEnabled()) {
-                Logger.log(2, '[ACTION] sequencerExecuteSh');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteSh');
                 Logger.log(3, 'regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));
