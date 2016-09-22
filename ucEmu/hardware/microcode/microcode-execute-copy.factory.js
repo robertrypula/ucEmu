@@ -13,7 +13,7 @@ var MicrocodeExecuteCopy = (function () {
         MEC.prototype = Object.create(AbstractMicrocode.prototype);
         MEC.prototype.constructor = MEC;
 
-        MEC.prototype.$$goToNextState = function () {
+        MEC.prototype.goToNextState = function () {
             var regOut, regIn0, regIn0Value;
 
             regOut = this.$$insDec.getRegOut();
@@ -25,9 +25,11 @@ var MicrocodeExecuteCopy = (function () {
                 Logger.log(3, 'regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2) + " (COPY, save regIn0Value at regOut)");
             }
-
-            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
+            
             this.$$regFile.save(regOut, regIn0Value);
+            this.$$core.regClockTick = this.$$cc.getClockTickNext();
+            this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
         return MEC;

@@ -13,7 +13,7 @@ var MicrocodeExecuteAdd = (function () {
         MEA.prototype = Object.create(AbstractMicrocode.prototype);
         MEA.prototype.constructor = MEA;
 
-        MEA.prototype.$$goToNextState = function () {
+        MEA.prototype.goToNextState = function () {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
@@ -33,6 +33,8 @@ var MicrocodeExecuteAdd = (function () {
             }
 
             this.$$regFile.save(regOut, regResult);
+            this.$$core.regClockTick = this.$$cc.getClockTickNext();
+            this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 

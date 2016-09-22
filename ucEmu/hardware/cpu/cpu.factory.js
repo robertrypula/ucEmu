@@ -125,6 +125,7 @@ var Cpu = (function () {
                 controlUnit: ControlUnitBuilder.build(this),
                 alu: AluBuilder.build(),
                 memoryController: MemoryControllerBuilder.build(this),
+                cycleCounter: ClockTickBuilder.build(this),
 
                 // general purpose registers
                 registerFile: RegisterFileBuilder.build(),
@@ -133,7 +134,7 @@ var Cpu = (function () {
                 regReset: BitUtil.random(BitUtil.BIT_1),
                 regSequencer: BitUtil.random(BitUtil.BYTE_HALF),
                 regInstruction: BitUtil.random(BitUtil.BYTE_4),
-                regTimer: BitUtil.random(BitUtil.BYTE_4),
+                regClockTick: BitUtil.random(BitUtil.BYTE_4),
                 regMemoryBuffer: BitUtil.random(BitUtil.BYTE_4),
                 regMemoryRowAddress: BitUtil.random(BitUtil.BYTE_2 - BitUtil.BIT_2),
                 regMemoryWrite: BitUtil.random(BitUtil.BYTE_4)
@@ -150,6 +151,8 @@ var Cpu = (function () {
                 memoryWrite: 0,
                 memoryWE: 0
             };
+
+            this.core.controlUnit.postInitialize();
         };
 
         C.prototype.$$update = function () {
@@ -193,7 +196,7 @@ var Cpu = (function () {
         C.prototype.$$performRegistersReset = function () {
             this.core.regSequencer = 0;
             this.core.regInstruction = 0;
-            this.core.regTimer = 0;
+            this.core.regClockTick = 0;
 
             this.core.regMemoryBuffer = 0;
             this.core.regMemoryRowAddress = 0;
@@ -240,7 +243,7 @@ var Cpu = (function () {
                     regReset: { value: c.regReset, bitSize: BitUtil.BIT_1, changed: null },
                     regSequencer: { value: c.regSequencer, bitSize: BitUtil.BYTE_HALF, changed: null },
                     regInstruction: { value: c.regInstruction, bitSize: BitUtil.BYTE_4, changed: null },
-                    regTimer: { value: c.regTimer, bitSize: BitUtil.BYTE_4, changed: null },
+                    regClockTick: { value: c.regClockTick, bitSize: BitUtil.BYTE_4, changed: null },
                     regMemoryBuffer: { value: c.regMemoryBuffer, bitSize: BitUtil.BYTE_4, changed: null },
                     regMemoryRowAddress: { value: c.regMemoryRowAddress, bitSize: BitUtil.BYTE_2 - BitUtil.BIT_2, changed: null },
                     regMemoryWrite: { value: c.regMemoryWrite, bitSize: BitUtil.BYTE_4, changed: null }

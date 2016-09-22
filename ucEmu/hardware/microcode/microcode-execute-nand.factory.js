@@ -13,7 +13,7 @@ var MicrocodeExecuteNand = (function () {
         MEN.prototype = Object.create(AbstractMicrocode.prototype);
         MEN.prototype.constructor = MEN;
 
-        MEN.prototype.$$goToNextState = function () {
+        MEN.prototype.goToNextState = function () {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
@@ -31,9 +31,11 @@ var MicrocodeExecuteNand = (function () {
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));
                 Logger.log(3, 'result = ' + BitUtil.hex(regResult, BitUtil.BYTE_2) + ' (NAND)');
             }
-
-            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
+            
             this.$$regFile.save(regOut, regResult);
+            this.$$core.regClockTick = this.$$cc.getClockTickNext();
+            this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
         return MEN;

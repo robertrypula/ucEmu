@@ -4,7 +4,8 @@ var Microcode = (function () {
     _Microcode.$inject = [];
 
     function _Microcode() {
-        var $$MICROCODE,
+        var
+            $$MICROCODE,
             $$keyLookUp;
 
         $$MICROCODE = {

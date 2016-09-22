@@ -13,11 +13,11 @@ var MicrocodeFetchFirst = (function () {
         MFF.prototype = Object.create(AbstractMicrocode.prototype);
         MFF.prototype.constructor = MFF;
 
-        MFF.prototype.$$goToNextState = function () {
+        MFF.prototype.goToNextState = function () {
             var column, memoryReadShifted;
             
-            column = this.$$mc.getColumn(this.$$regFile.getProgramCounter());
-            memoryReadShifted = this.$$mc.getMemoryReadShiftedLeft(column);
+            column = this.$$memCtrl.getColumn(this.$$regFile.getProgramCounter());
+            memoryReadShifted = this.$$memCtrl.getMemoryReadShiftedLeft(column);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, '[ACTION] sequenceFetchFirst');
@@ -26,8 +26,9 @@ var MicrocodeFetchFirst = (function () {
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
             }
 
+            this.$$core.regClockTick = this.$$cc.getClockTickNext();
             this.$$core.regMemoryBuffer = memoryReadShifted;
-            this.$$core.regMemoryRowAddress = this.$$mc.getMemoryRowAddressNext(this.$$regFile.getProgramCounter());
+            this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddressNextRow(this.$$regFile.getProgramCounter());
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_SECOND_AND_DECODE;
             this.$$core.regInstruction = memoryReadShifted;
         };

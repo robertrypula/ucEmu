@@ -23,7 +23,7 @@ var MemoryController = (function () {
         };
 
         MC.prototype.getMemoryReadShiftedRight = function (columnFromTheBack) {
-            return BitUtil.shiftRight(this.$$cpu.input.memoryRead, columnFromTheBack * BitUtil.BYTE_1)
+            return BitUtil.shiftRight(this.$$cpu.input.memoryRead, columnFromTheBack * BitUtil.BYTE_1);
         };
 
         MC.prototype.getColumnFromTheBack = function (column) {
@@ -41,7 +41,7 @@ var MemoryController = (function () {
             );
         };
 
-        MC.prototype.getMemoryRowAddressNext = function (address) {
+        MC.prototype.getMemoryRowAddressNextRow = function (address) {
             return BitUtil.mask(
                 this.getMemoryRowAddress(address) + 1,
                 BitUtil.BYTE_2 - BitUtil.BIT_2

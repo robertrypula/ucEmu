@@ -13,16 +13,16 @@ var MicrocodeExecuteLdSecond = (function () {
         MELS.prototype = Object.create(AbstractMicrocode.prototype);
         MELS.prototype.constructor = MELS;
 
-        MELS.prototype.$$goToNextState = function () {
+        MELS.prototype.goToNextState = function () {
             var regIn0, regIn0Value, column, columnFromTheBack,
                 memoryReadShifted, memoryReadFinal;
             
             regIn0 = this.$$insDec.getRegIn0();
             regIn0Value = this.$$regFile.read(regIn0);
-            column = this.$$mc.getColumn(regIn0Value);
-            columnFromTheBack = this.$$mc.getColumnFromTheBack(column);
-            memoryReadShifted = this.$$mc.getMemoryReadShiftedRight(columnFromTheBack);
-            memoryReadFinal = this.$$mc.getMemoryReadFinal(memoryReadShifted);
+            column = this.$$memCtrl.getColumn(regIn0Value);
+            columnFromTheBack = this.$$memCtrl.getColumnFromTheBack(column);
+            memoryReadShifted = this.$$memCtrl.getMemoryReadShiftedRight(columnFromTheBack);
+            memoryReadFinal = this.$$memCtrl.getMemoryReadFinal(memoryReadShifted);
 
             if (Logger.isEnabled()) {
                 Logger.log(2, '[ACTION] sequencerExecuteLdSecond');
@@ -35,21 +35,14 @@ var MicrocodeExecuteLdSecond = (function () {
                 Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitUtil.BYTE_2));
             }
 
-            this.$$regFile.setMemoryAccess(memoryReadFinal);
+            this.$$regFile.setMemoryAccess(memoryReadFinal);       // it could be at some point any register...
+            this.$$core.regClockTick = this.$$cc.getClockTickNext();
+            this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
-        MELS.prototype.$$updateOutputMemoryRowAddress = function () {
-            var regIn0, regIn0Value;
-
-            regIn0 = this.$$insDec.getRegIn0();
-            regIn0Value = this.$$regFile.read(regIn0);
-
-            this.$$out.memoryRowAddress = this.$$mc.getMemoryRowAddressNext(regIn0Value);
-        };
-
         return MELS;
-    };
+    }
 
     return _MicrocodeExecuteLdSecond();        // TODO change it to dependency injection
 

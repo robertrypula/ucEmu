@@ -10,8 +10,8 @@ var InstructionDecoder = (function () {
             CpuAware.apply(this, arguments);
 
             this.$$instructionSet = [];
-            this.$$byteWidthLookup;
-            this.$$sequencerNextLookup;
+            this.$$byteWidthLookup = undefined;
+            this.$$sequencerNextLookup = undefined;
             
             this.$$initialize();
         };
@@ -59,15 +59,7 @@ var InstructionDecoder = (function () {
             }
         };
 
-        ID.prototype.$$checkOpcode = function(opcode, method) {
-            if (opcode < 0 || opcode >= this.$$instructionSet.length) {
-                throw 'InstructionDecoder.' + method + '() - unknown opcode: ' + opcode;
-            }
-        };
-
         ID.prototype.getOpcode = function () {
-            //this.$$checkCpu();
-
             return BitUtil.shiftRight(
                 this.$$cpu.core.regInstruction & 0x70000000,
                 BitUtil.BYTE_3 + BitUtil.BYTE_HALF
@@ -75,8 +67,6 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.getRegOut = function () {
-            //this.$$checkCpu();
-
             return BitUtil.shiftRight(
                 this.$$cpu.core.regInstruction & 0x0F000000,
                 BitUtil.BYTE_3
@@ -84,8 +74,6 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.getRegIn0 = function () {
-            //this.$$checkCpu();
-
             return BitUtil.shiftRight(
                 this.$$cpu.core.regInstruction & 0x00F00000,
                 BitUtil.BYTE_2 + BitUtil.BYTE_HALF
@@ -93,8 +81,6 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.getRegIn1 = function () {
-            //this.$$checkCpu();
-
             return BitUtil.shiftRight(
                 this.$$cpu.core.regInstruction & 0x000F0000,
                 BitUtil.BYTE_2
@@ -102,8 +88,6 @@ var InstructionDecoder = (function () {
         };
 
         ID.prototype.getImm = function () {
-            //this.$$checkCpu();
-            
             return this.$$cpu.core.regInstruction & 0x0000FFFF;
         };
 
@@ -121,11 +105,14 @@ var InstructionDecoder = (function () {
             return BitUtil.mask(this.$$cpu.core.registerFile.getProgramCounter() + byteWidth, BitUtil.BYTE_2);
         };
 
+        ID.prototype.isLoadOrStoreOpcode = function (opcode) {
+            var O = Opcode.OPCODE;
+
+            return opcode === O.LD || opcode === O.ST;
+        };
+
         ID.prototype.getInstruction = function (opcode) {
             var instruction;
-
-            //this.$$checkCpu();
-            //this.$$checkOpcode(opcode, 'getInstruction');
 
             instruction = this.$$instructionSet[opcode];
 

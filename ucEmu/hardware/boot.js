@@ -20,12 +20,13 @@ TODO list:
                 + return instr/microcode state at extra field in cpu dump
     + [1.50h] create new MemoryController and move all code related to col/row/shift/mask manipulation
     + [0.25h] rename registerSet to registerFile
+    + [0.25h] introduce registers for memoryWrite and memoryRowAddress
+    + [0.50h] refactor all output computing, they should use newly created registers
+    + [0.25h] rename regTimer to regClockTick
 
-    - [0.25h] introduce registers for memoryWrite and memoryRowAddress
-    - [0.50h] refactor all output computing, they should use newly created registers
-    - [0.50h] figure out how to load regTimer (check row address 0xFFF at memory controller?)
+    - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
     - [1.50h] implement store instruction
-    - [0.25h] rename regTimer to regCycleCounter
+    - [0.50h] restructure microcode (rename microcode-execute-* to microcode-handler-*, two directories 'microcode' and 'microcode-handler')
      
         :: fun starts here ::
     - [1.5h] add DI and clean up
@@ -57,7 +58,7 @@ CPU outputs:
 
 // 3.95 emulated MHz / second @ 3.6 GHz real cpu      # old score
 // 2.35 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-21
-var benchmarkMode = 2.35;
+var benchmarkMode = null;//2.35;
 
 var memoryState = [
     { row: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },
@@ -233,7 +234,7 @@ function cpuLog(hideCpuClockInfo) {
         'regReset = ' + BitUtil.hex(c.regReset, BitUtil.BIT_1) + ' | ' +
         'regSequencer = ' + BitUtil.hex(c.regSequencer, BitUtil.BYTE_HALF) + ' | ' +
         'regInstruction = ' + BitUtil.hex(c.regInstruction, BitUtil.BYTE_4) + ' | ' +
-        'regTimer = ' + BitUtil.hex(c.regTimer, BitUtil.BYTE_4)
+        'regClockTick = ' + BitUtil.hex(c.regClockTick, BitUtil.BYTE_4)
     );
     Logger.log(
         1,

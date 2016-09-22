@@ -37,19 +37,20 @@ var ControlUnit = (function () {
             }
         };
 
-        CU.prototype.$$checkState = function (state) {
-            if (state < 0 || state >= this.$$controlStore.length) {
-                throw 'Bad state: ' + state;
+        CU.prototype.$$checkSequencer = function (sequencer) {
+            var result = sequencer;
+
+            if (sequencer < 0 || sequencer >= this.$$controlStore.length) {
+                result = Microcode.MICROCODE.FETCH_FIRST;   // fallback to first microcode entry
             }
+
+            return result;
         };
 
         CU.prototype.$$getMicrocodeFromControlStore = function () {
-            var state;
+            var sequencer = this.$$checkSequencer(this.$$cpu.core.regSequencer);
 
-            state = this.$$cpu.core.regSequencer;
-            //this.$$checkState(state);
-
-            return this.$$controlStore[state];
+            return this.$$controlStore[sequencer];
         };
 
         CU.prototype.setCpu = function (cpu) {
@@ -59,21 +60,34 @@ var ControlUnit = (function () {
 
         CU.prototype.goToNextState = function () {
             this.$$getMicrocodeFromControlStore().goToNextState();
+        };
 
-            this.$$cpu.core.regTimer = BitUtil.mask(this.$$cpu.core.regTimer + 1, BitUtil.BYTE_4);
+        CU.prototype.isWriteEnableFlagActive = function () {
+            var
+                M = Microcode.MICROCODE,
+                sequencer = this.$$checkSequencer(this.$$cpu.core.regSequencer);
+
+            return sequencer === M.EXECUTE_ST_FIRST_B || sequencer === M.EXECUTE_ST_SECOND_B;
         };
 
         CU.prototype.updateOutput = function () {
             var
-                microcode = this.$$getMicrocodeFromControlStore(),
                 c = this.$$cpu.core,
+                i = this.$$cpu.input,
                 o = this.$$cpu.output;
 
-            o.memoryWrite = c.regMemoryWrite;
             o.memoryRowAddress = c.regMemoryRowAddress;
+            o.memoryWrite = c.regMemoryWrite;
+            o.memoryWE = this.isWriteEnableFlagActive() && i.clock ? 1 : 0;
+        };
 
-            // TODO write WE
-            // console.log(microcode);
+        CU.prototype.postInitialize = function () {
+            var i, microcode;
+
+            for (i = 0; i < this.$$controlStore.length; i++) {
+                microcode = this.$$controlStore[i];
+                microcode.generateCpuAliases();
+            }
         };
 
         return CU;

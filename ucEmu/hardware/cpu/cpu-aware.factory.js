@@ -14,12 +14,6 @@ var CpuAware = (function () {
             this.$$cpu = cpu;
         };
 
-        CA.prototype.$$checkCpu = function () {
-            if (!this.$$cpu) {
-                throw 'Please attach cpu first';
-            }
-        };
-
         return CA;
     }
 

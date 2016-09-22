@@ -13,7 +13,7 @@ var MicrocodeExecuteImm = (function () {
         MEI.prototype = Object.create(AbstractMicrocode.prototype);
         MEI.prototype.constructor = MEI;
 
-        MEI.prototype.$$goToNextState = function () {
+        MEI.prototype.goToNextState = function () {
             var regOut, imm;
 
             regOut = this.$$insDec.getRegOut();
@@ -24,9 +24,11 @@ var MicrocodeExecuteImm = (function () {
                 Logger.log(3, 'regOut = ' + regOut);
                 Logger.log(3, 'imm = ' + BitUtil.hex(imm, BitUtil.BYTE_2) + " (store immediate value at regOut)");
             }
-
-            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
+            
             this.$$regFile.save(regOut, imm);
+            this.$$core.regClockTick = this.$$cc.getClockTickNext();
+            this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
         return MEI;
