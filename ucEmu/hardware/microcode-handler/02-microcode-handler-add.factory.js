@@ -1,19 +1,19 @@
-var MicrocodeExecuteNand = (function () {
+var MicrocodeHandlerAdd = (function () {
     'use strict';
 
-    _MicrocodeExecuteNand.$inject = [];
+     _MicrocodeHandlerAdd.$inject = [];
 
-    function _MicrocodeExecuteNand() {
-        var MEN;
+    function _MicrocodeHandlerAdd() {
+        var MEA;
 
-        MEN = function (cpu) {
+        MEA = function (cpu) {
             AbstractMicrocode.apply(this, arguments);
         };
 
-        MEN.prototype = Object.create(AbstractMicrocode.prototype);
-        MEN.prototype.constructor = MEN;
+        MEA.prototype = Object.create(AbstractMicrocode.prototype);
+        MEA.prototype.constructor = MEA;
 
-        MEN.prototype.finalizePropagationAndStoreResults = function () {
+        MEA.prototype.finalizePropagationAndStoreResults = function () {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
@@ -22,25 +22,25 @@ var MicrocodeExecuteNand = (function () {
             regIn1 = this.$$insDec.getRegIn1();
             regIn0Value = this.$$regFile.read(regIn0);
             regIn1Value = this.$$regFile.read(regIn1);
-            regResult = this.$$alu.nand(regIn0Value, regIn1Value);
+            regResult = this.$$alu.add(regIn0Value, regIn1Value);
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteNand');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerAdd');
                 Logger.log(3, 'regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));
-                Logger.log(3, 'result = ' + BitUtil.hex(regResult, BitUtil.BYTE_2) + ' (NAND)');
+                Logger.log(3, 'result = ' + BitUtil.hex(regResult, BitUtil.BYTE_2) + ' (sum)');
             }
-            
+
             this.$$regFile.save(regOut, regResult);
             this.$$core.regClockTick = this.$$cc.getClockTickNext();
             this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
-        return MEN;
+        return MEA;
     }
 
-    return _MicrocodeExecuteNand();        // TODO change it to dependency injection
+    return _MicrocodeHandlerAdd();        // TODO change it to dependency injection
 
 })();

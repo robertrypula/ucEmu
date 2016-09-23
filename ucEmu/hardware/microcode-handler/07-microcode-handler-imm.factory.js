@@ -1,9 +1,9 @@
-var MicrocodeExecuteImm = (function () {
+var MicrocodeHandlerImm = (function () {
     'use strict';
 
-    _MicrocodeExecuteImm.$inject = [];
+    _MicrocodeHandlerImm.$inject = [];
 
-    function _MicrocodeExecuteImm() {
+    function _MicrocodeHandlerImm() {
         var MEI;
 
         MEI = function (cpu) {
@@ -20,7 +20,7 @@ var MicrocodeExecuteImm = (function () {
             imm = this.$$insDec.getImm();
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteImm');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerImm');
                 Logger.log(3, 'regOut = ' + regOut);
                 Logger.log(3, 'imm = ' + BitUtil.hex(imm, BitUtil.BYTE_2) + " (store immediate value at regOut)");
             }
@@ -34,6 +34,6 @@ var MicrocodeExecuteImm = (function () {
         return MEI;
     }
 
-    return _MicrocodeExecuteImm();        // TODO change it to dependency injection
+    return _MicrocodeHandlerImm();        // TODO change it to dependency injection
 
 })();

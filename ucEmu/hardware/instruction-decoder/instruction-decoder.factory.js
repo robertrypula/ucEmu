@@ -32,14 +32,14 @@ var InstructionDecoder = (function () {
             M = Microcode.MICROCODE;
 
             this.$$instructionSet.push(
-                { opcode: O.ADD, sequencerNext: M.EXECUTE_ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
-                { opcode: O.NAND, sequencerNext: M.EXECUTE_NAND, cycles: null, byteWidth: 2, name: 'nand', nameFull: 'Bitwise NAND' },
-                { opcode: O.SH, sequencerNext: M.EXECUTE_SH, cycles: null, byteWidth: 2, name: 'sh',  nameFull: "Logical bit shift" },
-                { opcode: O.JNZ, sequencerNext: M.EXECUTE_JNZ, cycles: null, byteWidth: 2, name: 'jnz', nameFull: "Jump if not zero" },
-                { opcode: O.COPY, sequencerNext: M.EXECUTE_COPY, cycles: null, byteWidth: 2, name: 'copy', nameFull: "Copy" },
-                { opcode: O.IMM, sequencerNext: M.EXECUTE_IMM, cycles: null, byteWidth: 4, name: 'imm', nameFull: "Immediate value" },
-                { opcode: O.LD, sequencerNext: M.EXECUTE_LD_FIRST, cycles: null, byteWidth: 2, name: 'ld', nameFull: "Load" },
-                { opcode: O.ST, sequencerNext: M.EXECUTE_ST_FIRST_A, cycles: null, byteWidth: 2, name: 'st', nameFull: "Store" }
+                { opcode: O.ADD, sequencerNext: M.ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
+                { opcode: O.NAND, sequencerNext: M.NAND, cycles: null, byteWidth: 2, name: 'nand', nameFull: 'Bitwise NAND' },
+                { opcode: O.SH, sequencerNext: M.SH, cycles: null, byteWidth: 2, name: 'sh',  nameFull: "Logical bit shift" },
+                { opcode: O.JNZ, sequencerNext: M.JNZ, cycles: null, byteWidth: 2, name: 'jnz', nameFull: "Jump if not zero" },
+                { opcode: O.COPY, sequencerNext: M.COPY, cycles: null, byteWidth: 2, name: 'copy', nameFull: "Copy" },
+                { opcode: O.IMM, sequencerNext: M.IMM, cycles: null, byteWidth: 4, name: 'imm', nameFull: "Immediate value" },
+                { opcode: O.LD, sequencerNext: M.LD_FIRST, cycles: null, byteWidth: 2, name: 'ld', nameFull: "Load" },
+                { opcode: O.ST, sequencerNext: M.ST_FIRST_A, cycles: null, byteWidth: 2, name: 'st', nameFull: "Store" }
             );
         };
 

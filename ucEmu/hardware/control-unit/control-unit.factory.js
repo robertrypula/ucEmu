@@ -8,9 +8,7 @@ var ControlUnit = (function () {
 
         CU = function (cpu) {
             CpuAware.apply(this, arguments);
-
             this.$$controlStore = [];
-
             this.$$initialize();
         };
 
@@ -18,23 +16,13 @@ var ControlUnit = (function () {
         CU.prototype.constructor = CU;
 
         CU.prototype.$$initialize = function () {
-            this.$$initializeMicrocode();
-        };
-
-        CU.prototype.$$initializeMicrocode = function () {
             var self = this;
 
             Microcode.loop(function (key, microcode) {
                 self.$$controlStore.push(
-                    MicrocodeBuilder.build(microcode, self.$$cpu)
+                    MicrocodeHandlerBuilder.build(microcode, self.$$cpu)
                 );
             });
-        };
-
-        CU.prototype.$$setCpuAtControlStore = function (cpu) {
-            for (var i = 0; i < this.$$controlStore.length; i++) {
-                this.$$controlStore[i].setCpu(cpu);
-            }
         };
 
         CU.prototype.$$checkSequencer = function (sequencer) {
@@ -53,11 +41,6 @@ var ControlUnit = (function () {
             return this.$$controlStore[sequencer];
         };
 
-        CU.prototype.setCpu = function (cpu) {
-            CpuAware.prototype.setCpu.apply(this, arguments);
-            this.$$setCpuAtControlStore(cpu);
-        };
-
         CU.prototype.finalizePropagationAndStoreResults = function () {
             this.$$getMicrocodeFromControlStore().finalizePropagationAndStoreResults();
         };
@@ -67,7 +50,7 @@ var ControlUnit = (function () {
                 M = Microcode.MICROCODE,
                 sequencer = this.$$checkSequencer(this.$$cpu.core.regSequencer);
 
-            return sequencer === M.EXECUTE_ST_FIRST_B || sequencer === M.EXECUTE_ST_SECOND_B;
+            return sequencer === M.ST_FIRST_B || sequencer === M.ST_SECOND_B;
         };
 
         CU.prototype.updateOutput = function () {

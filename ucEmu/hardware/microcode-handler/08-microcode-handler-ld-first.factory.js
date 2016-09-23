@@ -1,9 +1,9 @@
-var MicrocodeExecuteLdFirst = (function () {
+var MicrocodeHandlerLdFirst = (function () {
     'use strict';
 
-    _MicrocodeExecuteLdFirst.$inject = [];
+    _MicrocodeHandlerLdFirst.$inject = [];
 
-    function _MicrocodeExecuteLdFirst() {
+    function _MicrocodeHandlerLdFirst() {
         var MELF;
 
         MELF = function (cpu) {
@@ -22,7 +22,7 @@ var MicrocodeExecuteLdFirst = (function () {
             memoryReadShifted = this.$$memCtrl.getMemoryReadShiftedLeft(column);
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteLdFirst');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerLdFirst');
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'column = ' + column);
@@ -33,12 +33,12 @@ var MicrocodeExecuteLdFirst = (function () {
             this.$$core.regClockTick = this.$$cc.getClockTickNext();
             this.$$core.regMemoryBuffer = memoryReadShifted;
             this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddressNextRow(regIn0Value);
-            this.$$core.regSequencer = this.$$MICROCODE.EXECUTE_LD_SECOND;
+            this.$$core.regSequencer = this.$$MICROCODE.LD_SECOND;
         };
 
         return MELF;
     }
 
-    return _MicrocodeExecuteLdFirst();        // TODO change it to dependency injection
+    return _MicrocodeHandlerLdFirst();        // TODO change it to dependency injection
 
 })();

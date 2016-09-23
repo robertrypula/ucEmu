@@ -23,11 +23,12 @@ TODO list:
     + [0.25h] introduce registers for memoryWrite and memoryRowAddress
     + [0.50h] refactor all output computing, they should use newly created registers
     + [0.25h] rename regTimer to regClockTick
+    + [0.50h] restructure microcode (rename microcode-execute-* to microcode-handler-*, two directories 'microcode' and 'microcode-handler')
 
+    - [1.00h] implement store instruction
+    - [0.50h] move all combinational logic into services without access to CPU, remove CpuAware class
     - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
-    - [1.50h] implement store instruction
-    - [0.50h] restructure microcode (rename microcode-execute-* to microcode-handler-*, two directories 'microcode' and 'microcode-handler')
-     
+
         :: fun starts here ::
     - [1.5h] add DI and clean up
     - [1.0h] move project to separate GitHub repo ('SimpleCPU')

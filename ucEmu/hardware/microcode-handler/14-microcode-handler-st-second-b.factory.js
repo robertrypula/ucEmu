@@ -1,9 +1,9 @@
-var MicrocodeExecuteStSecondB = (function () {
+var MicrocodeHandlerStSecondB = (function () {
     'use strict';
 
-    _MicrocodeExecuteStSecondB.$inject = [];
+    _MicrocodeHandlerStSecondB.$inject = [];
 
-    function _MicrocodeExecuteStSecondB() {
+    function _MicrocodeHandlerStSecondB() {
         var MESSB;
 
         MESSB = function (cpu) {
@@ -16,16 +16,16 @@ var MicrocodeExecuteStSecondB = (function () {
         MESSB.prototype.finalizePropagationAndStoreResults = function () {
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteStSecondB');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerStSecondB');
             }
 
             this.$$core.regClockTick = this.$$cc.getClockTickNext();
-            this.$$core.regSequencer = this.$$MICROCODE.EXECUTE_ST_SECOND_C;
+            this.$$core.regSequencer = this.$$MICROCODE.ST_SECOND_C;
         };
 
         return MESSB;
     }
 
-    return _MicrocodeExecuteStSecondB();        // TODO change it to dependency injection
+    return _MicrocodeHandlerStSecondB();        // TODO change it to dependency injection
 
 })();

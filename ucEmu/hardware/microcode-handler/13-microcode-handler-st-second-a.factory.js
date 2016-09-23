@@ -1,9 +1,9 @@
-var MicrocodeExecuteStSecondA = (function () {
+var MicrocodeHandlerStSecondA = (function () {
     'use strict';
 
-    _MicrocodeExecuteStSecondA.$inject = [];
+    _MicrocodeHandlerStSecondA.$inject = [];
 
-    function _MicrocodeExecuteStSecondA() {
+    function _MicrocodeHandlerStSecondA() {
         var MESSA;
 
         MESSA = function (cpu) {
@@ -16,16 +16,16 @@ var MicrocodeExecuteStSecondA = (function () {
         MESSA.prototype.finalizePropagationAndStoreResults = function () {
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteStSecondA');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerStSecondA');
             }
 
             this.$$core.regClockTick = this.$$cc.getClockTickNext();
-            this.$$core.regSequencer = this.$$MICROCODE.EXECUTE_ST_SECOND_B;
+            this.$$core.regSequencer = this.$$MICROCODE.ST_SECOND_B;
         };
 
         return MESSA;
     }
 
-    return _MicrocodeExecuteStSecondA();        // TODO change it to dependency injection
+    return _MicrocodeHandlerStSecondA();        // TODO change it to dependency injection
 
 })();

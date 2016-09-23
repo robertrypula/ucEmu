@@ -1,9 +1,9 @@
-var MicrocodeExecuteLdSecond = (function () {
+var MicrocodeHandlerLdSecond = (function () {
     'use strict';
 
-    _MicrocodeExecuteLdSecond.$inject = [];
+    _MicrocodeHandlerLdSecond.$inject = [];
 
-    function _MicrocodeExecuteLdSecond() {
+    function _MicrocodeHandlerLdSecond() {
         var MELS;
 
         MELS = function (cpu) {
@@ -25,7 +25,7 @@ var MicrocodeExecuteLdSecond = (function () {
             memoryReadFinal = this.$$memCtrl.getMemoryReadFinal(memoryReadShifted);
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteLdSecond');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerLdSecond');
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'column = ' + column);
@@ -44,6 +44,6 @@ var MicrocodeExecuteLdSecond = (function () {
         return MELS;
     }
 
-    return _MicrocodeExecuteLdSecond();        // TODO change it to dependency injection
+    return _MicrocodeHandlerLdSecond();        // TODO change it to dependency injection
 
 })();

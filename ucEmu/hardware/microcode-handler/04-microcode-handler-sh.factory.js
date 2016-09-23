@@ -1,9 +1,9 @@
-var MicrocodeExecuteSh = (function () {
+var MicrocodeHandlerSh = (function () {
     'use strict';
 
-    _MicrocodeExecuteSh.$inject = [];
+    _MicrocodeHandlerSh.$inject = [];
 
-    function _MicrocodeExecuteSh() {
+    function _MicrocodeHandlerSh() {
         var MES;
 
         MES = function (cpu) {
@@ -25,7 +25,7 @@ var MicrocodeExecuteSh = (function () {
             regResult = this.$$alu.sh(regIn0Value, regIn1Value);
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteSh');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerSh');
                 Logger.log(3, 'regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));
@@ -41,6 +41,6 @@ var MicrocodeExecuteSh = (function () {
         return MES;
     }
 
-    return _MicrocodeExecuteSh();        // TODO change it to dependency injection
+    return _MicrocodeHandlerSh();        // TODO change it to dependency injection
 
 })();

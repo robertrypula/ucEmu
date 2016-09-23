@@ -1,9 +1,9 @@
-var MicrocodeFetchFirst = (function () {
+var MicrocodeHandlerFetchFirst = (function () {
     'use strict';
 
-    _MicrocodeFetchFirst.$inject = [];
+    _MicrocodeHandlerFetchFirst.$inject = [];
 
-    function _MicrocodeFetchFirst() {
+    function _MicrocodeHandlerFetchFirst() {
         var MFF;
 
         MFF = function (cpu) {
@@ -36,6 +36,6 @@ var MicrocodeFetchFirst = (function () {
         return MFF;
     }
 
-    return _MicrocodeFetchFirst();        // TODO change it to dependency injection
+    return _MicrocodeHandlerFetchFirst();        // TODO change it to dependency injection
 
 })();

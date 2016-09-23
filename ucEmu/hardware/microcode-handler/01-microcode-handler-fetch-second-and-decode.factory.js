@@ -1,4 +1,4 @@
-var MicrocodeFetchSecondAndDecode = (function () {
+var MicrocodeHandlerFetchSecondAndDecode = (function () {
     'use strict';
 
     /*
@@ -13,9 +13,9 @@ var MicrocodeFetchSecondAndDecode = (function () {
      ____ ____ 0xcc 0xdd     >> 4-aCol width zero fill
     */
 
-    _MicrocodeFetchSecondAndDecode.$inject = [];
+    _MicrocodeHandlerFetchSecondAndDecode.$inject = [];
 
-    function _MicrocodeFetchSecondAndDecode() {
+    function _MicrocodeHandlerFetchSecondAndDecode() {
         var MFSAD;
 
         MFSAD = function (cpu) {
@@ -58,6 +58,9 @@ var MicrocodeFetchSecondAndDecode = (function () {
                 Logger.log(3, 'byteWidth = ' + byteWidth);
                 Logger.log(3, 'regProgramCounterNext = ' + BitUtil.hex(regProgramCounterNext, BitUtil.BYTE_2));
                 Logger.log(3, 'regSequencerNext = ' + BitUtil.hex(regSequencerNext, BitUtil.BYTE_HALF));
+                Logger.log(3, 'regIn0 = ' + regIn0);
+                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
+                Logger.log(3, 'regMemoryRowAddressNext = ' + BitUtil.hex(regMemoryRowAddressNext, BitUtil.BYTE_2 - BitUtil.BIT_2));
             }
 
             this.$$regFile.setProgramCounter(regProgramCounterNext);
@@ -70,6 +73,6 @@ var MicrocodeFetchSecondAndDecode = (function () {
         return MFSAD;
     }
 
-    return _MicrocodeFetchSecondAndDecode();        // TODO change it to dependency injection
+    return _MicrocodeHandlerFetchSecondAndDecode();        // TODO change it to dependency injection
 
 })();

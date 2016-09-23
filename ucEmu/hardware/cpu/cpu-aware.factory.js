@@ -10,10 +10,6 @@ var CpuAware = (function () {
             this.$$cpu = cpu;
         };
 
-        CA.prototype.setCpu = function (cpu) {
-            this.$$cpu = cpu;
-        };
-
         return CA;
     }
 

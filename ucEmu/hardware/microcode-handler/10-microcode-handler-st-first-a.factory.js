@@ -1,4 +1,4 @@
-var MicrocodeExecuteStFirstA = (function () {
+var MicrocodeHandlerStFirstA = (function () {
     'use strict';
 
     /*
@@ -10,23 +10,27 @@ var MicrocodeExecuteStFirstA = (function () {
 
     :: 1a
 
+        data prepare
+
         12 34 56 78   ram read  (row + 0)
         11 11 11 00   ram mask           (00 00 11 11 >> col, ones fill)
         12 34 56 00   ram read & ram mask
 
         00 00 00 61   dataWriteShifted   (dataWrite >> col, zeros fill)
 
-        12 34 56 61   dataWriteShifted | (ram read & ram mask) a
+        12 34 56 61   dataWriteShifted | (ram read & ram mask)
 
     :: 1b
 
-        data write (WE == true and clock) or (!WE == false and !clock)
+        data write    WE and clock
 
     :: 1c
 
-        data hold (WE == false and clock) or (!WE == true and !clock)
+        data hold     WE and !clock
 
     :: 2a
+
+        data prepare
 
         9a bc de ff   ram read  (row + 1)
         00 11 11 11   ram mask           (00 00 11 11 << (4 - col), ones fill)
@@ -38,18 +42,18 @@ var MicrocodeExecuteStFirstA = (function () {
 
     :: 2b
 
-        data write (WE == true and clock) or (!WE == false and !clock)
+        data write    WE and clock
 
     :: 2c
 
-        data hold (WE == false and clock) or (!WE == true and !clock)
+        data hold     WE and !clock
 
 
     |1a |1b |1c |2a |2b |2c |         store sequencer cycles
 
     __**__**__**__**__**__**__        clock
 
-    ______**__________**______        WE
+    ______****________****____        WE
 
     ____********____********__        valid data for related WE signal
 
@@ -57,9 +61,9 @@ var MicrocodeExecuteStFirstA = (function () {
 
     */
     
-    _MicrocodeExecuteStFirstA.$inject = [];
+    _MicrocodeHandlerStFirstA.$inject = [];
 
-    function _MicrocodeExecuteStFirstA() {
+    function _MicrocodeHandlerStFirstA() {
         var MESFA;
 
         MESFA = function (cpu) {
@@ -72,16 +76,16 @@ var MicrocodeExecuteStFirstA = (function () {
         MESFA.prototype.finalizePropagationAndStoreResults = function () {
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteStFirstA');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerStFirstA');
             }
 
             this.$$core.regClockTick = this.$$cc.getClockTickNext();
-            this.$$core.regSequencer = this.$$MICROCODE.EXECUTE_ST_FIRST_B;
+            this.$$core.regSequencer = this.$$MICROCODE.ST_FIRST_B;
         };
 
         return MESFA;
     }
 
-    return _MicrocodeExecuteStFirstA();        // TODO change it to dependency injection
+    return _MicrocodeHandlerStFirstA();        // TODO change it to dependency injection
 
 })();

@@ -1,9 +1,9 @@
-var MicrocodeExecuteCopy = (function () {
+var MicrocodeHandlerCopy = (function () {
     'use strict';
 
-    _MicrocodeExecuteCopy.$inject = [];
+    _MicrocodeHandlerCopy.$inject = [];
 
-    function _MicrocodeExecuteCopy() {
+    function _MicrocodeHandlerCopy() {
         var MEC;
 
         MEC = function (cpu) {
@@ -21,7 +21,7 @@ var MicrocodeExecuteCopy = (function () {
             regIn0Value = this.$$regFile.read(regIn0);
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteCopy');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerCopy');
                 Logger.log(3, 'regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2) + " (COPY, save regIn0Value at regOut)");
             }
@@ -35,6 +35,6 @@ var MicrocodeExecuteCopy = (function () {
         return MEC;
     }
 
-    return _MicrocodeExecuteCopy();        // TODO change it to dependency injection
+    return _MicrocodeHandlerCopy();        // TODO change it to dependency injection
 
 })();

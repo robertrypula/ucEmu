@@ -1,9 +1,9 @@
-var MicrocodeExecuteJnz = (function () {
+var MicrocodeHandlerJnz = (function () {
     'use strict';
 
-    _MicrocodeExecuteJnz.$inject = [];
+    _MicrocodeHandlerJnz.$inject = [];
 
-    function _MicrocodeExecuteJnz() {
+    function _MicrocodeHandlerJnz() {
         var MEJ;
 
         MEJ = function (cpu) {
@@ -25,7 +25,7 @@ var MicrocodeExecuteJnz = (function () {
             regPCNext = notZeroFlag ? regIn0Value : this.$$regFile.getProgramCounter();
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerExecuteJnz');
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerJnz');
                 Logger.log(3, 'regIn0, regIn1 <-> ' + regIn0 + ', ' + regIn1);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));
@@ -42,6 +42,6 @@ var MicrocodeExecuteJnz = (function () {
         return MEJ;
     }
 
-    return _MicrocodeExecuteJnz();        // TODO change it to dependency injection
+    return _MicrocodeHandlerJnz();        // TODO change it to dependency injection
 
 })();
