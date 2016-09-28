@@ -17,12 +17,12 @@ var MicrocodeHandlerLdSecond = (function () {
             var regIn0, regIn0Value, column, columnFromTheBack,
                 memoryReadShifted, memoryReadFinal;
             
-            regIn0 = this.$$insDec.getRegIn0();
+            regIn0 = InstructionDecoder.getRegIn0(this.$$core.regInstruction);
             regIn0Value = this.$$regFile.read(regIn0);
-            column = this.$$memCtrl.getColumn(regIn0Value);
-            columnFromTheBack = this.$$memCtrl.getColumnFromTheBack(column);
-            memoryReadShifted = this.$$memCtrl.getMemoryReadShiftedRight(columnFromTheBack);
-            memoryReadFinal = this.$$memCtrl.getMemoryReadFinal(memoryReadShifted);
+            column = MemoryController.getColumn(regIn0Value);
+            columnFromTheBack = MemoryController.getColumnFromTheBack(column);
+            memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
+            memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, this.$$core.regMemoryBuffer);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerLdSecond');
@@ -36,8 +36,8 @@ var MicrocodeHandlerLdSecond = (function () {
             }
 
             this.$$regFile.setMemoryAccess(memoryReadFinal);       // it could be at some point any register...
-            this.$$core.regClockTick = this.$$cc.getClockTickNext();
-            this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
+            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 

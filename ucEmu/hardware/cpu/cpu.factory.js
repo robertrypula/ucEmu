@@ -121,11 +121,8 @@ var Cpu = (function () {
 
         C.prototype.$$initialize = function () {
             this.core = {
-                instructionDecoder: InstructionDecoderBuilder.build(this),
                 controlUnit: ControlUnitBuilder.build(this),
                 alu: AluBuilder.build(),
-                memoryController: MemoryControllerBuilder.build(this),
-                cycleCounter: ClockTickBuilder.build(this),
 
                 // general purpose registers
                 registerFile: RegisterFileBuilder.build(),
@@ -218,15 +215,14 @@ var Cpu = (function () {
         };
 
         C.prototype.dumpState = function (previous) {
-            var dump, rf, c, i, o, id, opcode, key;
+            var dump, rf, c, i, o, opcode, key;
 
             rf = cpu.core.registerFile;
             c = cpu.core;
             i = cpu.input;
             o = cpu.output;
-            id = this.core.instructionDecoder;
 
-            opcode = id.getOpcode();
+            opcode = InstructionDecoder.getOpcode(c.regInstruction);
 
             dump = {
                 input: {
@@ -269,7 +265,7 @@ var Cpu = (function () {
                 extra: {
                     microcodeKey: { value: Microcode.getMicrocodeKey(c.regSequencer), changed: null },
                     opcodeKey: { value: Opcode.getOpcodeKey(opcode), changed: null },
-                    instruction: id.getInstruction(opcode)
+                    instruction: InstructionDecoder.getInstruction(c.regInstruction)
                 }
             };
 

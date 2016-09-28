@@ -16,7 +16,7 @@ var MicrocodeHandlerStFirstC = (function () {
         MESFC.prototype.finalizePropagationAndStoreResults = function () {
             var regIn0, regIn0Value;
 
-            regIn0 = this.$$insDec.getRegIn0();
+            regIn0 = InstructionDecoder.getRegIn0(this.$$core.regInstruction);
             regIn0Value = this.$$regFile.read(regIn0);
 
             if (Logger.isEnabled()) {
@@ -25,8 +25,8 @@ var MicrocodeHandlerStFirstC = (function () {
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
             }
 
-            this.$$core.regClockTick = this.$$cc.getClockTickNext();
-            this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddressNextRow(regIn0Value);
+            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
+            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
             this.$$core.regSequencer = this.$$MICROCODE.ST_SECOND_A;
         };
 

@@ -16,8 +16,8 @@ var MicrocodeHandlerCopy = (function () {
         MEC.prototype.finalizePropagationAndStoreResults = function () {
             var regOut, regIn0, regIn0Value;
 
-            regOut = this.$$insDec.getRegOut();
-            regIn0 = this.$$insDec.getRegIn0();
+            regOut = InstructionDecoder.getRegOut(this.$$core.regInstruction);
+            regIn0 = InstructionDecoder.getRegIn0(this.$$core.regInstruction);
             regIn0Value = this.$$regFile.read(regIn0);
 
             if (Logger.isEnabled()) {
@@ -27,8 +27,8 @@ var MicrocodeHandlerCopy = (function () {
             }
             
             this.$$regFile.save(regOut, regIn0Value);
-            this.$$core.regClockTick = this.$$cc.getClockTickNext();
-            this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
+            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 

@@ -18,7 +18,7 @@ var Logger = (function () {
         }
 
         function $$logConsole(str) {
-            console.log(str);
+            // console.log(str);
         }
 
         function log(verbose, str) {

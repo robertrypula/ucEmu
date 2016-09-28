@@ -16,10 +16,10 @@ var MicrocodeHandlerLdFirst = (function () {
         MELF.prototype.finalizePropagationAndStoreResults = function () {
             var regIn0, regIn0Value, column, memoryReadShifted;
 
-            regIn0 = this.$$insDec.getRegIn0();
+            regIn0 = InstructionDecoder.getRegIn0(this.$$core.regInstruction);
             regIn0Value = this.$$regFile.read(regIn0);
-            column = this.$$memCtrl.getColumn(regIn0Value);
-            memoryReadShifted = this.$$memCtrl.getMemoryReadShiftedLeft(column);
+            column = MemoryController.getColumn(regIn0Value);
+            memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(this.$$in.memoryRead, column);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerLdFirst');
@@ -30,9 +30,9 @@ var MicrocodeHandlerLdFirst = (function () {
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
             }
 
-            this.$$core.regClockTick = this.$$cc.getClockTickNext();
+            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
             this.$$core.regMemoryBuffer = memoryReadShifted;
-            this.$$core.regMemoryRowAddress = this.$$memCtrl.getMemoryRowAddressNextRow(regIn0Value);
+            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
             this.$$core.regSequencer = this.$$MICROCODE.LD_SECOND;
         };
 

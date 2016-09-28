@@ -79,7 +79,7 @@ var MicrocodeHandlerStFirstA = (function () {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerStFirstA');
             }
 
-            this.$$core.regClockTick = this.$$cc.getClockTickNext();
+            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
             this.$$core.regSequencer = this.$$MICROCODE.ST_FIRST_B;
         };
 

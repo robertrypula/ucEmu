@@ -15,12 +15,9 @@
 
         AM.prototype.generateCpuAliases = function () {
             this.$$MICROCODE = Microcode.MICROCODE;
-
-            this.$$insDec = this.$$cpu.core.instructionDecoder;
+            
             this.$$regFile = this.$$cpu.core.registerFile;
             this.$$alu = this.$$cpu.core.alu;
-            this.$$memCtrl = this.$$cpu.core.memoryController;
-            this.$$cc = this.$$cpu.core.cycleCounter;
 
             this.$$core = this.$$cpu.core;
             this.$$in = this.$$cpu.input;
