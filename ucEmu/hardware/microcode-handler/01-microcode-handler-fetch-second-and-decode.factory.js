@@ -18,39 +18,39 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
     function _MicrocodeHandlerFetchSecondAndDecode() {
         var MFSAD;
 
-        MFSAD = function (cpu) {
+        MFSAD = function () {
             AbstractMicrocode.apply(this, arguments);
         };
 
         MFSAD.prototype = Object.create(AbstractMicrocode.prototype);
         MFSAD.prototype.constructor = MFSAD;
 
-        MFSAD.prototype.finalizePropagationAndStoreResults = function () {
+        MFSAD.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
             var column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
                 opcode, byteWidth,
                 regProgramCounterNext, regMemoryRowAddressNext, regSequencerNext,
                 regIn0, regIn0Value;
 
-            column = MemoryController.getColumn(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER));
+            column = MemoryController.getColumn(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);
             memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
-            memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, this.$$core.regMemoryBuffer);
+            memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
 
-            opcode = InstructionDecoder.getOpcode(this.$$core.regInstruction);
-            // instruction = InstructionDecoder.getInstruction(this.$$core.regInstruction);
-            byteWidth = InstructionDecoder.getByteWidth(this.$$core.regInstruction);
-            regProgramCounterNext = InstructionDecoder.getProgramCounterNext(this.$$core.regInstruction, this.$$regFile.read(RegisterFile.PROGRAM_COUNTER));
-            regSequencerNext = InstructionDecoder.getSequencerNext(this.$$core.regInstruction);
+            opcode = InstructionDecoder.getOpcode(registerBag.regInstruction);
+            // instruction = InstructionDecoder.getInstruction(registerBag.regInstruction);
+            byteWidth = InstructionDecoder.getByteWidth(registerBag.regInstruction);
+            regProgramCounterNext = InstructionDecoder.getProgramCounterNext(registerBag.regInstruction, registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
+            regSequencerNext = InstructionDecoder.getSequencerNext(registerBag.regInstruction);
 
-            regIn0 = InstructionDecoder.getRegIn0(this.$$core.regInstruction);
-            regIn0Value = this.$$regFile.read(regIn0);
-            regMemoryRowAddressNext = InstructionDecoder.isLoadOrStoreOpcode(this.$$core.regInstruction)
+            regIn0 = InstructionDecoder.getRegIn0(registerBag.regInstruction);
+            regIn0Value = registerBag.registerFile.read(regIn0);
+            regMemoryRowAddressNext = InstructionDecoder.isLoadOrStoreOpcode(registerBag.regInstruction)
                 ? regIn0Value : regProgramCounterNext;
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequenceFetchSecondAndDecode');
                 Logger.log(3, 'column = ' + column);
-                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(this.$$in.memoryRead, BitUtil.BYTE_4));
+                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitUtil.BYTE_4));
                 Logger.log(3, 'columnFromTheBack = ' + columnFromTheBack);
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
                 Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitUtil.BYTE_4));
@@ -64,11 +64,11 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
                 Logger.log(3, 'regMemoryRowAddressNext = ' + BitUtil.hex(regMemoryRowAddressNext, BitUtil.BYTE_2 - BitUtil.BIT_2));
             }
 
-            this.$$regFile.save(RegisterFile.PROGRAM_COUNTER, regProgramCounterNext);
-            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
-            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(regMemoryRowAddressNext);
-            this.$$core.regSequencer = regSequencerNext;
-            this.$$core.regInstruction = memoryReadFinal;
+            registerBag.registerFile.save(RegisterFile.PROGRAM_COUNTER, regProgramCounterNext);
+            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(regMemoryRowAddressNext);
+            registerBag.regSequencer = regSequencerNext;
+            registerBag.regInstruction = memoryReadFinal;
         };
 
         return MFSAD;

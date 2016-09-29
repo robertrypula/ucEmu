@@ -105,10 +105,11 @@ var Cpu = (function () {
         var C;
 
         C = function () {
-            this.core = null;
-            this.input = null;
-            this.output = null;
-            this.$$clockPrevious = null;
+            this.registerBag = undefined;
+            this.controlUnit = undefined;
+            this.input = undefined;
+            this.output = undefined;
+            this.$$clockPrevious = undefined;
 
             this.$$initialize();
             this.$$update();
@@ -120,8 +121,7 @@ var Cpu = (function () {
         };
 
         C.prototype.$$initialize = function () {
-            this.controlUnit = ControlUnitBuilder.build(this);
-            this.core = {
+            this.registerBag = {
                 // general purpose registers
                 registerFile: RegisterFileBuilder.build(),
                 // special purpose registers
@@ -133,6 +133,7 @@ var Cpu = (function () {
                 regMemoryRowAddress: BitUtil.random(BitUtil.BYTE_2 - BitUtil.BIT_2),
                 regMemoryWrite: BitUtil.random(BitUtil.BYTE_4)
             };
+            this.controlUnit = ControlUnitBuilder.build(this.registerBag);
 
             this.input = {
                 clock: 0,
@@ -145,12 +146,9 @@ var Cpu = (function () {
                 memoryWrite: 0,
                 memoryWE: 0
             };
-
-            this.controlUnit.postInitialize();
         };
 
         C.prototype.$$update = function () {
-
             if (this.$$clockPrevious === null) {
                 this.$$clockPrevious = this.input.clock;
             }
@@ -164,7 +162,9 @@ var Cpu = (function () {
                 this.$$clockPrevious = this.input.clock;
             }
 
-            this.controlUnit.updateOutput();
+            this.output.memoryRowAddress = this.controlUnit.getMemoryRowAddress();
+            this.output.memoryWrite = this.controlUnit.getMemoryWrite();
+            this.output.memoryWE = this.controlUnit.getMemoryWE();
         };
 
         C.prototype.$$clockLowToHigh = function () {
@@ -175,28 +175,28 @@ var Cpu = (function () {
         C.prototype.$$clockHighToLow = function () {
             var resetOccurred = false;
 
-            if (this.core.regReset) {
+            if (this.registerBag.regReset) {
                 this.$$performRegistersReset();
                 resetOccurred = true;
             }
 
-            this.core.regReset = this.input.reset;         // store current input
+            this.registerBag.regReset = this.input.reset;         // store current input
 
             if (!resetOccurred) {
-                this.controlUnit.finalizePropagationAndStoreResults();
+                this.controlUnit.clockHighToLow(this.input.memoryRead);
             }
         };
 
         C.prototype.$$performRegistersReset = function () {
-            this.core.regSequencer = 0;
-            this.core.regInstruction = 0;
-            this.core.regClockTick = 0;
+            this.registerBag.regSequencer = 0;
+            this.registerBag.regInstruction = 0;
+            this.registerBag.regClockTick = 0;
 
-            this.core.regMemoryBuffer = 0;
-            this.core.regMemoryRowAddress = 0;
-            this.core.regMemoryWrite = 0;
+            this.registerBag.regMemoryBuffer = 0;
+            this.registerBag.regMemoryRowAddress = 0;
+            this.registerBag.regMemoryWrite = 0;
 
-            this.core.registerFile.reset();
+            this.registerBag.registerFile.reset();
 
             // !!! regReset register is excluded from reset !!!
         };
@@ -214,8 +214,8 @@ var Cpu = (function () {
         C.prototype.dumpState = function (previous) {
             var dump, rf, c, i, o, opcode, key;
 
-            rf = this.core.registerFile;
-            c = this.core;
+            rf = this.registerBag.registerFile;
+            c = this.registerBag;
             i = this.input;
             o = this.output;
 

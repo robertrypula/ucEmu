@@ -24,9 +24,9 @@ TODO list:
     + [0.50h] refactor all output computing, they should use newly created registers
     + [0.25h] rename regTimer to regClockTick
     + [0.50h] restructure microcode (rename microcode-execute-* to microcode-handler-*, two directories 'microcode' and 'microcode-handler')
+    + [0.50h] move all combinational logic into services without access to CPU, remove CpuAware class
 
     - [1.00h] implement store instruction
-    - [0.50h] move all combinational logic into services without access to CPU, remove CpuAware class
     - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
 
         :: fun starts here ::
@@ -151,7 +151,7 @@ function runCpu() {
         Logger.log(1, '----> clockTicks ' + clockTicks);
         Logger.log(1, "\n");
         
-        if (cpu.core.regSequencer == Microcode.MICROCODE.FETCH_FIRST) {
+        if (cpu.registerBag.regSequencer == Microcode.MICROCODE.FETCH_FIRST) {
             Logger.log(
                 0, 
                 '                                                      ' +
@@ -213,8 +213,8 @@ function clockLow() {
 var dumpPrevious;
 
 function cpuLog(hideCpuClockInfo) {
-    var rf = cpu.core.registerFile,
-        c = cpu.core;
+    var rf = cpu.registerBag.registerFile,
+        c = cpu.registerBag;
 
     if (!hideCpuClockInfo) {
         if (cpu.input.clock) {

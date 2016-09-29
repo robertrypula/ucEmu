@@ -6,16 +6,7 @@
     function _AbstractMicrocode() {
         var AM;
 
-        AM = function (cpu) {
-            this.$$cpu = cpu;
-        };
-
-        AM.prototype.generateCpuAliases = function () {
-            this.$$MICROCODE = Microcode.MICROCODE;
-            
-            this.$$regFile = this.$$cpu.core.registerFile;
-            this.$$core = this.$$cpu.core;
-            this.$$in = this.$$cpu.input;
+        AM = function () {
         };
 
         return AM;

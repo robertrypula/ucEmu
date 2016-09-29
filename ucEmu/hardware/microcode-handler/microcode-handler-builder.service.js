@@ -4,68 +4,68 @@ var MicrocodeHandlerBuilder = (function () {
     _MicrocodeHandlerBuilder.$inject = [];
 
     function _MicrocodeHandlerBuilder() {
-        function build(microcode, cpu) {
-            var microcodeObject, M;
+        function build(microcode) {
+            var microcodeHandler, M;
 
             M = Microcode.MICROCODE;
-            microcodeObject = null;
+            microcodeHandler = null;
 
             switch (microcode) {
                 case M.FETCH_FIRST:
-                    microcodeObject = new MicrocodeHandlerFetchFirst(cpu);
+                    microcodeHandler = new MicrocodeHandlerFetchFirst();
                     break;
                 case M.FETCH_SECOND_AND_DECODE:
-                    microcodeObject = new MicrocodeHandlerFetchSecondAndDecode(cpu);
+                    microcodeHandler = new MicrocodeHandlerFetchSecondAndDecode();
                     break;
                 case M.ADD:
-                    microcodeObject = new MicrocodeHandlerAdd(cpu);
+                    microcodeHandler = new MicrocodeHandlerAdd();
                     break;
                 case M.NAND:
-                    microcodeObject = new MicrocodeHandlerNand(cpu);
+                    microcodeHandler = new MicrocodeHandlerNand();
                     break;
                 case M.SH:
-                    microcodeObject = new MicrocodeHandlerSh(cpu);
+                    microcodeHandler = new MicrocodeHandlerSh();
                     break;
                 case M.JNZ:
-                    microcodeObject = new MicrocodeHandlerJnz(cpu);
+                    microcodeHandler = new MicrocodeHandlerJnz();
                     break;
                 case M.COPY:
-                    microcodeObject = new MicrocodeHandlerCopy(cpu);
+                    microcodeHandler = new MicrocodeHandlerCopy();
                     break;
                 case M.IMM:
-                    microcodeObject = new MicrocodeHandlerImm(cpu);
+                    microcodeHandler = new MicrocodeHandlerImm();
                     break;
                 case M.LD_FIRST:
-                    microcodeObject = new MicrocodeHandlerLdFirst(cpu);
+                    microcodeHandler = new MicrocodeHandlerLdFirst();
                     break;
                 case M.LD_SECOND:
-                    microcodeObject = new MicrocodeHandlerLdSecond(cpu);
+                    microcodeHandler = new MicrocodeHandlerLdSecond();
                     break;
                 case M.ST_FIRST_A:
-                    microcodeObject = new MicrocodeHandlerStFirstA(cpu);
+                    microcodeHandler = new MicrocodeHandlerStFirstA();
                     break;
                 case M.ST_FIRST_B:
-                    microcodeObject = new MicrocodeHandlerStFirstB(cpu);
+                    microcodeHandler = new MicrocodeHandlerStFirstB();
                     break;
                 case M.ST_FIRST_C:
-                    microcodeObject = new MicrocodeHandlerStFirstC(cpu);
+                    microcodeHandler = new MicrocodeHandlerStFirstC();
                     break;
                 case M.ST_SECOND_A:
-                    microcodeObject = new MicrocodeHandlerStSecondA(cpu);
+                    microcodeHandler = new MicrocodeHandlerStSecondA();
                     break;
                 case M.ST_SECOND_B:
-                    microcodeObject = new MicrocodeHandlerStSecondB(cpu);
+                    microcodeHandler = new MicrocodeHandlerStSecondB();
                     break;
                 case M.ST_SECOND_C:
-                    microcodeObject = new MicrocodeHandlerStSecondC(cpu);
+                    microcodeHandler = new MicrocodeHandlerStSecondC();
                     break;
             }
 
-            if (!microcodeObject) {
-                throw 'Cannot build microcodeObject: ' + microcode;
+            if (!microcodeHandler) {
+                throw 'Cannot build microcodeHandler: ' + microcode;
             }
 
-            return microcodeObject;
+            return microcodeHandler;
         }
 
         return {

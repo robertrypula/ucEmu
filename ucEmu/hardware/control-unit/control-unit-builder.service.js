@@ -5,8 +5,8 @@ var ControlUnitBuilder = (function () {
 
     function _ControlUnitBuilder() {
 
-        function build(cpu) {
-            return new ControlUnit(cpu);
+        function build(registerBag) {
+            return new ControlUnit(registerBag);
         }
 
         return {

@@ -6,22 +6,22 @@ var MicrocodeHandlerAdd = (function () {
     function _MicrocodeHandlerAdd() {
         var MEA;
 
-        MEA = function (cpu) {
+        MEA = function () {
             AbstractMicrocode.apply(this, arguments);
         };
 
         MEA.prototype = Object.create(AbstractMicrocode.prototype);
         MEA.prototype.constructor = MEA;
 
-        MEA.prototype.finalizePropagationAndStoreResults = function () {
+        MEA.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
-            regOut = InstructionDecoder.getRegOut(this.$$core.regInstruction);
-            regIn0 = InstructionDecoder.getRegIn0(this.$$core.regInstruction);
-            regIn1 = InstructionDecoder.getRegIn1(this.$$core.regInstruction);
-            regIn0Value = this.$$regFile.read(regIn0);
-            regIn1Value = this.$$regFile.read(regIn1);
+            regOut = InstructionDecoder.getRegOut(registerBag.regInstruction);
+            regIn0 = InstructionDecoder.getRegIn0(registerBag.regInstruction);
+            regIn1 = InstructionDecoder.getRegIn1(registerBag.regInstruction);
+            regIn0Value = registerBag.registerFile.read(regIn0);
+            regIn1Value = registerBag.registerFile.read(regIn1);
             regResult = Alu.add(regIn0Value, regIn1Value);
 
             if (Logger.isEnabled()) {
@@ -32,10 +32,10 @@ var MicrocodeHandlerAdd = (function () {
                 Logger.log(3, 'result = ' + BitUtil.hex(regResult, BitUtil.BYTE_2) + ' (sum)');
             }
 
-            this.$$regFile.save(regOut, regResult);
-            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
-            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
-            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
+            registerBag.registerFile.save(regOut, regResult);
+            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            registerBag.regSequencer = Microcode.MICROCODE.FETCH_FIRST;
         };
 
         return MEA;

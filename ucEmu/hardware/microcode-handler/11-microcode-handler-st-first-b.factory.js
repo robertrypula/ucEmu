@@ -6,21 +6,21 @@ var MicrocodeHandlerStFirstB = (function () {
     function _MicrocodeHandlerStFirstB() {
         var MESFB;
 
-        MESFB = function (cpu) {
+        MESFB = function () {
             AbstractMicrocode.apply(this, arguments);
         };
 
         MESFB.prototype = Object.create(AbstractMicrocode.prototype);
         MESFB.prototype.constructor = MESFB;
 
-        MESFB.prototype.finalizePropagationAndStoreResults = function () {
+        MESFB.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerStFirstB');
             }
 
-            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
-            this.$$core.regSequencer = this.$$MICROCODE.ST_FIRST_C;
+            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            registerBag.regSequencer = Microcode.MICROCODE.ST_FIRST_C;
         };
 
         return MESFB;

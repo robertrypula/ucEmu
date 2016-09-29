@@ -66,21 +66,21 @@ var MicrocodeHandlerStFirstA = (function () {
     function _MicrocodeHandlerStFirstA() {
         var MESFA;
 
-        MESFA = function (cpu) {
+        MESFA = function () {
             AbstractMicrocode.apply(this, arguments);
         };
 
         MESFA.prototype = Object.create(AbstractMicrocode.prototype);
         MESFA.prototype.constructor = MESFA;
 
-        MESFA.prototype.finalizePropagationAndStoreResults = function () {
+        MESFA.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerStFirstA');
             }
 
-            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
-            this.$$core.regSequencer = this.$$MICROCODE.ST_FIRST_B;
+            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            registerBag.regSequencer = Microcode.MICROCODE.ST_FIRST_B;
         };
 
         return MESFA;

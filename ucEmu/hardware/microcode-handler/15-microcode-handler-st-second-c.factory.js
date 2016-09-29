@@ -6,22 +6,22 @@ var MicrocodeHandlerStSecondC = (function () {
     function _MicrocodeHandlerStSecondC() {
         var MESSC;
 
-        MESSC = function (cpu) {
+        MESSC = function () {
             AbstractMicrocode.apply(this, arguments);
         };
 
         MESSC.prototype = Object.create(AbstractMicrocode.prototype);
         MESSC.prototype.constructor = MESSC;
 
-        MESSC.prototype.finalizePropagationAndStoreResults = function () {
+        MESSC.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerStSecondC');
             }
 
-            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
-            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
-            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
+            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            registerBag.regSequencer = Microcode.MICROCODE.FETCH_FIRST;
         };
 
         return MESSC;

@@ -6,8 +6,8 @@ var ControlUnit = (function () {
     function _ControlUnit() {
         var CU;
 
-        CU = function (cpu) {
-            this.$$cpu = cpu;
+        CU = function (registerBag) {
+            this.$$registerBag = registerBag;
             this.$$controlStore = [];
             this.$$initialize();
         };
@@ -17,57 +17,51 @@ var ControlUnit = (function () {
 
             Microcode.loop(function (key, microcode) {
                 self.$$controlStore.push(
-                    MicrocodeHandlerBuilder.build(microcode, self.$$cpu)
+                    MicrocodeHandlerBuilder.build(microcode)
                 );
             });
         };
 
-        CU.prototype.$$checkSequencer = function (sequencer) {
-            var result = sequencer;
+        CU.prototype.$$getMicrocodeIndex = function (regSequencer) {
+            var result = regSequencer;
 
-            if (sequencer < 0 || sequencer >= this.$$controlStore.length) {
+            if (regSequencer < 0 || regSequencer >= this.$$controlStore.length) {
                 result = Microcode.MICROCODE.FETCH_FIRST;   // fallback to first microcode entry
             }
 
             return result;
         };
 
-        CU.prototype.$$getMicrocodeFromControlStore = function () {
-            var sequencer = this.$$checkSequencer(this.$$cpu.core.regSequencer);
+        CU.prototype.$$getMicrocodeHandlerFromControlStore = function () {
+            var microcodeIndex = this.$$getMicrocodeIndex(this.$$registerBag.regSequencer);
 
-            return this.$$controlStore[sequencer];
+            return this.$$controlStore[microcodeIndex];
         };
 
-        CU.prototype.finalizePropagationAndStoreResults = function () {
-            this.$$getMicrocodeFromControlStore().finalizePropagationAndStoreResults();
+        CU.prototype.clockHighToLow = function (memoryRead) {
+            var microcodeHandler = this.$$getMicrocodeHandlerFromControlStore();
+
+            microcodeHandler.finalizePropagationAndStoreResults(this.$$registerBag, memoryRead);
         };
 
         CU.prototype.isWriteEnableFlagActive = function () {
             var
-                M = Microcode.MICROCODE,
-                sequencer = this.$$checkSequencer(this.$$cpu.core.regSequencer);
+                microcodeIndex = this.$$getMicrocodeIndex(this.$$registerBag.regSequencer),
+                M = Microcode.MICROCODE;
 
-            return sequencer === M.ST_FIRST_B || sequencer === M.ST_SECOND_B;
+            return microcodeIndex === M.ST_FIRST_B || microcodeIndex === M.ST_SECOND_B;
         };
 
-        CU.prototype.updateOutput = function () {
-            var
-                c = this.$$cpu.core,
-                i = this.$$cpu.input,
-                o = this.$$cpu.output;
-
-            o.memoryRowAddress = c.regMemoryRowAddress;
-            o.memoryWrite = c.regMemoryWrite;
-            o.memoryWE = this.isWriteEnableFlagActive() && i.clock ? 1 : 0;
+        CU.prototype.getMemoryRowAddress = function () {
+            return this.$$registerBag.regMemoryRowAddress;
         };
 
-        CU.prototype.postInitialize = function () {
-            var i, microcode;
+        CU.prototype.getMemoryWrite = function () {
+            return this.$$registerBag.regMemoryWrite;
+        };
 
-            for (i = 0; i < this.$$controlStore.length; i++) {
-                microcode = this.$$controlStore[i];
-                microcode.generateCpuAliases();
-            }
+        CU.prototype.getMemoryWE = function (clock) {
+            return this.isWriteEnableFlagActive() && clock ? 1 : 0;
         };
 
         return CU;

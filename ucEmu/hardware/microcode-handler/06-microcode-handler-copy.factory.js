@@ -6,19 +6,19 @@ var MicrocodeHandlerCopy = (function () {
     function _MicrocodeHandlerCopy() {
         var MEC;
 
-        MEC = function (cpu) {
+        MEC = function () {
             AbstractMicrocode.apply(this, arguments);
         };
 
         MEC.prototype = Object.create(AbstractMicrocode.prototype);
         MEC.prototype.constructor = MEC;
 
-        MEC.prototype.finalizePropagationAndStoreResults = function () {
+        MEC.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
             var regOut, regIn0, regIn0Value;
 
-            regOut = InstructionDecoder.getRegOut(this.$$core.regInstruction);
-            regIn0 = InstructionDecoder.getRegIn0(this.$$core.regInstruction);
-            regIn0Value = this.$$regFile.read(regIn0);
+            regOut = InstructionDecoder.getRegOut(registerBag.regInstruction);
+            regIn0 = InstructionDecoder.getRegIn0(registerBag.regInstruction);
+            regIn0Value = registerBag.registerFile.read(regIn0);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerCopy');
@@ -26,10 +26,10 @@ var MicrocodeHandlerCopy = (function () {
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2) + " (COPY, save regIn0Value at regOut)");
             }
             
-            this.$$regFile.save(regOut, regIn0Value);
-            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
-            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
-            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
+            registerBag.registerFile.save(regOut, regIn0Value);
+            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            registerBag.regSequencer = Microcode.MICROCODE.FETCH_FIRST;
         };
 
         return MEC;

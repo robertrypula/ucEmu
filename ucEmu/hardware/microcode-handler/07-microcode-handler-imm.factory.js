@@ -6,18 +6,18 @@ var MicrocodeHandlerImm = (function () {
     function _MicrocodeHandlerImm() {
         var MEI;
 
-        MEI = function (cpu) {
+        MEI = function () {
             AbstractMicrocode.apply(this, arguments);
         };
 
         MEI.prototype = Object.create(AbstractMicrocode.prototype);
         MEI.prototype.constructor = MEI;
 
-        MEI.prototype.finalizePropagationAndStoreResults = function () {
+        MEI.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
             var regOut, imm;
 
-            regOut = InstructionDecoder.getRegOut(this.$$core.regInstruction);
-            imm = InstructionDecoder.getImm(this.$$core.regInstruction);
+            regOut = InstructionDecoder.getRegOut(registerBag.regInstruction);
+            imm = InstructionDecoder.getImm(registerBag.regInstruction);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerImm');
@@ -25,10 +25,10 @@ var MicrocodeHandlerImm = (function () {
                 Logger.log(3, 'imm = ' + BitUtil.hex(imm, BitUtil.BYTE_2) + " (store immediate value at regOut)");
             }
             
-            this.$$regFile.save(regOut, imm);
-            this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
-            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
-            this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
+            registerBag.registerFile.save(regOut, imm);
+            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            registerBag.regSequencer = Microcode.MICROCODE.FETCH_FIRST;
         };
 
         return MEI;
