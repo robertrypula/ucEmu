@@ -7,18 +7,18 @@ var RegisterFile = (function () {
         var RS;
 
         RS = function () {
-            this.REGISTERS_SIZE = 16;
-            this.PROGRAM_COUNTER_INDEX = this.REGISTERS_SIZE - 1;
-            this.MEMORY_ACCESS_INDEX = this.REGISTERS_SIZE - 2;
-            this.register = new Uint32Array(this.REGISTERS_SIZE);   // actually we need only 16bits
-
+            this.register = new Uint32Array(RS.REGISTERS_SIZE);   // actually we need only 16bits
             this.$$initialize();
         };
+
+        RS.REGISTERS_SIZE = 16;
+        RS.PROGRAM_COUNTER = RS.REGISTERS_SIZE - 1;
+        RS.MEMORY_ACCESS = RS.REGISTERS_SIZE - 2;
 
         RS.prototype.$$initialize = function () {
             var i;
 
-            for (i = 0; i < this.REGISTERS_SIZE; i++) {
+            for (i = 0; i < RS.REGISTERS_SIZE; i++) {
                 this.register[i] = BitUtil.random(BitUtil.BYTE_2);
             }
         };
@@ -26,25 +26,9 @@ var RegisterFile = (function () {
         RS.prototype.reset = function () {
             var i;
 
-            for (i = 0; i < this.REGISTERS_SIZE; i++) {
+            for (i = 0; i < RS.REGISTERS_SIZE; i++) {
                 this.save(i, 0);
             }
-        };
-
-        RS.prototype.getProgramCounter = function () {
-            return this.read(this.PROGRAM_COUNTER_INDEX);
-        };
-
-        RS.prototype.getMemoryAccess = function () {
-            return this.read(this.MEMORY_ACCESS_INDEX);
-        };
-
-        RS.prototype.setProgramCounter = function (value) {
-            this.save(this.PROGRAM_COUNTER_INDEX, value);
-        };
-
-        RS.prototype.setMemoryAccess = function (value) {
-            this.save(this.MEMORY_ACCESS_INDEX, value);
         };
 
         RS.prototype.read = function (number) {

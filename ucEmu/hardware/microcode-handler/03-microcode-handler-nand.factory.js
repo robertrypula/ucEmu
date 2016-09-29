@@ -22,7 +22,7 @@ var MicrocodeHandlerNand = (function () {
             regIn1 = InstructionDecoder.getRegIn1(this.$$core.regInstruction);
             regIn0Value = this.$$regFile.read(regIn0);
             regIn1Value = this.$$regFile.read(regIn1);
-            regResult = this.$$alu.nand(regIn0Value, regIn1Value);
+            regResult = Alu.nand(regIn0Value, regIn1Value);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerNand');
@@ -34,7 +34,7 @@ var MicrocodeHandlerNand = (function () {
             
             this.$$regFile.save(regOut, regResult);
             this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
-            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 

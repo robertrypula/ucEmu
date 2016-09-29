@@ -7,13 +7,10 @@ var ControlUnit = (function () {
         var CU;
 
         CU = function (cpu) {
-            CpuAware.apply(this, arguments);
+            this.$$cpu = cpu;
             this.$$controlStore = [];
             this.$$initialize();
         };
-
-        CU.prototype = Object.create(CpuAware.prototype);
-        CU.prototype.constructor = CU;
 
         CU.prototype.$$initialize = function () {
             var self = this;

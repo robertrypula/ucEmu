@@ -16,7 +16,7 @@ var MicrocodeHandlerFetchFirst = (function () {
         MFF.prototype.finalizePropagationAndStoreResults = function () {
             var column, memoryReadShifted;
             
-            column = MemoryController.getColumn(this.$$regFile.getProgramCounter());
+            column = MemoryController.getColumn(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER));
             memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(this.$$in.memoryRead, column);
 
             if (Logger.isEnabled()) {
@@ -28,7 +28,7 @@ var MicrocodeHandlerFetchFirst = (function () {
 
             this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
             this.$$core.regMemoryBuffer = memoryReadShifted;
-            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(this.$$regFile.getProgramCounter());
+            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER));
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_SECOND_AND_DECODE;
             this.$$core.regInstruction = memoryReadShifted;
         };

@@ -28,7 +28,7 @@ var MicrocodeHandlerCopy = (function () {
             
             this.$$regFile.save(regOut, regIn0Value);
             this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
-            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 

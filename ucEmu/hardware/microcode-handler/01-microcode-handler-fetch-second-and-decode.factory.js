@@ -31,7 +31,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
                 regProgramCounterNext, regMemoryRowAddressNext, regSequencerNext,
                 regIn0, regIn0Value;
 
-            column = MemoryController.getColumn(this.$$regFile.getProgramCounter());
+            column = MemoryController.getColumn(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER));
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);
             memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, this.$$core.regMemoryBuffer);
@@ -39,7 +39,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             opcode = InstructionDecoder.getOpcode(this.$$core.regInstruction);
             // instruction = InstructionDecoder.getInstruction(this.$$core.regInstruction);
             byteWidth = InstructionDecoder.getByteWidth(this.$$core.regInstruction);
-            regProgramCounterNext = InstructionDecoder.getProgramCounterNext(this.$$core.regInstruction, this.$$regFile.getProgramCounter());
+            regProgramCounterNext = InstructionDecoder.getProgramCounterNext(this.$$core.regInstruction, this.$$regFile.read(RegisterFile.PROGRAM_COUNTER));
             regSequencerNext = InstructionDecoder.getSequencerNext(this.$$core.regInstruction);
 
             regIn0 = InstructionDecoder.getRegIn0(this.$$core.regInstruction);
@@ -64,7 +64,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
                 Logger.log(3, 'regMemoryRowAddressNext = ' + BitUtil.hex(regMemoryRowAddressNext, BitUtil.BYTE_2 - BitUtil.BIT_2));
             }
 
-            this.$$regFile.setProgramCounter(regProgramCounterNext);
+            this.$$regFile.save(RegisterFile.PROGRAM_COUNTER, regProgramCounterNext);
             this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
             this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(regMemoryRowAddressNext);
             this.$$core.regSequencer = regSequencerNext;

@@ -266,8 +266,8 @@ function cpuLog(hideCpuClockInfo) {
         'reg11 = ' + BitUtil.hex(rf.read(11), BitUtil.BYTE_2) + ' | ' +
         'reg12 = ' + BitUtil.hex(rf.read(12), BitUtil.BYTE_2) + ' | ' +
         'reg13 = ' + BitUtil.hex(rf.read(13), BitUtil.BYTE_2) + ' | ' +
-        'regMA = ' + BitUtil.hex(rf.getMemoryAccess(), BitUtil.BYTE_2) + ' | ' +
-        'regPC = ' + BitUtil.hex(rf.getProgramCounter(), BitUtil.BYTE_2)
+        'reg14 = ' + BitUtil.hex(rf.read(14), BitUtil.BYTE_2) + ' | ' +
+        'regPC = ' + BitUtil.hex(rf.read(RegisterFile.PROGRAM_COUNTER), BitUtil.BYTE_2)
     );
 
     if (!benchmarkMode) {

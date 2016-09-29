@@ -22,7 +22,7 @@ var MicrocodeHandlerJnz = (function () {
             regIn0Value = this.$$regFile.read(regIn0);
             regIn1Value = this.$$regFile.read(regIn1);
             notZeroFlag = regIn1Value !== 0;
-            regPCNext = notZeroFlag ? regIn0Value : this.$$regFile.getProgramCounter();
+            regPCNext = notZeroFlag ? regIn0Value : this.$$regFile.read(RegisterFile.PROGRAM_COUNTER);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerJnz');
@@ -33,9 +33,9 @@ var MicrocodeHandlerJnz = (function () {
                 Logger.log(3, 'regPCNext = ' + BitUtil.hex(regPCNext, BitUtil.BYTE_2));
             }
 
-            this.$$regFile.setProgramCounter(regPCNext);
+            this.$$regFile.save(RegisterFile.PROGRAM_COUNTER, regPCNext);
             this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
-            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit 
+            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit 
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 

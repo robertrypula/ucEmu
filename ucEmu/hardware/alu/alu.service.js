@@ -4,19 +4,15 @@ var Alu = (function () {
     _Alu.$inject = [];
 
     function _Alu() {
-        var A;
 
-        A = function () {
-        };
-
-        A.prototype.add = function (a, b) {
+        function add(a, b) {
             a = BitUtil.mask(a, BitUtil.BYTE_2);
             b = BitUtil.mask(b, BitUtil.BYTE_2);
 
             return BitUtil.mask(a + b, BitUtil.BYTE_2);
-        };
+        }
 
-        A.prototype.sh = function (v, amount) {
+        function sh(v, amount) {
             var shifted, negative, amountAbsolute;
 
             v = BitUtil.mask(v, BitUtil.BYTE_2);
@@ -25,23 +21,25 @@ var Alu = (function () {
             negative = BitUtil.maskOneBit(amount, BitUtil.BYTE_2);
             amountAbsolute = negative
                 ? BitUtil.invertSignU2(amount, BitUtil.BYTE_2)
-                : amount
-            ;
+                : amount;
             shifted = negative
                 ? BitUtil.shiftRight(v, amountAbsolute)
-                : BitUtil.shiftLeft(v, amountAbsolute)
-            ;
+                : BitUtil.shiftLeft(v, amountAbsolute);
 
             return BitUtil.mask(shifted, BitUtil.BYTE_2);
-        };
+        }
 
-        A.prototype.nand = function (a, b) {
+        function nand(a, b) {
             return BitUtil.mask(~(a & b), BitUtil.BYTE_2);
-        };
+        }
 
-        return A;
+        return {
+            add: add,
+            sh: sh,
+            nand: nand
+        };
     }
 
-    return _Alu();        // TODO change it to dependency injection
+    return new _Alu();        // TODO change it to dependency injection
 
 })();

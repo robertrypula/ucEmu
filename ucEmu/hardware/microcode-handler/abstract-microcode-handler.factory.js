@@ -7,18 +7,13 @@
         var AM;
 
         AM = function (cpu) {
-            CpuAware.apply(this, arguments);
+            this.$$cpu = cpu;
         };
-
-        AM.prototype = Object.create(CpuAware.prototype);
-        AM.prototype.constructor = AM;
 
         AM.prototype.generateCpuAliases = function () {
             this.$$MICROCODE = Microcode.MICROCODE;
             
             this.$$regFile = this.$$cpu.core.registerFile;
-            this.$$alu = this.$$cpu.core.alu;
-
             this.$$core = this.$$cpu.core;
             this.$$in = this.$$cpu.input;
         };

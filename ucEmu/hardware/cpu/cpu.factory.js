@@ -120,13 +120,10 @@ var Cpu = (function () {
         };
 
         C.prototype.$$initialize = function () {
+            this.controlUnit = ControlUnitBuilder.build(this);
             this.core = {
-                controlUnit: ControlUnitBuilder.build(this),
-                alu: AluBuilder.build(),
-
                 // general purpose registers
                 registerFile: RegisterFileBuilder.build(),
-
                 // special purpose registers
                 regReset: BitUtil.random(BitUtil.BIT_1),
                 regSequencer: BitUtil.random(BitUtil.BYTE_HALF),
@@ -149,7 +146,7 @@ var Cpu = (function () {
                 memoryWE: 0
             };
 
-            this.core.controlUnit.postInitialize();
+            this.controlUnit.postInitialize();
         };
 
         C.prototype.$$update = function () {
@@ -167,7 +164,7 @@ var Cpu = (function () {
                 this.$$clockPrevious = this.input.clock;
             }
 
-            this.core.controlUnit.updateOutput();
+            this.controlUnit.updateOutput();
         };
 
         C.prototype.$$clockLowToHigh = function () {
@@ -186,7 +183,7 @@ var Cpu = (function () {
             this.core.regReset = this.input.reset;         // store current input
 
             if (!resetOccurred) {
-                this.core.controlUnit.finalizePropagationAndStoreResults();
+                this.controlUnit.finalizePropagationAndStoreResults();
             }
         };
 
@@ -217,10 +214,10 @@ var Cpu = (function () {
         C.prototype.dumpState = function (previous) {
             var dump, rf, c, i, o, opcode, key;
 
-            rf = cpu.core.registerFile;
-            c = cpu.core;
-            i = cpu.input;
-            o = cpu.output;
+            rf = this.core.registerFile;
+            c = this.core;
+            i = this.input;
+            o = this.output;
 
             opcode = InstructionDecoder.getOpcode(c.regInstruction);
 

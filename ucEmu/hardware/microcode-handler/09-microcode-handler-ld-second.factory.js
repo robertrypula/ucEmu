@@ -35,9 +35,9 @@ var MicrocodeHandlerLdSecond = (function () {
                 Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitUtil.BYTE_2));
             }
 
-            this.$$regFile.setMemoryAccess(memoryReadFinal);       // it could be at some point any register...
+            this.$$regFile.save(RegisterFile.MEMORY_ACCESS, memoryReadFinal);       // it could be at some point any register...
             this.$$core.regClockTick = ClockTick.getClockTickNext(this.$$core.regClockTick);
-            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.getProgramCounter()); // TODO when instruction will save also to PC it will produce troubles in real circuit
+            this.$$core.regMemoryRowAddress = MemoryController.getMemoryRowAddress(this.$$regFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
             this.$$core.regSequencer = this.$$MICROCODE.FETCH_FIRST;
         };
 
