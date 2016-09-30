@@ -26,6 +26,11 @@ TODO list:
     + [0.50h] restructure microcode (rename microcode-execute-* to microcode-handler-*, two directories 'microcode' and 'microcode-handler')
     + [0.50h] move all combinational logic into services without access to CPU, remove CpuAware class
 
+    - [?.??h] move instruction set creation to control unit
+    - [?.??h] split instructions into separate classes like opcode handlers
+    - [?.??h] add relations between opcode handlers and instruction
+    - [?.??h] change 'instruction decoder' service name to some 'instruction register spliter'
+    - [?.??h] move output update to cpu
     - [1.00h] implement store instruction
     - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
 
@@ -60,7 +65,8 @@ CPU outputs:
 // 3.95 emulated MHz / second @ 3.6 GHz real cpu      # old score
 // 2.35 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-21
 // 4.50 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-22
-var benchmarkMode = null;//4.5;
+// 3.90 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-30
+var benchmarkMode = null;//3.9;
 
 var memoryState = [
     { row: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },

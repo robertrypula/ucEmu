@@ -84,12 +84,14 @@ var InstructionDecoder = (function () {
         function getByteWidth(regInstruction) {
             var opcode = getOpcode(regInstruction);
 
+            // return $$instructionSet[opcode].byteWidth;
             return $$byteWidthLookup[opcode];
         }
 
         function getSequencerNext(regInstruction) {
             var opcode = getOpcode(regInstruction);
 
+            // return $$instructionSet[opcode].sequencerNext;
             return $$sequencerNextLookup[opcode];
         }
 
