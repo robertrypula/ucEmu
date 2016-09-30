@@ -4,11 +4,7 @@ var Microcode = (function () {
     _Microcode.$inject = [];
 
     function _Microcode() {
-        var
-            $$MICROCODE,
-            $$keyLookUp;
-
-        $$MICROCODE = {
+        return {
             FETCH_FIRST: 0,
             FETCH_SECOND_AND_DECODE: 1,
             ADD: 2,
@@ -25,38 +21,6 @@ var Microcode = (function () {
             ST_SECOND_A: 13,
             ST_SECOND_B: 14,
             ST_SECOND_C: 15
-        };
-
-        function loop(callback) {
-            var key;
-
-            for (key in $$MICROCODE) {
-                callback(key, $$MICROCODE[key]);
-            }
-        }
-
-        function getMicrocodeKey(number) {
-            return $$keyLookUp[number];
-        }
-
-        function $$initializeKeyLookUp() {
-            $$keyLookUp = [];
-
-            loop(function (key) {
-                $$keyLookUp.push(key);
-            });
-        }
-
-        function $$init() {
-            $$initializeKeyLookUp();
-        }
-
-        $$init();
-
-        return {
-            MICROCODE: $$MICROCODE,
-            loop: loop,
-            getMicrocodeKey: getMicrocodeKey
         };
     }
 

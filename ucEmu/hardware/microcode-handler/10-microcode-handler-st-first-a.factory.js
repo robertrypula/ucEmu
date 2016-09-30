@@ -80,7 +80,7 @@ var MicrocodeHandlerStFirstA = (function () {
             }
 
             registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            registerBag.regSequencer = Microcode.MICROCODE.ST_FIRST_B;
+            registerBag.regSequencer = Microcode.ST_FIRST_B;
         };
 
         return MESFA;

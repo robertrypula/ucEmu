@@ -20,7 +20,7 @@ var MicrocodeHandlerStSecondB = (function () {
             }
 
             registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            registerBag.regSequencer = Microcode.MICROCODE.ST_SECOND_C;
+            registerBag.regSequencer = Microcode.ST_SECOND_C;
         };
 
         return MESSB;

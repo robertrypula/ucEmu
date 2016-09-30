@@ -151,7 +151,7 @@ function runCpu() {
         Logger.log(1, '----> clockTicks ' + clockTicks);
         Logger.log(1, "\n");
         
-        if (cpu.registerBag.regSequencer == Microcode.MICROCODE.FETCH_FIRST) {
+        if (cpu.registerBag.regSequencer == Microcode.FETCH_FIRST) {
             Logger.log(
                 0, 
                 '                                                      ' +

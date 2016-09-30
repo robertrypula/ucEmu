@@ -33,7 +33,7 @@ var MicrocodeHandlerLdFirst = (function () {
             registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
             registerBag.regMemoryBuffer = memoryReadShifted;
             registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
-            registerBag.regSequencer = Microcode.MICROCODE.LD_SECOND;
+            registerBag.regSequencer = Microcode.LD_SECOND;
         };
 
         return MELF;

@@ -7,7 +7,7 @@ var MicrocodeHandlerBuilder = (function () {
         function build(microcode) {
             var microcodeHandler, M;
 
-            M = Microcode.MICROCODE;
+            M = Microcode;
             microcodeHandler = null;
 
             switch (microcode) {

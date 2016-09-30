@@ -260,8 +260,8 @@ var Cpu = (function () {
                     regPC: { value: rf.read(15), bitSize: BitUtil.BYTE_2, changed: null }
                 },
                 extra: {
-                    microcodeKey: { value: Microcode.getMicrocodeKey(c.regSequencer), changed: null },
-                    opcodeKey: { value: Opcode.getOpcodeKey(opcode), changed: null },
+                    // microcodeKey: { value: Microcode.getMicrocodeKey(c.regSequencer), changed: null },
+                    // opcodeKey: { value: Opcode.getOpcodeKey(opcode), changed: null },
                     instruction: InstructionDecoder.getInstruction(c.regInstruction)
                 }
             };

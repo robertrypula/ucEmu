@@ -38,7 +38,7 @@ var MicrocodeHandlerLdSecond = (function () {
             registerBag.registerFile.save(RegisterFile.MEMORY_ACCESS, memoryReadFinal);       // it could be at some point any register...
             registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
             registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
-            registerBag.regSequencer = Microcode.MICROCODE.FETCH_FIRST;
+            registerBag.regSequencer = Microcode.FETCH_FIRST;
         };
 
         return MELS;

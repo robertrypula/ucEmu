@@ -27,7 +27,7 @@ var MicrocodeHandlerStFirstC = (function () {
 
             registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
             registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
-            registerBag.regSequencer = Microcode.MICROCODE.ST_SECOND_A;
+            registerBag.regSequencer = Microcode.ST_SECOND_A;
         };
 
         return MESFC;

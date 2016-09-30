@@ -18,8 +18,8 @@ var InstructionDecoder = (function () {
         function $$initializeInstructionSet() {
             var O, M;
 
-            O = Opcode.OPCODE;
-            M = Microcode.MICROCODE;
+            O = Opcode;
+            M = Microcode;
 
             $$instructionSet.push(
                 { opcode: O.ADD, sequencerNext: M.ADD, cycles: null, byteWidth: 2, name: 'add', nameFull: 'Addition' },
@@ -102,7 +102,7 @@ var InstructionDecoder = (function () {
         function isLoadOrStoreOpcode(regInstruction) {
             var
                 opcode = getOpcode(regInstruction),
-                O = Opcode.OPCODE;
+                O = Opcode;
 
             return opcode === O.LD || opcode === O.ST;
         }

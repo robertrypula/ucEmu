@@ -29,7 +29,7 @@ var MicrocodeHandlerFetchFirst = (function () {
             registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
             registerBag.regMemoryBuffer = memoryReadShifted;
             registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
-            registerBag.regSequencer = Microcode.MICROCODE.FETCH_SECOND_AND_DECODE;
+            registerBag.regSequencer = Microcode.FETCH_SECOND_AND_DECODE;
             registerBag.regInstruction = memoryReadShifted;
         };
 

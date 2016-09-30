@@ -13,20 +13,31 @@ var ControlUnit = (function () {
         };
 
         CU.prototype.$$initialize = function () {
-            var self = this;
-
-            Microcode.loop(function (key, microcode) {
-                self.$$controlStore.push(
-                    MicrocodeHandlerBuilder.build(microcode)
-                );
-            });
+            this.$$controlStore.push(
+                MicrocodeHandlerBuilder.build(Microcode.FETCH_FIRST),
+                MicrocodeHandlerBuilder.build(Microcode.FETCH_SECOND_AND_DECODE),
+                MicrocodeHandlerBuilder.build(Microcode.ADD),
+                MicrocodeHandlerBuilder.build(Microcode.NAND),
+                MicrocodeHandlerBuilder.build(Microcode.SH),
+                MicrocodeHandlerBuilder.build(Microcode.JNZ),
+                MicrocodeHandlerBuilder.build(Microcode.COPY),
+                MicrocodeHandlerBuilder.build(Microcode.IMM),
+                MicrocodeHandlerBuilder.build(Microcode.LD_FIRST),
+                MicrocodeHandlerBuilder.build(Microcode.LD_SECOND),
+                MicrocodeHandlerBuilder.build(Microcode.ST_FIRST_A),
+                MicrocodeHandlerBuilder.build(Microcode.ST_FIRST_B),
+                MicrocodeHandlerBuilder.build(Microcode.ST_FIRST_C),
+                MicrocodeHandlerBuilder.build(Microcode.ST_SECOND_A),
+                MicrocodeHandlerBuilder.build(Microcode.ST_SECOND_B),
+                MicrocodeHandlerBuilder.build(Microcode.ST_SECOND_C)
+            );
         };
 
         CU.prototype.$$getMicrocodeIndex = function (regSequencer) {
             var result = regSequencer;
 
             if (regSequencer < 0 || regSequencer >= this.$$controlStore.length) {
-                result = Microcode.MICROCODE.FETCH_FIRST;   // fallback to first microcode entry
+                result = Microcode.FETCH_FIRST;   // fallback to first microcode
             }
 
             return result;
@@ -47,7 +58,7 @@ var ControlUnit = (function () {
         CU.prototype.isWriteEnableFlagActive = function () {
             var
                 microcodeIndex = this.$$getMicrocodeIndex(this.$$registerBag.regSequencer),
-                M = Microcode.MICROCODE;
+                M = Microcode;
 
             return microcodeIndex === M.ST_FIRST_B || microcodeIndex === M.ST_SECOND_B;
         };
