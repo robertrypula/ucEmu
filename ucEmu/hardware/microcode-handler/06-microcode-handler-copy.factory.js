@@ -6,7 +6,7 @@ var MicrocodeHandlerCopy = (function () {
     function _MicrocodeHandlerCopy() {
         var MEC;
 
-        MEC = function () {
+        MEC = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -16,8 +16,8 @@ var MicrocodeHandlerCopy = (function () {
         MEC.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
             var regOut, regIn0, regIn0Value;
 
-            regOut = InstructionDecoder.getRegOut(registerBag.regInstruction);
-            regIn0 = InstructionDecoder.getRegIn0(registerBag.regInstruction);
+            regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
+            regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
 
             if (Logger.isEnabled()) {

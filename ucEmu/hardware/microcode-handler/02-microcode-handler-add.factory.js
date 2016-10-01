@@ -6,7 +6,7 @@ var MicrocodeHandlerAdd = (function () {
     function _MicrocodeHandlerAdd() {
         var MEA;
 
-        MEA = function () {
+        MEA = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -17,9 +17,9 @@ var MicrocodeHandlerAdd = (function () {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
-            regOut = InstructionDecoder.getRegOut(registerBag.regInstruction);
-            regIn0 = InstructionDecoder.getRegIn0(registerBag.regInstruction);
-            regIn1 = InstructionDecoder.getRegIn1(registerBag.regInstruction);
+            regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
+            regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
+            regIn1 = InstructionRegisterSpliter.getRegIn1(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
             regIn1Value = registerBag.registerFile.read(regIn1);
             regResult = Alu.add(regIn0Value, regIn1Value);

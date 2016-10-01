@@ -6,7 +6,7 @@ var MicrocodeHandlerImm = (function () {
     function _MicrocodeHandlerImm() {
         var MEI;
 
-        MEI = function () {
+        MEI = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -16,8 +16,8 @@ var MicrocodeHandlerImm = (function () {
         MEI.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
             var regOut, imm;
 
-            regOut = InstructionDecoder.getRegOut(registerBag.regInstruction);
-            imm = InstructionDecoder.getImm(registerBag.regInstruction);
+            regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
+            imm = InstructionRegisterSpliter.getImm(registerBag.regInstruction);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerImm');

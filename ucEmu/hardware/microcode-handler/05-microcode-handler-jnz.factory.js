@@ -6,7 +6,7 @@ var MicrocodeHandlerJnz = (function () {
     function _MicrocodeHandlerJnz() {
         var MEJ;
 
-        MEJ = function () {
+        MEJ = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -17,8 +17,8 @@ var MicrocodeHandlerJnz = (function () {
             var regIn0, regIn1, regIn0Value, regIn1Value,
                 notZeroFlag, regPCNext;
 
-            regIn0 = InstructionDecoder.getRegIn0(registerBag.regInstruction);
-            regIn1 = InstructionDecoder.getRegIn1(registerBag.regInstruction);
+            regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
+            regIn1 = InstructionRegisterSpliter.getRegIn1(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
             regIn1Value = registerBag.registerFile.read(regIn1);
             notZeroFlag = regIn1Value !== 0;

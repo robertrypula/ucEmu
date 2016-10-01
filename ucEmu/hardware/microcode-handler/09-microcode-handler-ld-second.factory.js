@@ -6,7 +6,7 @@ var MicrocodeHandlerLdSecond = (function () {
     function _MicrocodeHandlerLdSecond() {
         var MELS;
 
-        MELS = function () {
+        MELS = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -17,7 +17,7 @@ var MicrocodeHandlerLdSecond = (function () {
             var regIn0, regIn0Value, column, columnFromTheBack,
                 memoryReadShifted, memoryReadFinal;
             
-            regIn0 = InstructionDecoder.getRegIn0(registerBag.regInstruction);
+            regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
             column = MemoryController.getColumn(regIn0Value);
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);

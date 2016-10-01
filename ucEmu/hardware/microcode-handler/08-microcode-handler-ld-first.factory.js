@@ -6,7 +6,7 @@ var MicrocodeHandlerLdFirst = (function () {
     function _MicrocodeHandlerLdFirst() {
         var MELF;
 
-        MELF = function () {
+        MELF = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -16,7 +16,7 @@ var MicrocodeHandlerLdFirst = (function () {
         MELF.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
             var regIn0, regIn0Value, column, memoryReadShifted;
 
-            regIn0 = InstructionDecoder.getRegIn0(registerBag.regInstruction);
+            regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
             column = MemoryController.getColumn(regIn0Value);
             memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(memoryRead, column);

@@ -162,9 +162,9 @@ var Cpu = (function () {
                 this.$$clockPrevious = this.input.clock;
             }
 
-            this.output.memoryRowAddress = this.controlUnit.getMemoryRowAddress();
-            this.output.memoryWrite = this.controlUnit.getMemoryWrite();
-            this.output.memoryWE = this.controlUnit.getMemoryWE();
+            this.output.memoryRowAddress = this.registerBag.regMemoryRowAddress;
+            this.output.memoryWrite = this.registerBag.regMemoryWrite;
+            this.output.memoryWE = this.controlUnit.isWriteEnableFlagActive() && this.input.clock ? 1 : 0;
         };
 
         C.prototype.$$clockLowToHigh = function () {
@@ -212,14 +212,14 @@ var Cpu = (function () {
         };
 
         C.prototype.dumpState = function (previous) {
-            var dump, rf, c, i, o, opcode, key;
+            var dump, rf, c, i, o, /*opcode, */key;
 
             rf = this.registerBag.registerFile;
             c = this.registerBag;
             i = this.input;
             o = this.output;
 
-            opcode = InstructionDecoder.getOpcode(c.regInstruction);
+            // opcode = InstructionRegisterSpliter.getOpcode(c.regInstruction);
 
             dump = {
                 input: {
@@ -262,7 +262,7 @@ var Cpu = (function () {
                 extra: {
                     // microcodeKey: { value: Microcode.getMicrocodeKey(c.regSequencer), changed: null },
                     // opcodeKey: { value: Opcode.getOpcodeKey(opcode), changed: null },
-                    instruction: InstructionDecoder.getInstruction(c.regInstruction)
+                    // instruction: InstructionRegisterSpliter.getInstruction(c.regInstruction)
                 }
             };
 

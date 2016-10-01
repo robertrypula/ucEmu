@@ -12,10 +12,10 @@ var Alu = (function () {
             return BitUtil.mask(a + b, BitUtil.BYTE_2);
         }
 
-        function sh(v, amount) {
+        function sh(value, amount) {
             var shifted, negative, amountAbsolute;
 
-            v = BitUtil.mask(v, BitUtil.BYTE_2);
+            value = BitUtil.mask(value, BitUtil.BYTE_2);
             amount = BitUtil.mask(amount, BitUtil.BYTE_2);
 
             negative = BitUtil.maskOneBit(amount, BitUtil.BYTE_2);
@@ -23,8 +23,8 @@ var Alu = (function () {
                 ? BitUtil.invertSignU2(amount, BitUtil.BYTE_2)
                 : amount;
             shifted = negative
-                ? BitUtil.shiftRight(v, amountAbsolute)
-                : BitUtil.shiftLeft(v, amountAbsolute);
+                ? BitUtil.shiftRight(value, amountAbsolute)
+                : BitUtil.shiftLeft(value, amountAbsolute);
 
             return BitUtil.mask(shifted, BitUtil.BYTE_2);
         }

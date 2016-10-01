@@ -6,7 +6,7 @@ var MicrocodeHandlerStFirstC = (function () {
     function _MicrocodeHandlerStFirstC() {
         var MESFC;
 
-        MESFC = function () {
+        MESFC = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -16,7 +16,7 @@ var MicrocodeHandlerStFirstC = (function () {
         MESFC.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
             var regIn0, regIn0Value;
 
-            regIn0 = InstructionDecoder.getRegIn0(registerBag.regInstruction);
+            regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
 
             if (Logger.isEnabled()) {

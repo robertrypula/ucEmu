@@ -6,7 +6,7 @@ var MicrocodeHandlerStSecondA = (function () {
     function _MicrocodeHandlerStSecondA() {
         var MESSA;
 
-        MESSA = function () {
+        MESSA = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 

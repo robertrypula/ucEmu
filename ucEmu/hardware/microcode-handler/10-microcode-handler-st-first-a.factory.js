@@ -66,7 +66,7 @@ var MicrocodeHandlerStFirstA = (function () {
     function _MicrocodeHandlerStFirstA() {
         var MESFA;
 
-        MESFA = function () {
+        MESFA = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 

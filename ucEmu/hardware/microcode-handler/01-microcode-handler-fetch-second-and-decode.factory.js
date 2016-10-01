@@ -18,7 +18,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
     function _MicrocodeHandlerFetchSecondAndDecode() {
         var MFSAD;
 
-        MFSAD = function () {
+        MFSAD = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -36,15 +36,15 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
 
-            opcode = InstructionDecoder.getOpcode(registerBag.regInstruction);
-            // instruction = InstructionDecoder.getInstruction(registerBag.regInstruction);
-            byteWidth = InstructionDecoder.getByteWidth(registerBag.regInstruction);
-            regProgramCounterNext = InstructionDecoder.getProgramCounterNext(registerBag.regInstruction, registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
-            regSequencerNext = InstructionDecoder.getSequencerNext(registerBag.regInstruction);
+            opcode = InstructionRegisterSpliter.getOpcode(registerBag.regInstruction);
+            // instruction = InstructionRegisterSpliter.getInstruction(registerBag.regInstruction);
+            byteWidth = InstructionRegisterSpliter.getByteWidth(registerBag.regInstruction);
+            regProgramCounterNext = InstructionRegisterSpliter.getProgramCounterNext(registerBag.regInstruction, registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
+            regSequencerNext = InstructionRegisterSpliter.getSequencerNext(registerBag.regInstruction);
 
-            regIn0 = InstructionDecoder.getRegIn0(registerBag.regInstruction);
+            regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
-            regMemoryRowAddressNext = InstructionDecoder.isLoadOrStoreOpcode(registerBag.regInstruction)
+            regMemoryRowAddressNext = InstructionRegisterSpliter.isLoadOrStoreOpcode(registerBag.regInstruction)
                 ? regIn0Value : regProgramCounterNext;
 
             if (Logger.isEnabled()) {

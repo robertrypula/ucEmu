@@ -6,7 +6,8 @@
     function _AbstractMicrocode() {
         var AM;
 
-        AM = function () {
+        AM = function (microcode) {
+            this.$$microcode = microcode;
         };
 
         return AM;

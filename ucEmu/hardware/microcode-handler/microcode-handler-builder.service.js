@@ -12,52 +12,52 @@ var MicrocodeHandlerBuilder = (function () {
 
             switch (microcode) {
                 case M.FETCH_FIRST:
-                    microcodeHandler = new MicrocodeHandlerFetchFirst();
+                    microcodeHandler = new MicrocodeHandlerFetchFirst(microcode);
                     break;
                 case M.FETCH_SECOND_AND_DECODE:
-                    microcodeHandler = new MicrocodeHandlerFetchSecondAndDecode();
+                    microcodeHandler = new MicrocodeHandlerFetchSecondAndDecode(microcode);
                     break;
                 case M.ADD:
-                    microcodeHandler = new MicrocodeHandlerAdd();
+                    microcodeHandler = new MicrocodeHandlerAdd(microcode);
                     break;
                 case M.NAND:
-                    microcodeHandler = new MicrocodeHandlerNand();
+                    microcodeHandler = new MicrocodeHandlerNand(microcode);
                     break;
                 case M.SH:
-                    microcodeHandler = new MicrocodeHandlerSh();
+                    microcodeHandler = new MicrocodeHandlerSh(microcode);
                     break;
                 case M.JNZ:
-                    microcodeHandler = new MicrocodeHandlerJnz();
+                    microcodeHandler = new MicrocodeHandlerJnz(microcode);
                     break;
                 case M.COPY:
-                    microcodeHandler = new MicrocodeHandlerCopy();
+                    microcodeHandler = new MicrocodeHandlerCopy(microcode);
                     break;
                 case M.IMM:
-                    microcodeHandler = new MicrocodeHandlerImm();
+                    microcodeHandler = new MicrocodeHandlerImm(microcode);
                     break;
                 case M.LD_FIRST:
-                    microcodeHandler = new MicrocodeHandlerLdFirst();
+                    microcodeHandler = new MicrocodeHandlerLdFirst(microcode);
                     break;
                 case M.LD_SECOND:
-                    microcodeHandler = new MicrocodeHandlerLdSecond();
+                    microcodeHandler = new MicrocodeHandlerLdSecond(microcode);
                     break;
                 case M.ST_FIRST_A:
-                    microcodeHandler = new MicrocodeHandlerStFirstA();
+                    microcodeHandler = new MicrocodeHandlerStFirstA(microcode);
                     break;
                 case M.ST_FIRST_B:
-                    microcodeHandler = new MicrocodeHandlerStFirstB();
+                    microcodeHandler = new MicrocodeHandlerStFirstB(microcode);
                     break;
                 case M.ST_FIRST_C:
-                    microcodeHandler = new MicrocodeHandlerStFirstC();
+                    microcodeHandler = new MicrocodeHandlerStFirstC(microcode);
                     break;
                 case M.ST_SECOND_A:
-                    microcodeHandler = new MicrocodeHandlerStSecondA();
+                    microcodeHandler = new MicrocodeHandlerStSecondA(microcode);
                     break;
                 case M.ST_SECOND_B:
-                    microcodeHandler = new MicrocodeHandlerStSecondB();
+                    microcodeHandler = new MicrocodeHandlerStSecondB(microcode);
                     break;
                 case M.ST_SECOND_C:
-                    microcodeHandler = new MicrocodeHandlerStSecondC();
+                    microcodeHandler = new MicrocodeHandlerStSecondC(microcode);
                     break;
             }
 

@@ -6,7 +6,7 @@ var MicrocodeHandlerStFirstB = (function () {
     function _MicrocodeHandlerStFirstB() {
         var MESFB;
 
-        MESFB = function () {
+        MESFB = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 

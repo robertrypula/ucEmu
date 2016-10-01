@@ -25,12 +25,12 @@ TODO list:
     + [0.25h] rename regTimer to regClockTick
     + [0.50h] restructure microcode (rename microcode-execute-* to microcode-handler-*, two directories 'microcode' and 'microcode-handler')
     + [0.50h] move all combinational logic into services without access to CPU, remove CpuAware class
+    + [?.??h] move instruction set creation to control unit
+    + [?.??h] split instructions into separate classes like opcode handlers
+    + [?.??h] change 'instruction decoder' service name to some 'instruction register spliter'
+    + [?.??h] move output update to cpu
 
-    - [?.??h] move instruction set creation to control unit
-    - [?.??h] split instructions into separate classes like opcode handlers
-    - [?.??h] add relations between opcode handlers and instruction
-    - [?.??h] change 'instruction decoder' service name to some 'instruction register spliter'
-    - [?.??h] move output update to cpu
+    - [?.??h] new parameter or microcode handlers (instruction), fix undefined methods errors
     - [1.00h] implement store instruction
     - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
 

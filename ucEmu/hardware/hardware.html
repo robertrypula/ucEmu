@@ -6,7 +6,17 @@
         <script src="microcode/microcode.service.js"></script>
         <script src="opcode/opcode.service.js"></script>
         <script src="bit-util/bit-util.service.js"></script>
-        <script src="instruction-decoder/instruction-decoder.service.js"></script>
+        <script src="instruction-register-spliter/instruction-register-spliter.service.js"></script>
+        <script src="instruction/abstract-instruction.factory.js"></script>
+        <script src="instruction/instruction-builder.service.js"></script>
+        <script src="instruction/00-instruction-add.factory.js"></script>
+        <script src="instruction/01-instruction-nand.factory.js"></script>
+        <script src="instruction/02-instruction-sh.factory.js"></script>
+        <script src="instruction/03-instruction-jnz.factory.js"></script>
+        <script src="instruction/04-instruction-copy.factory.js"></script>
+        <script src="instruction/05-instruction-imm.factory.js"></script>
+        <script src="instruction/06-instruction-ld.factory.js"></script>
+        <script src="instruction/07-instruction-st.factory.js"></script>
         <script src="alu/alu.service.js"></script>
         <script src="control-unit/control-unit.factory.js"></script>
         <script src="control-unit/control-unit-builder.service.js"></script>
@@ -16,7 +26,7 @@
         <script src="memory-controller/memory-controller.service.js"></script>
         <script src="microcode-handler/abstract-microcode-handler.factory.js"></script>
         <script src="microcode-handler/microcode-handler-builder.service.js"></script>
-        <script src="microcode-handler/00-microcode-handler-fetch-first.factory.factory.js"></script>
+        <script src="microcode-handler/00-microcode-handler-fetch-first.factory.js"></script>
         <script src="microcode-handler/01-microcode-handler-fetch-second-and-decode.factory.js"></script>
         <script src="microcode-handler/02-microcode-handler-add.factory.js"></script>
         <script src="microcode-handler/06-microcode-handler-copy.factory.js"></script>

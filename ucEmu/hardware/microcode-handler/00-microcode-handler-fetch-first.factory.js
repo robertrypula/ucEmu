@@ -6,7 +6,7 @@ var MicrocodeHandlerFetchFirst = (function () {
     function _MicrocodeHandlerFetchFirst() {
         var MFF;
 
-        MFF = function () {
+        MFF = function (microcode) {
             AbstractMicrocode.apply(this, arguments);
         };
 
