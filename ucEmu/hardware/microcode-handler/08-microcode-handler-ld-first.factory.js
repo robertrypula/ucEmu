@@ -6,7 +6,7 @@ var MicrocodeHandlerLdFirst = (function () {
     function _MicrocodeHandlerLdFirst() {
         var MELF;
 
-        MELF = function (microcode) {
+        MELF = function (microcode, writeEnablePositive, writeEnableNegative, name) {
             AbstractMicrocode.apply(this, arguments);
         };
 

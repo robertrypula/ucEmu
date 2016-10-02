@@ -18,7 +18,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
     function _MicrocodeHandlerFetchSecondAndDecode() {
         var MFSAD;
 
-        MFSAD = function (microcode) {
+        MFSAD = function (microcode, writeEnablePositive, writeEnableNegative, name) {
             AbstractMicrocode.apply(this, arguments);
         };
 

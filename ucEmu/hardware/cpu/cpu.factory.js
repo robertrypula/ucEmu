@@ -154,9 +154,7 @@ var Cpu = (function () {
             }
 
             if (this.$$clockPrevious !== this.input.clock) {
-                if (this.input.clock) {
-                    this.$$clockLowToHigh();
-                } else {
+                if (!this.input.clock) {
                     this.$$clockHighToLow();
                 }
                 this.$$clockPrevious = this.input.clock;
@@ -165,11 +163,6 @@ var Cpu = (function () {
             this.output.memoryRowAddress = this.registerBag.regMemoryRowAddress;
             this.output.memoryWrite = this.registerBag.regMemoryWrite;
             this.output.memoryWE = 0; // this.controlUnit.isWriteEnableFlagActive() && this.input.clock ? 1 : 0;
-        };
-
-        C.prototype.$$clockLowToHigh = function () {
-            // registers are not changing state during this phase
-            // data is passed internally inside master–slave D flip-flop registers
         };
 
         C.prototype.$$clockHighToLow = function () {

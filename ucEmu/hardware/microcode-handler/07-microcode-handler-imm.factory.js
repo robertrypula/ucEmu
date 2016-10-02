@@ -6,7 +6,7 @@ var MicrocodeHandlerImm = (function () {
     function _MicrocodeHandlerImm() {
         var MEI;
 
-        MEI = function (microcode) {
+        MEI = function (microcode, writeEnablePositive, writeEnableNegative, name) {
             AbstractMicrocode.apply(this, arguments);
         };
 

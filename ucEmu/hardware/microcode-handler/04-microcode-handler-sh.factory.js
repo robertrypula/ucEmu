@@ -6,7 +6,7 @@ var MicrocodeHandlerSh = (function () {
     function _MicrocodeHandlerSh() {
         var MES;
 
-        MES = function (microcode) {
+        MES = function (microcode, writeEnablePositive, writeEnableNegative, name) {
             AbstractMicrocode.apply(this, arguments);
         };
 

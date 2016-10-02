@@ -6,7 +6,7 @@ var MicrocodeHandlerStSecondC = (function () {
     function _MicrocodeHandlerStSecondC() {
         var MESSC;
 
-        MESSC = function (microcode) {
+        MESSC = function (microcode, writeEnablePositive, writeEnableNegative, name) {
             AbstractMicrocode.apply(this, arguments);
         };
 

@@ -6,7 +6,7 @@ var MicrocodeHandlerCopy = (function () {
     function _MicrocodeHandlerCopy() {
         var MEC;
 
-        MEC = function (microcode) {
+        MEC = function (microcode, writeEnablePositive, writeEnableNegative, name) {
             AbstractMicrocode.apply(this, arguments);
         };
 

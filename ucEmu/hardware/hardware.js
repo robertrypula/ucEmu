@@ -33,6 +33,7 @@ TODO list:
 
     - [?.??h] add WE clock flags to the microcodeHandlers
     - [?.??h] create RegisterBag class
+    - [?.??h] move register reset to microcode handlers
     - [?.??h] move common bit sizes to dedicated service
     - [1.00h] implement store instruction
     - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
