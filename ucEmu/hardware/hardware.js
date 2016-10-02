@@ -29,13 +29,17 @@ TODO list:
     + [?.??h] split instructions into separate classes like opcode handlers
     + [?.??h] change 'instruction decoder' service name to some 'instruction register spliter'
     + [?.??h] move output update to cpu
+    + [?.??h] new parameter or microcode handlers (instruction), fix undefined methods errors
 
-    - [?.??h] new parameter or microcode handlers (instruction), fix undefined methods errors
+    - [?.??h] add WE clock flags to the microcodeHandlers
+    - [?.??h] create RegisterBag class
+    - [?.??h] move common bit sizes to dedicated service
     - [1.00h] implement store instruction
     - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
 
         :: fun starts here ::
     - [1.5h] add DI and clean up
+    - [?.?h] test performance with dedicated Register and Signal classes (masking by bitSize and toString would be inside)
     - [1.0h] move project to separate GitHub repo ('SimpleCPU')
     - [2.0h] integrate CPU (without static memory) class with Module/Signal class from other repo
 
