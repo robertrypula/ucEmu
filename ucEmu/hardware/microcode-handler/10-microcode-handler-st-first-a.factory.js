@@ -73,10 +73,11 @@ var MicrocodeHandlerStFirstA = (function () {
         MESFA.prototype = Object.create(AbstractMicrocode.prototype);
         MESFA.prototype.constructor = MESFA;
 
-        MESFA.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
+        MESFA.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerStFirstA');
+                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
             }
 
             registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);

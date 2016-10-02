@@ -280,7 +280,7 @@ function cpuLog(hideCpuClockInfo) {
         var dump;
 
         dump = cpu.dumpState(dumpPrevious);
-        console.log(dump);
+        // console.log(dump);
         dumpPrevious = dump;
     }
 }

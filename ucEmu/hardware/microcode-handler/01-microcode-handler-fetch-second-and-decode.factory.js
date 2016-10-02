@@ -25,9 +25,9 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
         MFSAD.prototype = Object.create(AbstractMicrocode.prototype);
         MFSAD.prototype.constructor = MFSAD;
 
-        MFSAD.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
+        MFSAD.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
             var column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
-                opcode, byteWidth,
+                opcode, byteWidth, programCounter,
                 regProgramCounterNext, regMemoryRowAddressNext, regSequencerNext,
                 regIn0, regIn0Value;
 
@@ -36,27 +36,27 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
 
-            opcode = InstructionRegisterSpliter.getOpcode(registerBag.regInstruction);
-            // instruction = InstructionRegisterSpliter.getInstruction(registerBag.regInstruction);
-            byteWidth = InstructionRegisterSpliter.getByteWidth(registerBag.regInstruction);
-            regProgramCounterNext = InstructionRegisterSpliter.getProgramCounterNext(registerBag.regInstruction, registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
-            regSequencerNext = InstructionRegisterSpliter.getSequencerNext(registerBag.regInstruction);
+            opcode = instruction.opcode;
+            byteWidth = instruction.byteWidth;
+            programCounter = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+            regProgramCounterNext = Alu.add(programCounter, byteWidth);
+            regSequencerNext = instruction.microcodeJump;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
-            regMemoryRowAddressNext = InstructionRegisterSpliter.isLoadOrStoreOpcode(registerBag.regInstruction)
-                ? regIn0Value : regProgramCounterNext;
+            regMemoryRowAddressNext = instruction.memoryRowAddressFromRegIn0 ? regIn0Value : regProgramCounterNext;
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequenceFetchSecondAndDecode');
+                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'column = ' + column);
                 Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitUtil.BYTE_4));
                 Logger.log(3, 'columnFromTheBack = ' + columnFromTheBack);
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
                 Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitUtil.BYTE_4));
                 Logger.log(3, 'opcode = ' + opcode);
-                // Logger.log(0, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'byteWidth = ' + byteWidth);
+                Logger.log(3, 'programCounter = ' + BitUtil.hex(programCounter, BitUtil.BYTE_2));
                 Logger.log(3, 'regProgramCounterNext = ' + BitUtil.hex(regProgramCounterNext, BitUtil.BYTE_2));
                 Logger.log(3, 'regSequencerNext = ' + BitUtil.hex(regSequencerNext, BitUtil.BYTE_HALF));
                 Logger.log(3, 'regIn0 = ' + regIn0);

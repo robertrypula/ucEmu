@@ -13,7 +13,7 @@ var MicrocodeHandlerStFirstC = (function () {
         MESFC.prototype = Object.create(AbstractMicrocode.prototype);
         MESFC.prototype.constructor = MESFC;
 
-        MESFC.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
+        MESFC.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
             var regIn0, regIn0Value;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
@@ -21,6 +21,7 @@ var MicrocodeHandlerStFirstC = (function () {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerStFirstC');
+                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
             }

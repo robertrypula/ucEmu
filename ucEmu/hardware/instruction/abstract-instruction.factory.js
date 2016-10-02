@@ -7,12 +7,12 @@ var AbstractInstruction = (function () {
         var AI;
         
         AI = function (opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull) {
-            this.$$opcode = opcode;
-            this.$$microcodeJump = microcodeJump;
-            this.$$byteWidth = byteWidth;
-            this.$$memoryRowAddressFromRegIn0 = memoryRowAddressFromRegIn0;
-            this.$$name = name;
-            this.$$nameFull = nameFull;
+            this.opcode = opcode;
+            this.microcodeJump = microcodeJump;
+            this.byteWidth = byteWidth;
+            this.memoryRowAddressFromRegIn0 = memoryRowAddressFromRegIn0;
+            this.name = name;
+            this.nameFull = nameFull;
         };
 
         return AI;

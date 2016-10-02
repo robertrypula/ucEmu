@@ -13,10 +13,11 @@ var MicrocodeHandlerStSecondC = (function () {
         MESSC.prototype = Object.create(AbstractMicrocode.prototype);
         MESSC.prototype.constructor = MESSC;
 
-        MESSC.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
+        MESSC.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerStSecondC');
+                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
             }
 
             registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);

@@ -13,7 +13,7 @@ var MicrocodeHandlerLdFirst = (function () {
         MELF.prototype = Object.create(AbstractMicrocode.prototype);
         MELF.prototype.constructor = MELF;
 
-        MELF.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
+        MELF.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
             var regIn0, regIn0Value, column, memoryReadShifted;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
@@ -23,6 +23,7 @@ var MicrocodeHandlerLdFirst = (function () {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerLdFirst');
+                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'column = ' + column);

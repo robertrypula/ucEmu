@@ -13,7 +13,7 @@ var MicrocodeHandlerLdSecond = (function () {
         MELS.prototype = Object.create(AbstractMicrocode.prototype);
         MELS.prototype.constructor = MELS;
 
-        MELS.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
+        MELS.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
             var regIn0, regIn0Value, column, columnFromTheBack,
                 memoryReadShifted, memoryReadFinal;
             
@@ -26,6 +26,7 @@ var MicrocodeHandlerLdSecond = (function () {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerLdSecond');
+                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'column = ' + column);

@@ -13,7 +13,7 @@ var MicrocodeHandlerAdd = (function () {
         MEA.prototype = Object.create(AbstractMicrocode.prototype);
         MEA.prototype.constructor = MEA;
 
-        MEA.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
+        MEA.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
@@ -26,6 +26,7 @@ var MicrocodeHandlerAdd = (function () {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerAdd');
+                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));

@@ -13,7 +13,7 @@ var MicrocodeHandlerNand = (function () {
         MEN.prototype = Object.create(AbstractMicrocode.prototype);
         MEN.prototype.constructor = MEN;
 
-        MEN.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
+        MEN.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
@@ -26,6 +26,7 @@ var MicrocodeHandlerNand = (function () {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerNand');
+                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regOut, regIn0, regIn1 <-> ' + regOut + ', ' + regIn0 + ', ' + regIn1);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));

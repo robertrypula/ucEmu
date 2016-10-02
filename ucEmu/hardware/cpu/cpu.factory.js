@@ -164,7 +164,7 @@ var Cpu = (function () {
 
             this.output.memoryRowAddress = this.registerBag.regMemoryRowAddress;
             this.output.memoryWrite = this.registerBag.regMemoryWrite;
-            this.output.memoryWE = this.controlUnit.isWriteEnableFlagActive() && this.input.clock ? 1 : 0;
+            this.output.memoryWE = 0; // this.controlUnit.isWriteEnableFlagActive() && this.input.clock ? 1 : 0;
         };
 
         C.prototype.$$clockLowToHigh = function () {

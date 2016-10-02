@@ -13,7 +13,7 @@ var MicrocodeHandlerJnz = (function () {
         MEJ.prototype = Object.create(AbstractMicrocode.prototype);
         MEJ.prototype.constructor = MEJ;
 
-        MEJ.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
+        MEJ.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
             var regIn0, regIn1, regIn0Value, regIn1Value,
                 notZeroFlag, regPCNext;
 
@@ -26,6 +26,7 @@ var MicrocodeHandlerJnz = (function () {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerJnz');
+                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regIn0, regIn1 <-> ' + regIn0 + ', ' + regIn1);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));

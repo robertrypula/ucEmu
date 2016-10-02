@@ -13,10 +13,11 @@ var MicrocodeHandlerStSecondA = (function () {
         MESSA.prototype = Object.create(AbstractMicrocode.prototype);
         MESSA.prototype.constructor = MESSA;
 
-        MESSA.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
+        MESSA.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerStSecondA');
+                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
             }
 
             registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);

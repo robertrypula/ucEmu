@@ -7,7 +7,7 @@
         var AM;
 
         AM = function (microcode) {
-            this.$$microcode = microcode;
+            this.microcode = microcode;
         };
 
         return AM;

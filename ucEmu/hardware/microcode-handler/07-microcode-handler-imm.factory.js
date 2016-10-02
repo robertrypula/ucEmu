@@ -13,7 +13,7 @@ var MicrocodeHandlerImm = (function () {
         MEI.prototype = Object.create(AbstractMicrocode.prototype);
         MEI.prototype.constructor = MEI;
 
-        MEI.prototype.finalizePropagationAndStoreResults = function (registerBag, memoryRead) {
+        MEI.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
             var regOut, imm;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
@@ -21,6 +21,7 @@ var MicrocodeHandlerImm = (function () {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerImm');
+                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regOut = ' + regOut);
                 Logger.log(3, 'imm = ' + BitUtil.hex(imm, BitUtil.BYTE_2) + " (store immediate value at regOut)");
             }
