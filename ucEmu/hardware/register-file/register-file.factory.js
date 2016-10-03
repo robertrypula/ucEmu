@@ -19,7 +19,7 @@ var RegisterFile = (function () {
             var i;
 
             for (i = 0; i < RS.REGISTERS_SIZE; i++) {
-                this.register[i] = BitUtil.random(BitUtil.BYTE_2);
+                this.register[i] = BitUtil.random(BitSize.REGISTER);
             }
         };
 
@@ -36,7 +36,7 @@ var RegisterFile = (function () {
         };
 
         RS.prototype.save = function (number, value) {
-            this.register[number] = BitUtil.mask(value, BitUtil.BYTE_2);
+            this.register[number] = BitUtil.mask(value, BitSize.REGISTER);
         };
 
         return RS;

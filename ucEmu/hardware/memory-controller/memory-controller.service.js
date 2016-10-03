@@ -6,20 +6,22 @@ var MemoryController = (function () {
     function _MemoryController() {
 
         function getColumn(value) {
-            return BitUtil.mask(value, BitUtil.BIT_2)
+            return BitUtil.mask(value, BitSize.ADDRESS_ROW_OFFSET)
         }
 
         function getMemoryReadShiftedLeft(memoryRead, column) {
             // don't need to mask because JavaScript logic operators returns 32 bit long value
-            return BitUtil.shiftLeft(memoryRead, column * BitUtil.BYTE_1);
+            return BitUtil.shiftLeft(memoryRead, column * BitSize.MEMORY_COLUMN);
         }
 
         function getMemoryReadShiftedRight(memoryRead, columnFromTheBack) {
-            return BitUtil.shiftRight(memoryRead, columnFromTheBack * BitUtil.BYTE_1);
+            return BitUtil.shiftRight(memoryRead, columnFromTheBack * BitSize.MEMORY_COLUMN);
         }
 
         function getColumnFromTheBack(column) {
-            return (4 - column);
+            var columnInRow = BitSize.MEMORY_WIDTH / BitSize.MEMORY_COLUMN;
+
+            return (columnInRow - column);
         }
 
         function getMemoryReadFinal(memoryReadShifted, regMemoryBuffer) {
@@ -28,8 +30,8 @@ var MemoryController = (function () {
 
         function getMemoryRowAddress(address) {
             return BitUtil.mask(
-                BitUtil.shiftRight(address, BitUtil.BIT_2),
-                BitUtil.BYTE_2 - BitUtil.BIT_2
+                BitUtil.shiftRight(address, BitSize.ADDRESS_ROW_OFFSET),
+                BitSize.ADDRESS_ROW
             );
         }
 
@@ -37,7 +39,7 @@ var MemoryController = (function () {
             // TODO check if this incrementation could be done in ALU
             return BitUtil.mask(
                 this.getMemoryRowAddress(address) + 1,
-                BitUtil.BYTE_2 - BitUtil.BIT_2
+                BitSize.ADDRESS_ROW
             );
         }
 

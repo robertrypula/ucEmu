@@ -25,7 +25,7 @@ var MicrocodeHandlerCopy = (function () {
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
-                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2) + " (COPY, save regIn0Value at regOut)");
+                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER) + " (COPY, save regIn0Value at regOut)");
             }
             
             registerBag.registerFile.save(regOut, regIn0Value);

@@ -51,18 +51,18 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'column = ' + column);
-                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitUtil.BYTE_4));
+                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitSize.MEMORY_WIDTH));
                 Logger.log(3, 'columnFromTheBack = ' + columnFromTheBack);
-                Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
-                Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitUtil.BYTE_4));
+                Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitSize.MEMORY_WIDTH));
+                Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitSize.MEMORY_WIDTH));
                 Logger.log(3, 'opcode = ' + opcode);
                 Logger.log(3, 'byteWidth = ' + byteWidth);
-                Logger.log(3, 'programCounter = ' + BitUtil.hex(programCounter, BitUtil.BYTE_2));
-                Logger.log(3, 'regProgramCounterNext = ' + BitUtil.hex(regProgramCounterNext, BitUtil.BYTE_2));
-                Logger.log(3, 'regSequencerNext = ' + BitUtil.hex(regSequencerNext, BitUtil.BYTE_HALF));
+                Logger.log(3, 'programCounter = ' + BitUtil.hex(programCounter, BitSize.REGISTER));
+                Logger.log(3, 'regProgramCounterNext = ' + BitUtil.hex(regProgramCounterNext, BitSize.REGISTER));
+                Logger.log(3, 'regSequencerNext = ' + BitUtil.hex(regSequencerNext, BitSize.SEQUENCER));
                 Logger.log(3, 'regIn0 = ' + regIn0);
-                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
-                Logger.log(3, 'regMemoryRowAddressNext = ' + BitUtil.hex(regMemoryRowAddressNext, BitUtil.BYTE_2 - BitUtil.BIT_2));
+                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER));
+                Logger.log(3, 'regMemoryRowAddressNext = ' + BitUtil.hex(regMemoryRowAddressNext, BitSize.ADDRESS_ROW));
             }
 
             registerBag.registerFile.save(RegisterFile.PROGRAM_COUNTER, regProgramCounterNext);

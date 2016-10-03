@@ -24,7 +24,7 @@ var MicrocodeHandlerImm = (function () {
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regOut = ' + regOut);
-                Logger.log(3, 'imm = ' + BitUtil.hex(imm, BitUtil.BYTE_2) + " (store immediate value at regOut)");
+                Logger.log(3, 'imm = ' + BitUtil.hex(imm, BitSize.REGISTER) + " (store immediate value at regOut)");
             }
             
             registerBag.registerFile.save(regOut, imm);

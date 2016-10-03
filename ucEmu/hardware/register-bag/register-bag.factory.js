@@ -11,13 +11,13 @@ var RegisterBag = (function () {
             this.registerFile = RegisterFileBuilder.build();
 
             // special purpose registers
-            this.regReset = BitUtil.random(BitUtil.BIT_1);
-            this.regSequencer = BitUtil.random(BitUtil.BYTE_HALF);
-            this.regInstruction = BitUtil.random(BitUtil.BYTE_4);
-            this.regClockTick = BitUtil.random(BitUtil.BYTE_4);
-            this.regMemoryBuffer = BitUtil.random(BitUtil.BYTE_4);
-            this.regMemoryRowAddress = BitUtil.random(BitUtil.BYTE_2 - BitUtil.BIT_2);
-            this.regMemoryWrite = BitUtil.random(BitUtil.BYTE_4);
+            this.regReset = BitUtil.random(BitSize.SINGLE_BIT);
+            this.regSequencer = BitUtil.random(BitSize.SEQUENCER);
+            this.regInstruction = BitUtil.random(BitSize.MEMORY_WIDTH);
+            this.regClockTick = BitUtil.random(BitSize.MEMORY_WIDTH);
+            this.regMemoryBuffer = BitUtil.random(BitSize.MEMORY_WIDTH);
+            this.regMemoryRowAddress = BitUtil.random(BitSize.ADDRESS_ROW);
+            this.regMemoryWrite = BitUtil.random(BitSize.MEMORY_WIDTH);
         };
 
         RB.prototype.resetAll = function () {

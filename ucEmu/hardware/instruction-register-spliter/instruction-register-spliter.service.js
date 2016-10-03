@@ -54,7 +54,7 @@ var InstructionRegisterSpliter = (function () {
         function getProgramCounterNext(regInstruction, regProgramCounter) {
             var byteWidth = getByteWidth(regInstruction);
 
-            return BitUtil.mask(regProgramCounter + byteWidth, BitUtil.BYTE_2);
+            return BitUtil.mask(regProgramCounter + byteWidth, BitSize.REGISTER);
         }
 
         function isLoadOrStoreOpcode(regInstruction) {

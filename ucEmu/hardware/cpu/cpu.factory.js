@@ -191,41 +191,41 @@ var Cpu = (function () {
 
             dump = {
                 input: {
-                    clock: { value: i.clock, bitSize: BitUtil.BIT_1, changed: null },
-                    memoryRead: { value: i.memoryRead, bitSize: BitUtil.BYTE_4, changed: null },
-                    reset: { value: i.reset, bitSize: BitUtil.BIT_1, changed: null }
+                    clock: { value: i.clock, bitSize: BitSize.SINGLE_BIT, changed: null },
+                    memoryRead: { value: i.memoryRead, bitSize: BitSize.MEMORY_WIDTH, changed: null },
+                    reset: { value: i.reset, bitSize: BitSize.SINGLE_BIT, changed: null }
                 },
                 output: {
-                    memoryRowAddress: { value: o.memoryRowAddress, bitSize: BitUtil.BYTE_2 - BitUtil.BIT_2, changed: null },
-                    memoryWrite: { value: o.memoryWrite, bitSize: BitUtil.BYTE_4, changed: null },
-                    memoryWE: { value: o.memoryWE, bitSize: BitUtil.BIT_1, changed: null }
+                    memoryRowAddress: { value: o.memoryRowAddress, bitSize: BitSize.ADDRESS_ROW, changed: null },
+                    memoryWrite: { value: o.memoryWrite, bitSize: BitSize.MEMORY_WIDTH, changed: null },
+                    memoryWE: { value: o.memoryWE, bitSize: BitSize.SINGLE_BIT, changed: null }
                 },
                 registerSpecialPurpose: {
-                    regReset: { value: rb.regReset, bitSize: BitUtil.BIT_1, changed: null },
-                    regSequencer: { value: rb.regSequencer, bitSize: BitUtil.BYTE_HALF, changed: null },
-                    regInstruction: { value: rb.regInstruction, bitSize: BitUtil.BYTE_4, changed: null },
-                    regClockTick: { value: rb.regClockTick, bitSize: BitUtil.BYTE_4, changed: null },
-                    regMemoryBuffer: { value: rb.regMemoryBuffer, bitSize: BitUtil.BYTE_4, changed: null },
-                    regMemoryRowAddress: { value: rb.regMemoryRowAddress, bitSize: BitUtil.BYTE_2 - BitUtil.BIT_2, changed: null },
-                    regMemoryWrite: { value: rb.regMemoryWrite, bitSize: BitUtil.BYTE_4, changed: null }
+                    regReset: { value: rb.regReset, bitSize: BitSize.SINGLE_BIT, changed: null },
+                    regSequencer: { value: rb.regSequencer, bitSize: BitSize.SEQUENCER, changed: null },
+                    regInstruction: { value: rb.regInstruction, bitSize: BitSize.MEMORY_WIDTH, changed: null },
+                    regClockTick: { value: rb.regClockTick, bitSize: BitSize.MEMORY_WIDTH, changed: null },
+                    regMemoryBuffer: { value: rb.regMemoryBuffer, bitSize: BitSize.MEMORY_WIDTH, changed: null },
+                    regMemoryRowAddress: { value: rb.regMemoryRowAddress, bitSize: BitSize.ADDRESS_ROW, changed: null },
+                    regMemoryWrite: { value: rb.regMemoryWrite, bitSize: BitSize.MEMORY_WIDTH, changed: null }
                 },
                 registerGeneralPurpose: {
-                    reg00: { value: rf.read(0), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg01: { value: rf.read(1), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg02: { value: rf.read(2), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg03: { value: rf.read(3), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg04: { value: rf.read(4), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg05: { value: rf.read(5), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg06: { value: rf.read(6), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg07: { value: rf.read(7), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg08: { value: rf.read(8), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg09: { value: rf.read(9), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg10: { value: rf.read(10), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg11: { value: rf.read(11), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg12: { value: rf.read(12), bitSize: BitUtil.BYTE_2, changed: null },
-                    reg13: { value: rf.read(13), bitSize: BitUtil.BYTE_2, changed: null },
-                    regMA: { value: rf.read(14), bitSize: BitUtil.BYTE_2, changed: null },
-                    regPC: { value: rf.read(15), bitSize: BitUtil.BYTE_2, changed: null }
+                    reg00: { value: rf.read(0), bitSize: BitSize.REGISTER, changed: null },
+                    reg01: { value: rf.read(1), bitSize: BitSize.REGISTER, changed: null },
+                    reg02: { value: rf.read(2), bitSize: BitSize.REGISTER, changed: null },
+                    reg03: { value: rf.read(3), bitSize: BitSize.REGISTER, changed: null },
+                    reg04: { value: rf.read(4), bitSize: BitSize.REGISTER, changed: null },
+                    reg05: { value: rf.read(5), bitSize: BitSize.REGISTER, changed: null },
+                    reg06: { value: rf.read(6), bitSize: BitSize.REGISTER, changed: null },
+                    reg07: { value: rf.read(7), bitSize: BitSize.REGISTER, changed: null },
+                    reg08: { value: rf.read(8), bitSize: BitSize.REGISTER, changed: null },
+                    reg09: { value: rf.read(9), bitSize: BitSize.REGISTER, changed: null },
+                    reg10: { value: rf.read(10), bitSize: BitSize.REGISTER, changed: null },
+                    reg11: { value: rf.read(11), bitSize: BitSize.REGISTER, changed: null },
+                    reg12: { value: rf.read(12), bitSize: BitSize.REGISTER, changed: null },
+                    reg13: { value: rf.read(13), bitSize: BitSize.REGISTER, changed: null },
+                    regMA: { value: rf.read(14), bitSize: BitSize.REGISTER, changed: null },
+                    regPC: { value: rf.read(15), bitSize: BitSize.REGISTER, changed: null }
                 },
                 extra: {
                     // microcodeKey: { value: Microcode.getMicrocodeKey(rb.regSequencer), changed: null },

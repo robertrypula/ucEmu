@@ -5,7 +5,7 @@ var ClockTick = (function () {
 
     function _ClockTick() {
         function getClockTickNext(regClockTick) {
-            return BitUtil.mask(regClockTick + 1, BitUtil.BYTE_4);
+            return BitUtil.mask(regClockTick + 1, BitSize.MEMORY_WIDTH);
         }
 
         return {

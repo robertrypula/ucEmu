@@ -23,18 +23,19 @@ var MicrocodeHandlerLdSecond = (function () {
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);
             memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
+            // TODO map memoryReadFinal to register at MemoryController
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regIn0 = ' + regIn0);
-                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
+                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER));
                 Logger.log(3, 'column = ' + column);
-                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitUtil.BYTE_4));
+                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitSize.MEMORY_WIDTH));
                 Logger.log(3, 'columnFromTheBack = ' + columnFromTheBack);
-                Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
-                Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitUtil.BYTE_2));
+                Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitSize.MEMORY_WIDTH));
+                Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitSize.MEMORY_WIDTH));
             }
 
             registerBag.registerFile.save(RegisterFile.MEMORY_ACCESS, memoryReadFinal);       // it could be at some point any register...

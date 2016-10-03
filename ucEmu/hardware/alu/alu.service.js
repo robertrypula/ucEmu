@@ -6,31 +6,31 @@ var Alu = (function () {
     function _Alu() {
 
         function add(a, b) {
-            a = BitUtil.mask(a, BitUtil.BYTE_2);
-            b = BitUtil.mask(b, BitUtil.BYTE_2);
+            a = BitUtil.mask(a, BitSize.REGISTER);
+            b = BitUtil.mask(b, BitSize.REGISTER);
 
-            return BitUtil.mask(a + b, BitUtil.BYTE_2);
+            return BitUtil.mask(a + b, BitSize.REGISTER);
         }
 
         function sh(value, amount) {
             var shifted, negative, amountAbsolute;
 
-            value = BitUtil.mask(value, BitUtil.BYTE_2);
-            amount = BitUtil.mask(amount, BitUtil.BYTE_2);
+            value = BitUtil.mask(value, BitSize.REGISTER);
+            amount = BitUtil.mask(amount, BitSize.REGISTER);
 
-            negative = BitUtil.maskOneBit(amount, BitUtil.BYTE_2);
+            negative = BitUtil.maskOneBit(amount, BitSize.REGISTER);
             amountAbsolute = negative
-                ? BitUtil.invertSignU2(amount, BitUtil.BYTE_2)
+                ? BitUtil.invertSignU2(amount, BitSize.REGISTER)
                 : amount;
             shifted = negative
                 ? BitUtil.shiftRight(value, amountAbsolute)
                 : BitUtil.shiftLeft(value, amountAbsolute);
 
-            return BitUtil.mask(shifted, BitUtil.BYTE_2);
+            return BitUtil.mask(shifted, BitSize.REGISTER);
         }
 
         function nand(a, b) {
-            return BitUtil.mask(~(a & b), BitUtil.BYTE_2);
+            return BitUtil.mask(~(a & b), BitSize.REGISTER);
         }
 
         return {

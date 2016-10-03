@@ -32,12 +32,14 @@ TODO list:
     + [?.??h] new parameter or microcode handlers (instruction), fix undefined methods errors
     + [?.??h] add WE clock flags to the microcodeHandlers
     + [?.??h] create RegisterBag class
+    + [?.??h] move common bit sizes to dedicated service
 
-    - [?.??h] move register reset to microcode handlers
-    - [?.??h] move common bit sizes to dedicated service
-    - [1.00h] implement store instruction
     - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
-
+    - [?.??h] change jnz to jz
+    - [?.??h] move register reset to microcode handlers
+    - [1.00h] implement store instruction
+    - [?.??h] any register support at ld/st
+    
         :: fun starts here ::
     - [1.5h] add DI and clean up
     - [?.?h] test performance with dedicated Register and Signal classes (masking by bitSize and toString would be inside)
@@ -166,7 +168,7 @@ function runCpu() {
             Logger.log(
                 0, 
                 '                                                      ' +
-                '                               clockTicks: ' + BitUtil.hex(clockTicks, BitUtil.BYTE_4)
+                '                               clockTicks: ' + BitUtil.hex(clockTicks, BitSize.MEMORY_WIDTH)
             );
 
             Logger.log(
@@ -238,47 +240,47 @@ function cpuLog(hideCpuClockInfo) {
     Logger.log(
         1,
         'in.clock: ' + cpu.input.clock + ' | ' +
-        'in.memoryRead = ' + BitUtil.hex(cpu.input.memoryRead, BitUtil.BYTE_4) + ' | ' +
-        'in.reset = ' + BitUtil.hex(cpu.input.reset, BitUtil.BIT_1) + '      ' +
-        'out.memoryRowAddress = ' + BitUtil.hex(cpu.output.memoryRowAddress, BitUtil.BYTE_2 - BitUtil.BIT_2) + ' | ' +
-        'out.memoryWrite = ' + BitUtil.hex(cpu.output.memoryWrite, BitUtil.BYTE_4) + ' | ' +
-        'out.memoryWE = ' + BitUtil.hex(cpu.output.memoryWE, BitUtil.BIT_1)
+        'in.memoryRead = ' + BitUtil.hex(cpu.input.memoryRead, BitSize.MEMORY_WIDTH) + ' | ' +
+        'in.reset = ' + BitUtil.hex(cpu.input.reset, BitSize.SINGLE_BIT) + '      ' +
+        'out.memoryRowAddress = ' + BitUtil.hex(cpu.output.memoryRowAddress, BitSize.ADDRESS_ROW) + ' | ' +
+        'out.memoryWrite = ' + BitUtil.hex(cpu.output.memoryWrite, BitSize.MEMORY_WIDTH) + ' | ' +
+        'out.memoryWE = ' + BitUtil.hex(cpu.output.memoryWE, BitSize.SINGLE_BIT)
     );
 
     Logger.log(
         1,
-        'regReset = ' + BitUtil.hex(c.regReset, BitUtil.BIT_1) + ' | ' +
-        'regSequencer = ' + BitUtil.hex(c.regSequencer, BitUtil.BYTE_HALF) + ' | ' +
-        'regInstruction = ' + BitUtil.hex(c.regInstruction, BitUtil.BYTE_4) + ' | ' +
-        'regClockTick = ' + BitUtil.hex(c.regClockTick, BitUtil.BYTE_4)
+        'regReset = ' + BitUtil.hex(c.regReset, BitSize.SINGLE_BIT) + ' | ' +
+        'regSequencer = ' + BitUtil.hex(c.regSequencer, BitSize.SEQUENCER) + ' | ' +
+        'regInstruction = ' + BitUtil.hex(c.regInstruction, BitSize.MEMORY_WIDTH) + ' | ' +
+        'regClockTick = ' + BitUtil.hex(c.regClockTick, BitSize.MEMORY_WIDTH)
     );
     Logger.log(
         1,
-        'regMemoryBuffer = ' + BitUtil.hex(c.regMemoryBuffer, BitUtil.BYTE_4) + ' | ' +
-        'regMemoryRowAddress = ' + BitUtil.hex(c.regMemoryRowAddress, BitUtil.BYTE_2 - BitUtil.BIT_2) + ' | ' +
-        'regMemoryWrite = ' + BitUtil.hex(c.regMemoryWrite, BitUtil.BYTE_4)
+        'regMemoryBuffer = ' + BitUtil.hex(c.regMemoryBuffer, BitSize.MEMORY_WIDTH) + ' | ' +
+        'regMemoryRowAddress = ' + BitUtil.hex(c.regMemoryRowAddress, BitSize.ADDRESS_ROW) + ' | ' +
+        'regMemoryWrite = ' + BitUtil.hex(c.regMemoryWrite, BitSize.MEMORY_WIDTH)
     );
     Logger.log(
         1,
-        'reg00 = ' + BitUtil.hex(rf.read(0), BitUtil.BYTE_2) + ' | ' +
-        'reg01 = ' + BitUtil.hex(rf.read(1), BitUtil.BYTE_2) + ' | ' +
-        'reg02 = ' + BitUtil.hex(rf.read(2), BitUtil.BYTE_2) + ' | ' +
-        'reg03 = ' + BitUtil.hex(rf.read(3), BitUtil.BYTE_2) + ' | ' +
-        'reg04 = ' + BitUtil.hex(rf.read(4), BitUtil.BYTE_2) + ' | ' +
-        'reg05 = ' + BitUtil.hex(rf.read(5), BitUtil.BYTE_2) + ' | ' +
-        'reg06 = ' + BitUtil.hex(rf.read(6), BitUtil.BYTE_2) + ' | ' +
-        'reg07 = ' + BitUtil.hex(rf.read(7), BitUtil.BYTE_2)
+        'reg00 = ' + BitUtil.hex(rf.read(0), BitSize.REGISTER) + ' | ' +
+        'reg01 = ' + BitUtil.hex(rf.read(1), BitSize.REGISTER) + ' | ' +
+        'reg02 = ' + BitUtil.hex(rf.read(2), BitSize.REGISTER) + ' | ' +
+        'reg03 = ' + BitUtil.hex(rf.read(3), BitSize.REGISTER) + ' | ' +
+        'reg04 = ' + BitUtil.hex(rf.read(4), BitSize.REGISTER) + ' | ' +
+        'reg05 = ' + BitUtil.hex(rf.read(5), BitSize.REGISTER) + ' | ' +
+        'reg06 = ' + BitUtil.hex(rf.read(6), BitSize.REGISTER) + ' | ' +
+        'reg07 = ' + BitUtil.hex(rf.read(7), BitSize.REGISTER)
     );
     Logger.log(
         1,
-        'reg08 = ' + BitUtil.hex(rf.read(8), BitUtil.BYTE_2) + ' | ' +
-        'reg09 = ' + BitUtil.hex(rf.read(9), BitUtil.BYTE_2) + ' | ' +
-        'reg10 = ' + BitUtil.hex(rf.read(10), BitUtil.BYTE_2) + ' | ' +
-        'reg11 = ' + BitUtil.hex(rf.read(11), BitUtil.BYTE_2) + ' | ' +
-        'reg12 = ' + BitUtil.hex(rf.read(12), BitUtil.BYTE_2) + ' | ' +
-        'reg13 = ' + BitUtil.hex(rf.read(13), BitUtil.BYTE_2) + ' | ' +
-        'reg14 = ' + BitUtil.hex(rf.read(14), BitUtil.BYTE_2) + ' | ' +
-        'regPC = ' + BitUtil.hex(rf.read(RegisterFile.PROGRAM_COUNTER), BitUtil.BYTE_2)
+        'reg08 = ' + BitUtil.hex(rf.read(8), BitSize.REGISTER) + ' | ' +
+        'reg09 = ' + BitUtil.hex(rf.read(9), BitSize.REGISTER) + ' | ' +
+        'reg10 = ' + BitUtil.hex(rf.read(10), BitSize.REGISTER) + ' | ' +
+        'reg11 = ' + BitUtil.hex(rf.read(11), BitSize.REGISTER) + ' | ' +
+        'reg12 = ' + BitUtil.hex(rf.read(12), BitSize.REGISTER) + ' | ' +
+        'reg13 = ' + BitUtil.hex(rf.read(13), BitSize.REGISTER) + ' | ' +
+        'reg14 = ' + BitUtil.hex(rf.read(14), BitSize.REGISTER) + ' | ' +
+        'regPC = ' + BitUtil.hex(rf.read(RegisterFile.PROGRAM_COUNTER), BitSize.REGISTER)
     );
 
     if (!benchmarkMode) {

@@ -26,10 +26,10 @@ var MicrocodeHandlerLdFirst = (function () {
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regIn0 = ' + regIn0);
-                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
+                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER));
                 Logger.log(3, 'column = ' + column);
-                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitUtil.BYTE_4));
-                Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));
+                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitSize.MEMORY_WIDTH));
+                Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitSize.MEMORY_WIDTH));
             }
 
             registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);

@@ -24,7 +24,7 @@ var MicrocodeHandlerStFirstC = (function () {
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regIn0 = ' + regIn0);
-                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
+                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER));
             }
 
             registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
