@@ -122,7 +122,7 @@ function triggerCpuResetAndProgramStaticRam() {
 
     for (i = 0; i < 2; i++) {
         Logger.log(1, '[ACTION] reset enable #' + i);
-        cpu.input.reset = true;
+        cpu.inputBag.reset = true;
         clockHigh();
         clockLow();
         Logger.log(1, "\n");        
@@ -135,7 +135,7 @@ function triggerCpuResetAndProgramStaticRam() {
     Logger.log(1, "\n");
 
     Logger.log(1, '[ACTION] reset disable');
-    cpu.input.reset = false;
+    cpu.inputBag.reset = false;
     clockHigh();
     clockLow();
     Logger.log(1, "\n");
@@ -201,7 +201,7 @@ function syncCpuWithStaticRam() {
     staticRam.setDataIn(cpu.output.memoryWrite);
     staticRam.setWriteEnable(cpu.output.memoryWE);
 
-    cpu.input.memoryRead = staticRam.getDataOut();
+    cpu.inputBag.memoryRead = staticRam.getDataOut();
 }
 
 function clockHigh() {
@@ -230,7 +230,7 @@ function cpuLog(hideCpuClockInfo) {
         c = cpu.registerBag;
 
     if (!hideCpuClockInfo) {
-        if (cpu.input.clock) {
+        if (cpu.inputBag.clock) {
             Logger.log(1, '----> CPU state after rising edge of the clock (signals are still propagating thought the CPU)');
         } else {
             Logger.log(1, '----> CPU state after faling edge of the clock (results/inputs latched in flipflops)');
@@ -239,9 +239,9 @@ function cpuLog(hideCpuClockInfo) {
     
     Logger.log(
         1,
-        'in.clock: ' + cpu.input.clock + ' | ' +
-        'in.memoryRead = ' + BitUtil.hex(cpu.input.memoryRead, BitSize.MEMORY_WIDTH) + ' | ' +
-        'in.reset = ' + BitUtil.hex(cpu.input.reset, BitSize.SINGLE_BIT) + '      ' +
+        'in.clock: ' + cpu.inputBag.clock + ' | ' +
+        'in.memoryRead = ' + BitUtil.hex(cpu.inputBag.memoryRead, BitSize.MEMORY_WIDTH) + ' | ' +
+        'in.reset = ' + BitUtil.hex(cpu.inputBag.reset, BitSize.SINGLE_BIT) + '      ' +
         'out.memoryRowAddress = ' + BitUtil.hex(cpu.output.memoryRowAddress, BitSize.ADDRESS_ROW) + ' | ' +
         'out.memoryWrite = ' + BitUtil.hex(cpu.output.memoryWrite, BitSize.MEMORY_WIDTH) + ' | ' +
         'out.memoryWE = ' + BitUtil.hex(cpu.output.memoryWE, BitSize.SINGLE_BIT)

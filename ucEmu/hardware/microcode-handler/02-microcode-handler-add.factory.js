@@ -13,7 +13,7 @@ var MicrocodeHandlerAdd = (function () {
         MEA.prototype = Object.create(AbstractMicrocode.prototype);
         MEA.prototype.constructor = MEA;
 
-        MEA.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MEA.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 

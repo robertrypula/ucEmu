@@ -13,7 +13,7 @@ var MicrocodeHandlerStFirstB = (function () {
         MESFB.prototype = Object.create(AbstractMicrocode.prototype);
         MESFB.prototype.constructor = MESFB;
 
-        MESFB.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MESFB.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');

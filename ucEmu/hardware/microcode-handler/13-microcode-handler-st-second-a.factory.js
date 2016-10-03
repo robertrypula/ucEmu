@@ -13,7 +13,7 @@ var MicrocodeHandlerStSecondA = (function () {
         MESSA.prototype = Object.create(AbstractMicrocode.prototype);
         MESSA.prototype.constructor = MESSA;
 
-        MESSA.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MESSA.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');

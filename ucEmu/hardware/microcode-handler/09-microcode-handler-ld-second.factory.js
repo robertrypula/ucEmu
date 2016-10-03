@@ -13,7 +13,7 @@ var MicrocodeHandlerLdSecond = (function () {
         MELS.prototype = Object.create(AbstractMicrocode.prototype);
         MELS.prototype.constructor = MELS;
 
-        MELS.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MELS.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
             var regIn0, regIn0Value, column, columnFromTheBack,
                 memoryReadShifted, memoryReadFinal;
             
@@ -32,7 +32,7 @@ var MicrocodeHandlerLdSecond = (function () {
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER));
                 Logger.log(3, 'column = ' + column);
-                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitSize.MEMORY_WIDTH));
+                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(inputBag.memoryRead, BitSize.MEMORY_WIDTH));
                 Logger.log(3, 'columnFromTheBack = ' + columnFromTheBack);
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitSize.MEMORY_WIDTH));
                 Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitSize.MEMORY_WIDTH));

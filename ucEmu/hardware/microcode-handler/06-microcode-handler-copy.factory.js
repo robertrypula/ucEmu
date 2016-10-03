@@ -13,7 +13,7 @@ var MicrocodeHandlerCopy = (function () {
         MEC.prototype = Object.create(AbstractMicrocode.prototype);
         MEC.prototype.constructor = MEC;
 
-        MEC.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MEC.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
             var regOut, regIn0, regIn0Value;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);

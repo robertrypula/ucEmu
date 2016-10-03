@@ -13,7 +13,7 @@ var MicrocodeHandlerStFirstC = (function () {
         MESFC.prototype = Object.create(AbstractMicrocode.prototype);
         MESFC.prototype.constructor = MESFC;
 
-        MESFC.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MESFC.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
             var regIn0, regIn0Value;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);

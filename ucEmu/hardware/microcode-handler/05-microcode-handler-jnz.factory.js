@@ -13,7 +13,7 @@ var MicrocodeHandlerJnz = (function () {
         MEJ.prototype = Object.create(AbstractMicrocode.prototype);
         MEJ.prototype.constructor = MEJ;
 
-        MEJ.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MEJ.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
             var regIn0, regIn1, regIn0Value, regIn1Value,
                 notZeroFlag, regPCNext;
 

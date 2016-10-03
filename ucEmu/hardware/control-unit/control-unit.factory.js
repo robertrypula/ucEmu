@@ -58,12 +58,12 @@ var ControlUnit = (function () {
             return this.$$instructionSet[instructionIndex];
         };
 
-        CU.prototype.clockHighToLow = function (memoryRead) {
+        CU.prototype.clockHighToLow = function (inputBag) {
             var
                 microcodeHandler = this.getMicrocodeHandler(),
                 instruction = this.getInstruction();
 
-            microcodeHandler.finalizePropagationAndStoreResults(this.$$registerBag, instruction, memoryRead);
+            microcodeHandler.finalizePropagationAndStoreResults(this.$$registerBag, inputBag, instruction);
         };
 
         CU.prototype.getWriteEnable = function (clock) {

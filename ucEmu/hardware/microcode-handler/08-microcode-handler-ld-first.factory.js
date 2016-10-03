@@ -13,13 +13,13 @@ var MicrocodeHandlerLdFirst = (function () {
         MELF.prototype = Object.create(AbstractMicrocode.prototype);
         MELF.prototype.constructor = MELF;
 
-        MELF.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MELF.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
             var regIn0, regIn0Value, column, memoryReadShifted;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
             column = MemoryController.getColumn(regIn0Value);
-            memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(memoryRead, column);
+            memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(inputBag.memoryRead, column);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
@@ -28,7 +28,7 @@ var MicrocodeHandlerLdFirst = (function () {
                 Logger.log(3, 'regIn0 = ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER));
                 Logger.log(3, 'column = ' + column);
-                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitSize.MEMORY_WIDTH));
+                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(inputBag.memoryRead, BitSize.MEMORY_WIDTH));
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitSize.MEMORY_WIDTH));
             }
 

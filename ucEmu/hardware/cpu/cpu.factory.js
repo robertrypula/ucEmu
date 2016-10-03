@@ -105,53 +105,39 @@ var Cpu = (function () {
         var C;
 
         C = function () {
-            this.registerBag = undefined;
-            this.controlUnit = undefined;
-            this.input = undefined;
-            this.output = undefined;
-            this.$$clockPrevious = undefined;
-
-            this.$$initialize();
-            this.$$update();
-        };
-
-        C.prototype.setClock = function (clock) {
-            this.input.clock = clock ? 1 : 0;
-            this.$$update();
-        };
-
-        C.prototype.$$initialize = function () {
             this.registerBag = RegisterBagBuilder.build();
             this.controlUnit = ControlUnitBuilder.build(this.registerBag);
-
-            this.input = {
-                clock: 0,
-                reset: 0,
-                memoryRead: 0
-            };
-
+            this.inputBag = InputBagBuilder.build();
             this.output = {
                 memoryRowAddress: 0,
                 memoryWrite: 0,
                 memoryWE: 0
             };
+            this.$$clockPrevious = null;
+            
+            this.$$update();
+        };
+
+        C.prototype.setClock = function (clock) {
+            this.inputBag.clock = clock ? 1 : 0;
+            this.$$update();
         };
 
         C.prototype.$$update = function () {
             if (this.$$clockPrevious === null) {
-                this.$$clockPrevious = this.input.clock;
+                this.$$clockPrevious = this.inputBag.clock;
             }
 
-            if (this.$$clockPrevious !== this.input.clock) {
-                if (!this.input.clock) {
+            if (this.$$clockPrevious !== this.inputBag.clock) {
+                if (!this.inputBag.clock) {
                     this.$$clockHighToLow();
                 }
-                this.$$clockPrevious = this.input.clock;
+                this.$$clockPrevious = this.inputBag.clock;
             }
 
             this.output.memoryRowAddress = this.registerBag.regMemoryRowAddress;
             this.output.memoryWrite = this.registerBag.regMemoryWrite;
-            this.output.memoryWE = this.controlUnit.getWriteEnable(this.input.clock);
+            this.output.memoryWE = this.controlUnit.getWriteEnable(this.inputBag.clock);
         };
 
         C.prototype.$$clockHighToLow = function () {
@@ -162,10 +148,10 @@ var Cpu = (function () {
                 resetOccurred = true;
             }
 
-            this.registerBag.regReset = this.input.reset;         // store current input
+            this.registerBag.regReset = this.inputBag.reset;         // store current input
 
             if (!resetOccurred) {
-                this.controlUnit.clockHighToLow(this.input.memoryRead);
+                this.controlUnit.clockHighToLow(this.inputBag);
             }
         };
 
@@ -184,7 +170,7 @@ var Cpu = (function () {
 
             rf = this.registerBag.registerFile;
             rb = this.registerBag;
-            i = this.input;
+            i = this.inputBag;
             o = this.output;
 
             // opcode = InstructionRegisterSpliter.getOpcode(rb.regInstruction);

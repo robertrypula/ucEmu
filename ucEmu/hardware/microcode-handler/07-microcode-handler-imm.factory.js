@@ -13,7 +13,7 @@ var MicrocodeHandlerImm = (function () {
         MEI.prototype = Object.create(AbstractMicrocode.prototype);
         MEI.prototype.constructor = MEI;
 
-        MEI.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MEI.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
             var regOut, imm;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);

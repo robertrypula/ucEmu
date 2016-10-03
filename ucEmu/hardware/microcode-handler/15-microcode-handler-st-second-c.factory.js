@@ -13,7 +13,7 @@ var MicrocodeHandlerStSecondC = (function () {
         MESSC.prototype = Object.create(AbstractMicrocode.prototype);
         MESSC.prototype.constructor = MESSC;
 
-        MESSC.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MESSC.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');

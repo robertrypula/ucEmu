@@ -25,7 +25,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
         MFSAD.prototype = Object.create(AbstractMicrocode.prototype);
         MFSAD.prototype.constructor = MFSAD;
 
-        MFSAD.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MFSAD.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
             var column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
                 opcode, byteWidth, programCounter,
                 regProgramCounterNext, regMemoryRowAddressNext, regSequencerNext,
@@ -51,7 +51,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'column = ' + column);
-                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitSize.MEMORY_WIDTH));
+                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(inputBag.memoryRead, BitSize.MEMORY_WIDTH));
                 Logger.log(3, 'columnFromTheBack = ' + columnFromTheBack);
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitSize.MEMORY_WIDTH));
                 Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitSize.MEMORY_WIDTH));

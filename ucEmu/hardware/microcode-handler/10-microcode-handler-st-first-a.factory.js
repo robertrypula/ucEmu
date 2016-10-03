@@ -73,7 +73,7 @@ var MicrocodeHandlerStFirstA = (function () {
         MESFA.prototype = Object.create(AbstractMicrocode.prototype);
         MESFA.prototype.constructor = MESFA;
 
-        MESFA.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MESFA.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');

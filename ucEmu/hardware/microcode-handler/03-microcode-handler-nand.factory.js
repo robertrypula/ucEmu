@@ -13,7 +13,7 @@ var MicrocodeHandlerNand = (function () {
         MEN.prototype = Object.create(AbstractMicrocode.prototype);
         MEN.prototype.constructor = MEN;
 
-        MEN.prototype.finalizePropagationAndStoreResults = function (registerBag, instruction, memoryRead) {
+        MEN.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
