@@ -30,9 +30,9 @@ TODO list:
     + [?.??h] change 'instruction decoder' service name to some 'instruction register spliter'
     + [?.??h] move output update to cpu
     + [?.??h] new parameter or microcode handlers (instruction), fix undefined methods errors
+    + [?.??h] add WE clock flags to the microcodeHandlers
+    + [?.??h] create RegisterBag class
 
-    - [?.??h] add WE clock flags to the microcodeHandlers
-    - [?.??h] create RegisterBag class
     - [?.??h] move register reset to microcode handlers
     - [?.??h] move common bit sizes to dedicated service
     - [1.00h] implement store instruction

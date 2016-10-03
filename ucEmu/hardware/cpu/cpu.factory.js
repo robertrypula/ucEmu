@@ -121,18 +121,7 @@ var Cpu = (function () {
         };
 
         C.prototype.$$initialize = function () {
-            this.registerBag = {
-                // general purpose registers
-                registerFile: RegisterFileBuilder.build(),
-                // special purpose registers
-                regReset: BitUtil.random(BitUtil.BIT_1),
-                regSequencer: BitUtil.random(BitUtil.BYTE_HALF),
-                regInstruction: BitUtil.random(BitUtil.BYTE_4),
-                regClockTick: BitUtil.random(BitUtil.BYTE_4),
-                regMemoryBuffer: BitUtil.random(BitUtil.BYTE_4),
-                regMemoryRowAddress: BitUtil.random(BitUtil.BYTE_2 - BitUtil.BIT_2),
-                regMemoryWrite: BitUtil.random(BitUtil.BYTE_4)
-            };
+            this.registerBag = RegisterBagBuilder.build();
             this.controlUnit = ControlUnitBuilder.build(this.registerBag);
 
             this.input = {
@@ -162,14 +151,14 @@ var Cpu = (function () {
 
             this.output.memoryRowAddress = this.registerBag.regMemoryRowAddress;
             this.output.memoryWrite = this.registerBag.regMemoryWrite;
-            this.output.memoryWE = 0; // this.controlUnit.isWriteEnableFlagActive() && this.input.clock ? 1 : 0;
+            this.output.memoryWE = this.controlUnit.getWriteEnable(this.input.clock);
         };
 
         C.prototype.$$clockHighToLow = function () {
             var resetOccurred = false;
 
             if (this.registerBag.regReset) {
-                this.$$performRegistersReset();
+                this.registerBag.resetAll();
                 resetOccurred = true;
             }
 
@@ -178,20 +167,6 @@ var Cpu = (function () {
             if (!resetOccurred) {
                 this.controlUnit.clockHighToLow(this.input.memoryRead);
             }
-        };
-
-        C.prototype.$$performRegistersReset = function () {
-            this.registerBag.regSequencer = 0;
-            this.registerBag.regInstruction = 0;
-            this.registerBag.regClockTick = 0;
-
-            this.registerBag.regMemoryBuffer = 0;
-            this.registerBag.regMemoryRowAddress = 0;
-            this.registerBag.regMemoryWrite = 0;
-
-            this.registerBag.registerFile.reset();
-
-            // !!! regReset register is excluded from reset !!!
         };
 
         C.prototype.$$dumpStateLoopGroupKey = function (group, current, previous, callback) {
@@ -205,14 +180,14 @@ var Cpu = (function () {
         };
 
         C.prototype.dumpState = function (previous) {
-            var dump, rf, c, i, o, /*opcode, */key;
+            var dump, rf, rb, i, o, /*opcode, */key;
 
             rf = this.registerBag.registerFile;
-            c = this.registerBag;
+            rb = this.registerBag;
             i = this.input;
             o = this.output;
 
-            // opcode = InstructionRegisterSpliter.getOpcode(c.regInstruction);
+            // opcode = InstructionRegisterSpliter.getOpcode(rb.regInstruction);
 
             dump = {
                 input: {
@@ -226,13 +201,13 @@ var Cpu = (function () {
                     memoryWE: { value: o.memoryWE, bitSize: BitUtil.BIT_1, changed: null }
                 },
                 registerSpecialPurpose: {
-                    regReset: { value: c.regReset, bitSize: BitUtil.BIT_1, changed: null },
-                    regSequencer: { value: c.regSequencer, bitSize: BitUtil.BYTE_HALF, changed: null },
-                    regInstruction: { value: c.regInstruction, bitSize: BitUtil.BYTE_4, changed: null },
-                    regClockTick: { value: c.regClockTick, bitSize: BitUtil.BYTE_4, changed: null },
-                    regMemoryBuffer: { value: c.regMemoryBuffer, bitSize: BitUtil.BYTE_4, changed: null },
-                    regMemoryRowAddress: { value: c.regMemoryRowAddress, bitSize: BitUtil.BYTE_2 - BitUtil.BIT_2, changed: null },
-                    regMemoryWrite: { value: c.regMemoryWrite, bitSize: BitUtil.BYTE_4, changed: null }
+                    regReset: { value: rb.regReset, bitSize: BitUtil.BIT_1, changed: null },
+                    regSequencer: { value: rb.regSequencer, bitSize: BitUtil.BYTE_HALF, changed: null },
+                    regInstruction: { value: rb.regInstruction, bitSize: BitUtil.BYTE_4, changed: null },
+                    regClockTick: { value: rb.regClockTick, bitSize: BitUtil.BYTE_4, changed: null },
+                    regMemoryBuffer: { value: rb.regMemoryBuffer, bitSize: BitUtil.BYTE_4, changed: null },
+                    regMemoryRowAddress: { value: rb.regMemoryRowAddress, bitSize: BitUtil.BYTE_2 - BitUtil.BIT_2, changed: null },
+                    regMemoryWrite: { value: rb.regMemoryWrite, bitSize: BitUtil.BYTE_4, changed: null }
                 },
                 registerGeneralPurpose: {
                     reg00: { value: rf.read(0), bitSize: BitUtil.BYTE_2, changed: null },
@@ -253,9 +228,9 @@ var Cpu = (function () {
                     regPC: { value: rf.read(15), bitSize: BitUtil.BYTE_2, changed: null }
                 },
                 extra: {
-                    // microcodeKey: { value: Microcode.getMicrocodeKey(c.regSequencer), changed: null },
+                    // microcodeKey: { value: Microcode.getMicrocodeKey(rb.regSequencer), changed: null },
                     // opcodeKey: { value: Opcode.getOpcodeKey(opcode), changed: null },
-                    // instruction: InstructionRegisterSpliter.getInstruction(c.regInstruction)
+                    // instruction: InstructionRegisterSpliter.getInstruction(rb.regInstruction)
                 }
             };
 

@@ -34,10 +34,19 @@ var MemoryController = (function () {
         }
 
         function getMemoryRowAddressNextRow(address) {
+            // TODO check if this incrementation could be done in ALU
             return BitUtil.mask(
                 this.getMemoryRowAddress(address) + 1,
                 BitUtil.BYTE_2 - BitUtil.BIT_2
             );
+        }
+
+        function getWriteEnable(clock, writeEnablePositive, writeEnableNegative) {
+            var
+                writeEnableActive = writeEnablePositive || writeEnableNegative,
+                result = writeEnableActive && ((clock && writeEnablePositive) || (!clock && writeEnableNegative));
+
+            return result ? 1 : 0;
         }
 
         return {
@@ -47,7 +56,8 @@ var MemoryController = (function () {
             getColumnFromTheBack: getColumnFromTheBack,
             getMemoryReadFinal: getMemoryReadFinal,
             getMemoryRowAddress: getMemoryRowAddress,
-            getMemoryRowAddressNextRow: getMemoryRowAddressNextRow
+            getMemoryRowAddressNextRow: getMemoryRowAddressNextRow,
+            getWriteEnable: getWriteEnable
         };
     }
 

@@ -25,8 +25,9 @@ var MicrocodeHandlerJnz = (function () {
             regPCNext = notZeroFlag ? regIn0Value : registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerJnz');
-                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
+                Logger.log(1, 'microcodeHandlerName = ' + this.name);
+                Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regIn0, regIn1 <-> ' + regIn0 + ', ' + regIn1);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2));
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitUtil.BYTE_2));

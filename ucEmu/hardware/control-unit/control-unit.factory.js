@@ -48,28 +48,11 @@ var ControlUnit = (function () {
             );
         };
 
-        /*
-        CU.prototype.$$getMicrocodeIndex = function (regSequencer) {
-            var result = regSequencer;
-
-            if (regSequencer < 0 || regSequencer >= this.$$controlStore.length) {
-                result = Microcode.FETCH_FIRST;   // fallback to first microcode
-            }
-
-            return result;
-        };
-        */
-
-        CU.prototype.$$getMicrocodeHandler = function () {
-            return this.$$controlStore[this.$$registerBag.regSequencer];
-            /*
-            var microcodeIndex = this.$$getMicrocodeIndex(this.$$registerBag.regSequencer);
-
-            return this.$$controlStore[microcodeIndex];
-            */
+        CU.prototype.getMicrocodeHandler = function () {
+            return this.$$controlStore[this.$$registerBag.regSequencer]; // remember to track index ranges after changing microcode
         };
 
-        CU.prototype.$$getInstruction = function () {
+        CU.prototype.getInstruction = function () {
             var instructionIndex = InstructionRegisterSpliter.getOpcode(this.$$registerBag.regInstruction);
 
             return this.$$instructionSet[instructionIndex];
@@ -77,21 +60,21 @@ var ControlUnit = (function () {
 
         CU.prototype.clockHighToLow = function (memoryRead) {
             var
-                microcodeHandler = this.$$getMicrocodeHandler(),
-                instruction = this.$$getInstruction();
+                microcodeHandler = this.getMicrocodeHandler(),
+                instruction = this.getInstruction();
 
             microcodeHandler.finalizePropagationAndStoreResults(this.$$registerBag, instruction, memoryRead);
         };
 
-        /*
-        CU.prototype.isWriteEnableFlagActive = function () {
-            var
-                microcodeIndex = this.$$getMicrocodeIndex(this.$$registerBag.regSequencer),
-                M = Microcode;
+        CU.prototype.getWriteEnable = function (clock) {
+            var microcodeHandler = this.getMicrocodeHandler();
 
-            return microcodeIndex === M.ST_FIRST_B || microcodeIndex === M.ST_SECOND_B;
+            return MemoryController.getWriteEnable(
+                clock,
+                microcodeHandler.writeEnablePositive,
+                microcodeHandler.writeEnableNegative
+            );
         };
-        */
 
         return CU;
     }

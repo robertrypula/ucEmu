@@ -21,8 +21,9 @@ var MicrocodeHandlerCopy = (function () {
             regIn0Value = registerBag.registerFile.read(regIn0);
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerCopy');
-                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
+                Logger.log(1, 'microcodeHandlerName = ' + this.name);
+                Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitUtil.BYTE_2) + " (COPY, save regIn0Value at regOut)");
             }

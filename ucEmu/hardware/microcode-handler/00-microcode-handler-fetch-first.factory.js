@@ -20,8 +20,9 @@ var MicrocodeHandlerFetchFirst = (function () {
             memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(memoryRead, column);
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequenceFetchFirst');
-                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
+                Logger.log(1, 'microcodeHandlerName = ' + this.name);
+                Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'column = ' + column);
                 Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(memoryRead, BitUtil.BYTE_4));
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitUtil.BYTE_4));

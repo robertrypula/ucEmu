@@ -20,8 +20,9 @@ var MicrocodeHandlerImm = (function () {
             imm = InstructionRegisterSpliter.getImm(registerBag.regInstruction);
 
             if (Logger.isEnabled()) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED] sequencerImm');
-                Logger.log(3, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
+                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
+                Logger.log(1, 'microcodeHandlerName = ' + this.name);
+                Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regOut = ' + regOut);
                 Logger.log(3, 'imm = ' + BitUtil.hex(imm, BitUtil.BYTE_2) + " (store immediate value at regOut)");
             }
