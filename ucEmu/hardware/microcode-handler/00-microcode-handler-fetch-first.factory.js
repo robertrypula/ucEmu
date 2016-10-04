@@ -14,19 +14,24 @@ var MicrocodeHandlerFetchFirst = (function () {
         MFF.prototype.constructor = MFF;
 
         MFF.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
-            var reset, column, memoryReadShifted, clockTick, address;
+            var column, memoryReadShifted, clockTick, address, dummyRegisterValue;
 
-            reset = registerBag.regReset;
-            column = MemoryController.getColumn(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
+            address = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+            dummyRegisterValue = registerBag.registerFile.read(RegisterFile.DUMMY_REGISTER);
+
+            column = MemoryController.getColumn(address);
             memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(inputBag.memoryRead, column);
             clockTick = registerBag.regClockTick;
-            address = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
 
+            internalResultBag.registerSaveIndex = RegisterFile.DUMMY_REGISTER;
+            internalResultBag.register = dummyRegisterValue;
             internalResultBag.sequencer = instruction.microcodeJump;
             internalResultBag.instruction = memoryReadShifted;
             internalResultBag.clockTick = ClockTick.getClockTickNext(clockTick);
             internalResultBag.memoryBuffer = memoryReadShifted;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddressNextRow(address);
+            internalResultBag.memoryWrite = registerBag.regMemoryWrite;
+            internalResultBag.writeEnable = MemoryController.getWriteEnable(inputBag.clock, this.writeEnablePositive, this.writeEnableNegative);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
@@ -37,18 +42,19 @@ var MicrocodeHandlerFetchFirst = (function () {
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitSize.MEMORY_WIDTH));
             }
 
-            if (reset) {
+            if (registerBag.regReset) {
                 registerBag.resetAll();
             } else {
-                // internalResultBag.register
-                // internalResultBag.registerSaveIndex
+                registerBag.registerFile.save(
+                    internalResultBag.registerSaveIndex,
+                    internalResultBag.register
+                );
                 registerBag.regSequencer = internalResultBag.sequencer;
                 registerBag.regInstruction = internalResultBag.instruction;
                 registerBag.regClockTick = internalResultBag.clockTick;
                 registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
                 registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                // internalResultBag.memoryWrite
-                // internalResultBag.writeEnable
+                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
             }
             registerBag.regReset = inputBag.reset;
         };
