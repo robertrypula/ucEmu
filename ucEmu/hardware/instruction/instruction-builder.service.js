@@ -51,6 +51,11 @@ var InstructionBuilder = (function () {
                         opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
                     );
                     break;
+                case O.NOT_YET_DECODED:
+                    instruction = new InstructionNotYetDecoded(
+                        opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
+                    );
+                    break;
             }
 
             if (!instruction) {

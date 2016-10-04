@@ -33,10 +33,15 @@ TODO list:
     + [?.??h] add WE clock flags to the microcodeHandlers
     + [?.??h] create RegisterBag class
     + [?.??h] move common bit sizes to dedicated service
+    + [?.??h] move register reset to microcode handlers
+    + [?.??h] create virtual NotYetDecoded instruction for fetch-first microcode phase
+
+    - [?.??h] microcode handlers should use internalResultBag
+    - [?.??h] split data propagation and data storing at microcode handlers
+    - [?.??h] registerFile instead of single read should have channels like: out0, out1, outAddress
 
     - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
     - [?.??h] change jnz to jz
-    - [?.??h] move register reset to microcode handlers
     - [1.00h] implement store instruction
     - [?.??h] any register support at ld/st
     
@@ -44,7 +49,6 @@ TODO list:
     - [1.5h] add DI and clean up
     - [?.?h] test performance with dedicated Register and Signal classes (masking by bitSize and toString would be inside)
     - [1.0h] move project to separate GitHub repo ('SimpleCPU')
-    - [2.0h] integrate CPU (without static memory) class with Module/Signal class from other repo
 
 CPU inputs:
     - [1 bit] clock
@@ -85,9 +89,9 @@ var memoryState = [
 Logger.setVerbose(benchmarkMode ? -1 : 4);
 var cpu = new Cpu();
 var staticRam = new StaticRam(
-    cpu.output.memoryRowAddress,
-    cpu.output.memoryWE,
-    cpu.output.memoryWrite
+    cpu.outputBag.memoryRowAddress,
+    cpu.outputBag.memoryWE,
+    cpu.outputBag.memoryWrite
 );
 syncCpuWithStaticRam();
 cpu.setClock(false);
@@ -197,9 +201,9 @@ function programStaticRamAndSync(memoryState) {
 }
 
 function syncCpuWithStaticRam() {
-    staticRam.setRow(cpu.output.memoryRowAddress);
-    staticRam.setDataIn(cpu.output.memoryWrite);
-    staticRam.setWriteEnable(cpu.output.memoryWE);
+    staticRam.setRow(cpu.outputBag.memoryRowAddress);
+    staticRam.setDataIn(cpu.outputBag.memoryWrite);
+    staticRam.setWriteEnable(cpu.outputBag.memoryWE);
 
     cpu.inputBag.memoryRead = staticRam.getDataOut();
 }
@@ -242,9 +246,9 @@ function cpuLog(hideCpuClockInfo) {
         'in.clock: ' + cpu.inputBag.clock + ' | ' +
         'in.memoryRead = ' + BitUtil.hex(cpu.inputBag.memoryRead, BitSize.MEMORY_WIDTH) + ' | ' +
         'in.reset = ' + BitUtil.hex(cpu.inputBag.reset, BitSize.SINGLE_BIT) + '      ' +
-        'out.memoryRowAddress = ' + BitUtil.hex(cpu.output.memoryRowAddress, BitSize.ADDRESS_ROW) + ' | ' +
-        'out.memoryWrite = ' + BitUtil.hex(cpu.output.memoryWrite, BitSize.MEMORY_WIDTH) + ' | ' +
-        'out.memoryWE = ' + BitUtil.hex(cpu.output.memoryWE, BitSize.SINGLE_BIT)
+        'out.memoryRowAddress = ' + BitUtil.hex(cpu.outputBag.memoryRowAddress, BitSize.ADDRESS_ROW) + ' | ' +
+        'out.memoryWrite = ' + BitUtil.hex(cpu.outputBag.memoryWrite, BitSize.MEMORY_WIDTH) + ' | ' +
+        'out.memoryWE = ' + BitUtil.hex(cpu.outputBag.memoryWE, BitSize.SINGLE_BIT)
     );
 
     Logger.log(

@@ -6,8 +6,7 @@ var ControlUnit = (function () {
     function _ControlUnit() {
         var CU;
 
-        CU = function (registerBag) {
-            this.$$registerBag = registerBag;
+        CU = function () {
             this.$$controlStore = [];
             this.$$instructionSet = [];
             this.$$initialize();
@@ -46,28 +45,32 @@ var ControlUnit = (function () {
                 InstructionBuilder.build(O.LD, M.LD_FIRST, 2, true, 'ld', 'Load'),
                 InstructionBuilder.build(O.ST, M.ST_FIRST_A, 2, true, 'st', 'Store')
             );
+            this.$$instructionNotYetDecoded = InstructionBuilder.build(
+                O.NOT_YET_DECODED, M.FETCH_SECOND_AND_DECODE, 0, false, '???', 'Not yet decoded'
+            );
         };
 
-        CU.prototype.getMicrocodeHandler = function () {
-            return this.$$controlStore[this.$$registerBag.regSequencer]; // remember to track index ranges after changing microcode
+        CU.prototype.getMicrocodeHandler = function (regSequencer) {
+            // remember to verify index ranges after changing control store
+            return this.$$controlStore[regSequencer];
         };
 
-        CU.prototype.getInstruction = function () {
-            var instructionIndex = InstructionRegisterSpliter.getOpcode(this.$$registerBag.regInstruction);
+        CU.prototype.getInstruction = function (regInstruction, microcodeHandler) {
+            var instructionIndex, instruction;
 
-            return this.$$instructionSet[instructionIndex];
+            if (microcodeHandler.microcode === Microcode.FETCH_FIRST) {
+                instruction = this.$$instructionNotYetDecoded;
+            } else {
+                // remember to verify index ranges after changing instruction set
+                instructionIndex = InstructionRegisterSpliter.getOpcode(regInstruction);
+                instruction = this.$$instructionSet[instructionIndex];
+            }
+
+            return instruction;
         };
 
-        CU.prototype.clockHighToLow = function (inputBag) {
-            var
-                microcodeHandler = this.getMicrocodeHandler(),
-                instruction = this.getInstruction();
-
-            microcodeHandler.finalizePropagationAndStoreResults(this.$$registerBag, inputBag, instruction);
-        };
-
-        CU.prototype.getWriteEnable = function (clock) {
-            var microcodeHandler = this.getMicrocodeHandler();
+        CU.prototype.getWriteEnable = function (clock, regSequencer) {   // TODO refactor
+            var microcodeHandler = this.getMicrocodeHandler(regSequencer);
 
             return MemoryController.getWriteEnable(
                 clock,

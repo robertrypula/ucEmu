@@ -13,9 +13,10 @@ var MicrocodeHandlerFetchFirst = (function () {
         MFF.prototype = Object.create(AbstractMicrocode.prototype);
         MFF.prototype.constructor = MFF;
 
-        MFF.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
-            var column, memoryReadShifted;
-            
+        MFF.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+            var reset, column, memoryReadShifted;
+
+            reset = registerBag.regReset;
             column = MemoryController.getColumn(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
             memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(inputBag.memoryRead, column);
 
@@ -28,11 +29,16 @@ var MicrocodeHandlerFetchFirst = (function () {
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitSize.MEMORY_WIDTH));
             }
 
-            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            registerBag.regMemoryBuffer = memoryReadShifted;
-            registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
-            registerBag.regSequencer = Microcode.FETCH_SECOND_AND_DECODE;
-            registerBag.regInstruction = memoryReadShifted;
+            if (reset) {
+                registerBag.resetAll();
+            } else {
+                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+                registerBag.regMemoryBuffer = memoryReadShifted;
+                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
+                registerBag.regSequencer = instruction.microcodeJump;
+                registerBag.regInstruction = memoryReadShifted;
+            }
+            registerBag.regReset = inputBag.reset;
         };
 
         return MFF;

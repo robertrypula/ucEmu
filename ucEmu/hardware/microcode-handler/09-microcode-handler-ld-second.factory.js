@@ -13,10 +13,11 @@ var MicrocodeHandlerLdSecond = (function () {
         MELS.prototype = Object.create(AbstractMicrocode.prototype);
         MELS.prototype.constructor = MELS;
 
-        MELS.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
-            var regIn0, regIn0Value, column, columnFromTheBack,
+        MELS.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+            var reset, regIn0, regIn0Value, column, columnFromTheBack,
                 memoryReadShifted, memoryReadFinal;
-            
+
+            reset = registerBag.regReset;
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
             column = MemoryController.getColumn(regIn0Value);
@@ -38,10 +39,15 @@ var MicrocodeHandlerLdSecond = (function () {
                 Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitSize.MEMORY_WIDTH));
             }
 
-            registerBag.registerFile.save(RegisterFile.MEMORY_ACCESS, memoryReadFinal);       // it could be at some point any register...
-            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
-            registerBag.regSequencer = Microcode.FETCH_FIRST;
+            if (reset) {
+                registerBag.resetAll();
+            } else {
+                registerBag.registerFile.save(RegisterFile.MEMORY_ACCESS, memoryReadFinal);       // it could be at some point any register...
+                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
+                registerBag.regSequencer = Microcode.FETCH_FIRST;
+            }
+            registerBag.regReset = inputBag.reset;
         };
 
         return MELS;

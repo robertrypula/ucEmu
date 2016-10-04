@@ -36,46 +36,12 @@ var InstructionRegisterSpliter = (function () {
             return regInstruction & 0x0000FFFF;
         }
 
-        /*
-        function getByteWidth(regInstruction) {
-            var opcode = getOpcode(regInstruction);
-
-            return this.$$instructionSet[opcode].byteWidth;
-            // return $$byteWidthLookup[opcode];
-        }
-
-        function getSequencerNext(regInstruction) {
-            var opcode = getOpcode(regInstruction);
-
-            return this.$$instructionSet[opcode].sequencerNext;
-            // return $$sequencerNextLookup[opcode];
-        }
-
-        function getProgramCounterNext(regInstruction, regProgramCounter) {
-            var byteWidth = getByteWidth(regInstruction);
-
-            return BitUtil.mask(regProgramCounter + byteWidth, BitSize.REGISTER);
-        }
-
-        function isLoadOrStoreOpcode(regInstruction) {
-            var
-                opcode = getOpcode(regInstruction),
-                O = Opcode;
-
-            return opcode === O.LD || opcode === O.ST;
-        }
-        */
-
         return {
             getOpcode: getOpcode,
             getRegOut: getRegOut,
             getRegIn0: getRegIn0,
             getRegIn1: getRegIn1,
             getImm: getImm
-            // getByteWidth: getByteWidth,
-            // getSequencerNext: getSequencerNext,
-            // getProgramCounterNext: getProgramCounterNext,
-            // isLoadOrStoreOpcode: isLoadOrStoreOpcode
         };
     }
 

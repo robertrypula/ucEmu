@@ -13,10 +13,11 @@ var MicrocodeHandlerAdd = (function () {
         MEA.prototype = Object.create(AbstractMicrocode.prototype);
         MEA.prototype.constructor = MEA;
 
-        MEA.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
-            var regOut, regIn0, regIn1,
+        MEA.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+            var reset, regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult;
 
+            reset = registerBag.regReset;
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn1 = InstructionRegisterSpliter.getRegIn1(registerBag.regInstruction);
@@ -34,10 +35,15 @@ var MicrocodeHandlerAdd = (function () {
                 Logger.log(3, 'result = ' + BitUtil.hex(regResult, BitSize.REGISTER) + ' (sum)');
             }
 
-            registerBag.registerFile.save(regOut, regResult);
-            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
-            registerBag.regSequencer = Microcode.FETCH_FIRST;
+            if (reset) {
+                registerBag.resetAll();
+            } else {
+                registerBag.registerFile.save(regOut, regResult);
+                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
+                registerBag.regSequencer = Microcode.FETCH_FIRST;
+            }
+            registerBag.regReset = inputBag.reset;
         };
 
         return MEA;

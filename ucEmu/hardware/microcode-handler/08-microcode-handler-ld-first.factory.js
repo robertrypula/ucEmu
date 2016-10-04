@@ -13,9 +13,10 @@ var MicrocodeHandlerLdFirst = (function () {
         MELF.prototype = Object.create(AbstractMicrocode.prototype);
         MELF.prototype.constructor = MELF;
 
-        MELF.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
-            var regIn0, regIn0Value, column, memoryReadShifted;
+        MELF.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+            var reset, regIn0, regIn0Value, column, memoryReadShifted;
 
+            reset = registerBag.regReset;
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
             column = MemoryController.getColumn(regIn0Value);
@@ -32,10 +33,15 @@ var MicrocodeHandlerLdFirst = (function () {
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitSize.MEMORY_WIDTH));
             }
 
-            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            registerBag.regMemoryBuffer = memoryReadShifted;
-            registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
-            registerBag.regSequencer = Microcode.LD_SECOND;
+            if (reset) {
+                registerBag.resetAll();
+            } else {
+                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+                registerBag.regMemoryBuffer = memoryReadShifted;
+                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
+                registerBag.regSequencer = Microcode.LD_SECOND;
+            }
+            registerBag.regReset = inputBag.reset;
         };
 
         return MELF;

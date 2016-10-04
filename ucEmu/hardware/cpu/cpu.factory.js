@@ -106,13 +106,10 @@ var Cpu = (function () {
 
         C = function () {
             this.registerBag = RegisterBagBuilder.build();
-            this.controlUnit = ControlUnitBuilder.build(this.registerBag);
             this.inputBag = InputBagBuilder.build();
-            this.output = {
-                memoryRowAddress: 0,
-                memoryWrite: 0,
-                memoryWE: 0
-            };
+            this.controlUnit = ControlUnitBuilder.build();
+            this.internalResultBag = InternalResultBagBuilder.build();
+            this.outputBag = OutputBagBuilder.build();
             this.$$clockPrevious = null;
             
             this.$$update();
@@ -130,29 +127,27 @@ var Cpu = (function () {
 
             if (this.$$clockPrevious !== this.inputBag.clock) {
                 if (!this.inputBag.clock) {
-                    this.$$clockHighToLow();
+                    this.$$clockFallingEdge();
                 }
                 this.$$clockPrevious = this.inputBag.clock;
             }
 
-            this.output.memoryRowAddress = this.registerBag.regMemoryRowAddress;
-            this.output.memoryWrite = this.registerBag.regMemoryWrite;
-            this.output.memoryWE = this.controlUnit.getWriteEnable(this.inputBag.clock);
+            this.outputBag.memoryRowAddress = this.registerBag.regMemoryRowAddress;
+            this.outputBag.memoryWrite = this.registerBag.regMemoryWrite;
+            this.outputBag.memoryWE = this.controlUnit.getWriteEnable(this.inputBag.clock, this.registerBag.regSequencer);  // TODO refactor, take it from internalResultBag
         };
 
-        C.prototype.$$clockHighToLow = function () {
-            var resetOccurred = false;
+        C.prototype.$$clockFallingEdge = function () {
+            var
+                microcodeHandler = this.controlUnit.getMicrocodeHandler(this.registerBag.regSequencer),
+                instruction = this.controlUnit.getInstruction(this.registerBag.regInstruction, microcodeHandler);
 
-            if (this.registerBag.regReset) {
-                this.registerBag.resetAll();
-                resetOccurred = true;
-            }
-
-            this.registerBag.regReset = this.inputBag.reset;         // store current input
-
-            if (!resetOccurred) {
-                this.controlUnit.clockHighToLow(this.inputBag);
-            }
+            microcodeHandler.finalizePropagationAndStoreResults(
+                this.registerBag,
+                this.inputBag,
+                instruction,
+                this.internalResultBag
+            );
         };
 
         C.prototype.$$dumpStateLoopGroupKey = function (group, current, previous, callback) {
@@ -171,7 +166,7 @@ var Cpu = (function () {
             rf = this.registerBag.registerFile;
             rb = this.registerBag;
             i = this.inputBag;
-            o = this.output;
+            o = this.outputBag;
 
             // opcode = InstructionRegisterSpliter.getOpcode(rb.regInstruction);
 

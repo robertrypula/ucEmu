@@ -13,16 +13,23 @@ var MicrocodeHandlerStSecondA = (function () {
         MESSA.prototype = Object.create(AbstractMicrocode.prototype);
         MESSA.prototype.constructor = MESSA;
 
-        MESSA.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
+        MESSA.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+            var reset;
 
+            reset = registerBag.regReset;
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
             }
 
-            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            registerBag.regSequencer = Microcode.ST_SECOND_B;
+            if (reset) {
+                registerBag.resetAll();
+            } else {
+                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+                registerBag.regSequencer = Microcode.ST_SECOND_B;
+            }
+            registerBag.regReset = inputBag.reset;
         };
 
         return MESSA;

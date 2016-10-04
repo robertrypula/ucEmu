@@ -13,9 +13,10 @@ var MicrocodeHandlerCopy = (function () {
         MEC.prototype = Object.create(AbstractMicrocode.prototype);
         MEC.prototype.constructor = MEC;
 
-        MEC.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
-            var regOut, regIn0, regIn0Value;
+        MEC.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+            var reset, regOut, regIn0, regIn0Value;
 
+            reset = registerBag.regReset;
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
@@ -27,11 +28,16 @@ var MicrocodeHandlerCopy = (function () {
                 Logger.log(3, 'regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER) + " (COPY, save regIn0Value at regOut)");
             }
-            
-            registerBag.registerFile.save(regOut, regIn0Value);
-            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
-            registerBag.regSequencer = Microcode.FETCH_FIRST;
+
+            if (reset) {
+                registerBag.resetAll();
+            } else {
+                registerBag.registerFile.save(regOut, regIn0Value);
+                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
+                registerBag.regSequencer = Microcode.FETCH_FIRST;
+            }
+            registerBag.regReset = inputBag.reset;
         };
 
         return MEC;

@@ -12,7 +12,8 @@ var Opcode = (function () {
             COPY: 4,
             IMM: 5,
             LD: 6,
-            ST: 7
+            ST: 7,
+            NOT_YET_DECODED: -1      // actually it's not 'real' instruction
         };
     }
 

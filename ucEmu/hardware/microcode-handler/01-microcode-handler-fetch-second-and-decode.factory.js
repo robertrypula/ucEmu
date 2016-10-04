@@ -25,12 +25,13 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
         MFSAD.prototype = Object.create(AbstractMicrocode.prototype);
         MFSAD.prototype.constructor = MFSAD;
 
-        MFSAD.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction) {
-            var column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
+        MFSAD.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+            var reset, column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
                 opcode, byteWidth, programCounter,
                 regProgramCounterNext, regMemoryRowAddressNext, regSequencerNext,
                 regIn0, regIn0Value;
 
+            reset = registerBag.regReset;
             column = MemoryController.getColumn(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);
             memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
@@ -65,11 +66,16 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
                 Logger.log(3, 'regMemoryRowAddressNext = ' + BitUtil.hex(regMemoryRowAddressNext, BitSize.ADDRESS_ROW));
             }
 
-            registerBag.registerFile.save(RegisterFile.PROGRAM_COUNTER, regProgramCounterNext);
-            registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(regMemoryRowAddressNext);
-            registerBag.regSequencer = regSequencerNext;
-            registerBag.regInstruction = memoryReadFinal;
+            if (reset) {
+                registerBag.resetAll();
+            } else {
+                registerBag.registerFile.save(RegisterFile.PROGRAM_COUNTER, regProgramCounterNext);
+                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(regMemoryRowAddressNext);
+                registerBag.regSequencer = regSequencerNext;
+                registerBag.regInstruction = memoryReadFinal;
+            }
+            registerBag.regReset = inputBag.reset;
         };
 
         return MFSAD;
