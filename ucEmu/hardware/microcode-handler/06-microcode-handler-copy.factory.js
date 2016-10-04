@@ -14,12 +14,20 @@ var MicrocodeHandlerCopy = (function () {
         MEC.prototype.constructor = MEC;
 
         MEC.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
-            var reset, regOut, regIn0, regIn0Value;
+            var reset, regOut, regIn0, regIn0Value, address;
 
             reset = registerBag.regReset;
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
+
+            address = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+
+            internalResultBag.register = regIn0Value;
+            internalResultBag.registerSaveIndex = regOut;
+            internalResultBag.sequencer = Microcode.FETCH_FIRST;
+            internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address); // TODO when instruction will save to PC it will produce wrong result
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
@@ -32,10 +40,17 @@ var MicrocodeHandlerCopy = (function () {
             if (reset) {
                 registerBag.resetAll();
             } else {
-                registerBag.registerFile.save(regOut, regIn0Value);
-                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
-                registerBag.regSequencer = Microcode.FETCH_FIRST;
+                registerBag.registerFile.save(
+                    internalResultBag.registerSaveIndex,
+                    internalResultBag.register
+                );
+                registerBag.regSequencer = internalResultBag.sequencer;
+                // internalResultBag.instruction
+                registerBag.regClockTick = internalResultBag.clockTick;
+                // internalResultBag.memoryBuffer
+                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
+                // internalResultBag.memoryWrite
+                // internalResultBag.writeEnable
             }
             registerBag.regReset = inputBag.reset;
         };

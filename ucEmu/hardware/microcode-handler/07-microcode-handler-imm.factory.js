@@ -33,7 +33,7 @@ var MicrocodeHandlerImm = (function () {
             } else {
                 registerBag.registerFile.save(regOut, imm);
                 registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
+                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save to PC it will produce wrong result
                 registerBag.regSequencer = Microcode.FETCH_FIRST;
             }
             registerBag.regReset = inputBag.reset;

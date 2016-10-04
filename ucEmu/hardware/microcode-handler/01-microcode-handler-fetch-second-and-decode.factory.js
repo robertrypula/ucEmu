@@ -29,7 +29,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             var reset, column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
                 opcode, byteWidth, programCounter,
                 regProgramCounterNext, regMemoryRowAddressNext, regSequencerNext,
-                regIn0, regIn0Value;
+                regIn0, regIn0Value, clockTick;
 
             reset = registerBag.regReset;
             column = MemoryController.getColumn(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER));
@@ -46,6 +46,15 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
             regMemoryRowAddressNext = instruction.memoryRowAddressFromRegIn0 ? regIn0Value : regProgramCounterNext;
+
+            clockTick = registerBag.regClockTick;
+
+            internalResultBag.register = regProgramCounterNext;
+            internalResultBag.registerSaveIndex = RegisterFile.PROGRAM_COUNTER;
+            internalResultBag.sequencer = regSequencerNext;
+            internalResultBag.instruction = memoryReadFinal;
+            internalResultBag.clockTick = ClockTick.getClockTickNext(clockTick);
+            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(regMemoryRowAddressNext);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
@@ -69,11 +78,17 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             if (reset) {
                 registerBag.resetAll();
             } else {
-                registerBag.registerFile.save(RegisterFile.PROGRAM_COUNTER, regProgramCounterNext);
-                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(regMemoryRowAddressNext);
-                registerBag.regSequencer = regSequencerNext;
-                registerBag.regInstruction = memoryReadFinal;
+                registerBag.registerFile.save(
+                    internalResultBag.registerSaveIndex,
+                    internalResultBag.register
+                );
+                registerBag.regSequencer = internalResultBag.sequencer;
+                registerBag.regInstruction = internalResultBag.instruction;
+                registerBag.regClockTick = internalResultBag.clockTick;
+                // internalResultBag.memoryBuffer = undefined;
+                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
+                // internalResultBag.memoryWrite = undefined;
+                // internalResultBag.writeEnable = undefined;
             }
             registerBag.regReset = inputBag.reset;
         };

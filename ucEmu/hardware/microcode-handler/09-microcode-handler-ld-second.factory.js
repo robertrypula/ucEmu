@@ -15,7 +15,7 @@ var MicrocodeHandlerLdSecond = (function () {
 
         MELS.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
             var reset, regIn0, regIn0Value, column, columnFromTheBack,
-                memoryReadShifted, memoryReadFinal;
+                memoryReadShifted, memoryReadFinal, address;
 
             reset = registerBag.regReset;
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
@@ -25,6 +25,14 @@ var MicrocodeHandlerLdSecond = (function () {
             memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
             // TODO map memoryReadFinal to register at MemoryController
+
+            address = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+
+            internalResultBag.register = memoryReadFinal;
+            internalResultBag.registerSaveIndex = RegisterFile.MEMORY_ACCESS;    // TODO it could be at some point any register...
+            internalResultBag.sequencer = Microcode.FETCH_FIRST;
+            internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address); // TODO when instruction will save to PC it will produce wrong result
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
@@ -42,10 +50,17 @@ var MicrocodeHandlerLdSecond = (function () {
             if (reset) {
                 registerBag.resetAll();
             } else {
-                registerBag.registerFile.save(RegisterFile.MEMORY_ACCESS, memoryReadFinal);       // it could be at some point any register...
-                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddress(registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER)); // TODO when instruction will save also to PC it will produce troubles in real circuit
-                registerBag.regSequencer = Microcode.FETCH_FIRST;
+                registerBag.registerFile.save(
+                    internalResultBag.registerSaveIndex,
+                    internalResultBag.register
+                );
+                registerBag.regSequencer = internalResultBag.sequencer;
+                // internalResultBag.instruction
+                registerBag.regClockTick = internalResultBag.clockTick;
+                // internalResultBag.memoryBuffer
+                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
+                // internalResultBag.memoryWrite
+                // internalResultBag.writeEnable
             }
             registerBag.regReset = inputBag.reset;
         };

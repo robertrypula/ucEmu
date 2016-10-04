@@ -20,7 +20,8 @@ var Microcode = (function () {
             ST_FIRST_C: 12,
             ST_SECOND_A: 13,
             ST_SECOND_B: 14,
-            ST_SECOND_C: 15
+            ST_SECOND_C: 15,
+            FROM_INSTRUCTION: -1   // actually it's not 'real' microcode entry
         };
     }
 

@@ -20,6 +20,10 @@ var MicrocodeHandlerStFirstC = (function () {
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
 
+            internalResultBag.sequencer = Microcode.ST_SECOND_A;
+            internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
+
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
@@ -31,9 +35,15 @@ var MicrocodeHandlerStFirstC = (function () {
             if (reset) {
                 registerBag.resetAll();
             } else {
-                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
-                registerBag.regSequencer = Microcode.ST_SECOND_A;
+                // internalResultBag.register
+                // internalResultBag.registerSaveIndex
+                registerBag.regSequencer = internalResultBag.sequencer;
+                // internalResultBag.instruction
+                registerBag.regClockTick = internalResultBag.clockTick;
+                // internalResultBag.memoryBuffer
+                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
+                // internalResultBag.memoryWrite
+                // internalResultBag.writeEnable
             }
             registerBag.regReset = inputBag.reset;
         };

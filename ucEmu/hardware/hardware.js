@@ -35,8 +35,9 @@ TODO list:
     + [?.??h] move common bit sizes to dedicated service
     + [?.??h] move register reset to microcode handlers
     + [?.??h] create virtual NotYetDecoded instruction for fetch-first microcode phase
-
-    - [?.??h] microcode handlers should use internalResultBag
+    + [?.??h] microcode handlers should use internalResultBag
+    
+    - [?.??h] add microcode jump to microcode handler itself (we have also extra Microcode.JUMP_AT_INSTRUCTION)
     - [?.??h] split data propagation and data storing at microcode handlers
     - [?.??h] registerFile instead of single read should have channels like: out0, out1, outAddress
 

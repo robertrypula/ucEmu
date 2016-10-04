@@ -22,6 +22,11 @@ var MicrocodeHandlerLdFirst = (function () {
             column = MemoryController.getColumn(regIn0Value);
             memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(inputBag.memoryRead, column);
 
+            internalResultBag.sequencer = Microcode.LD_SECOND;
+            internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            internalResultBag.memoryBuffer = memoryReadShifted;
+            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
+
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
@@ -36,10 +41,15 @@ var MicrocodeHandlerLdFirst = (function () {
             if (reset) {
                 registerBag.resetAll();
             } else {
-                registerBag.regClockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-                registerBag.regMemoryBuffer = memoryReadShifted;
-                registerBag.regMemoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
-                registerBag.regSequencer = Microcode.LD_SECOND;
+                // internalResultBag.register
+                // internalResultBag.registerSaveIndex
+                registerBag.regSequencer = internalResultBag.sequencer;
+                // internalResultBag.instruction
+                registerBag.regClockTick = internalResultBag.clockTick;
+                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
+                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
+                // internalResultBag.memoryWrite
+                // internalResultBag.writeEnable
             }
             registerBag.regReset = inputBag.reset;
         };
