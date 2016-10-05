@@ -14,10 +14,9 @@ var MicrocodeHandlerSh = (function () {
         MES.prototype.constructor = MES;
 
         MES.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
-            var reset, regOut, regIn0, regIn1,
+            var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult, address;
 
-            reset = registerBag.regReset;
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn1 = InstructionRegisterSpliter.getRegIn1(registerBag.regInstruction);

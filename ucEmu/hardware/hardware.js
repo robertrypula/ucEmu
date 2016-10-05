@@ -103,14 +103,6 @@ Logger.log(0, "\n");
 
 triggerCpuResetAndProgramStaticRam();
 
-// TODO does those lines are really needed?
-/*
-cpu.setClock(false);
-syncCpuWithStaticRam();
-cpu.setClock(false);
-syncCpuWithStaticRam();
-*/
-
 var secondsStart = new Date().getTime();
 document.write('START<br/>');
 
@@ -300,3 +292,61 @@ function cpuLog(hideCpuClockInfo) {
 
 staticRam.log(0, 4);
 staticRam.log(0x100, 0x102);
+
+
+/*
+    inputs + registers
+    instruction + opcode
+    outputs
+    [clock HIGH] :: sync with ram ::
+    inputs
+    outputs
+    [clock LOW] :: sync with ram ::
+
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
