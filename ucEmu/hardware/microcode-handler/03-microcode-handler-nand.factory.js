@@ -13,7 +13,7 @@ var MicrocodeHandlerNand = (function () {
         MEN.prototype = Object.create(AbstractMicrocode.prototype);
         MEN.prototype.constructor = MEN;
 
-        MEN.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+        MEN.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult, address;
 
@@ -47,22 +47,6 @@ var MicrocodeHandlerNand = (function () {
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitSize.REGISTER));
                 Logger.log(3, 'result = ' + BitUtil.hex(regResult, BitSize.REGISTER) + ' (NAND)');
             }
-
-            if (registerBag.regReset) {
-                registerBag.resetAll();
-            } else {
-                registerBag.registerFile.save(
-                    internalResultBag.registerSaveIndex,
-                    internalResultBag.register
-                );
-                registerBag.regSequencer = internalResultBag.sequencer;
-                registerBag.regInstruction = internalResultBag.instruction;
-                registerBag.regClockTick = internalResultBag.clockTick;
-                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
-                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
-            }
-            registerBag.regReset = inputBag.reset;
         };
 
         return MEN;

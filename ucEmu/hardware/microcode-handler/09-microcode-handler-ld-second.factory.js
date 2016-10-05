@@ -13,7 +13,7 @@ var MicrocodeHandlerLdSecond = (function () {
         MELS.prototype = Object.create(AbstractMicrocode.prototype);
         MELS.prototype.constructor = MELS;
 
-        MELS.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+        MELS.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var regIn0, regIn0Value, regOut, regResult, column, columnFromTheBack,
                 memoryReadShifted, memoryReadFinal, address;
 
@@ -54,22 +54,6 @@ var MicrocodeHandlerLdSecond = (function () {
                 Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitSize.MEMORY_WIDTH));
                 Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitSize.MEMORY_WIDTH));
             }
-
-            if (registerBag.regReset) {
-                registerBag.resetAll();
-            } else {
-                registerBag.registerFile.save(
-                    internalResultBag.registerSaveIndex,
-                    internalResultBag.register
-                );
-                registerBag.regSequencer = internalResultBag.sequencer;
-                registerBag.regInstruction = internalResultBag.instruction;
-                registerBag.regClockTick = internalResultBag.clockTick;
-                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
-                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
-            }
-            registerBag.regReset = inputBag.reset;
         };
 
         return MELS;

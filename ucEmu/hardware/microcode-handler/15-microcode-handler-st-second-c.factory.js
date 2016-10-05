@@ -13,7 +13,7 @@ var MicrocodeHandlerStSecondC = (function () {
         MESSC.prototype = Object.create(AbstractMicrocode.prototype);
         MESSC.prototype.constructor = MESSC;
 
-        MESSC.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+        MESSC.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var dummyRegisterValue, address;
 
             address = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
@@ -34,22 +34,6 @@ var MicrocodeHandlerStSecondC = (function () {
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
             }
-
-            if (registerBag.regReset) {
-                registerBag.resetAll();
-            } else {
-                registerBag.registerFile.save(
-                    internalResultBag.registerSaveIndex,
-                    internalResultBag.register
-                );
-                registerBag.regSequencer = internalResultBag.sequencer;
-                registerBag.regInstruction = internalResultBag.instruction;
-                registerBag.regClockTick = internalResultBag.clockTick;
-                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
-                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
-            }
-            registerBag.regReset = inputBag.reset;
         };
 
         return MESSC;

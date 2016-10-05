@@ -25,7 +25,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
         MFSAD.prototype = Object.create(AbstractMicrocode.prototype);
         MFSAD.prototype.constructor = MFSAD;
 
-        MFSAD.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+        MFSAD.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
                 opcode, byteWidth, address,
                 regProgramCounterNext, regMemoryRowAddressNext, regSequencerNext,
@@ -78,22 +78,6 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER));
                 Logger.log(3, 'regMemoryRowAddressNext = ' + BitUtil.hex(regMemoryRowAddressNext, BitSize.ADDRESS_ROW));
             }
-
-            if (registerBag.regReset) {
-                registerBag.resetAll();
-            } else {
-                registerBag.registerFile.save(
-                    internalResultBag.registerSaveIndex,
-                    internalResultBag.register
-                );
-                registerBag.regSequencer = internalResultBag.sequencer;
-                registerBag.regInstruction = internalResultBag.instruction;
-                registerBag.regClockTick = internalResultBag.clockTick;
-                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
-                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
-            }
-            registerBag.regReset = inputBag.reset;
         };
 
         return MFSAD;

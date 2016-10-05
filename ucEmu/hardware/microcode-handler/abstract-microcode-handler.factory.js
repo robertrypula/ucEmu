@@ -13,6 +13,24 @@
             this.name = name;
         };
 
+        AM.prototype.storeResults = function (internalResultBag, reset, registerBag) {
+            if (registerBag.regReset) {
+                registerBag.resetAll();
+            } else {
+                registerBag.registerFile.save(
+                    internalResultBag.registerSaveIndex,
+                    internalResultBag.register
+                );
+                registerBag.regSequencer = internalResultBag.sequencer;
+                registerBag.regInstruction = internalResultBag.instruction;
+                registerBag.regClockTick = internalResultBag.clockTick;
+                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
+                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
+                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
+            }
+            registerBag.regReset = reset;
+        };
+
         return AM;
     }
 

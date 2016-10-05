@@ -36,13 +36,14 @@ TODO list:
     + [?.??h] move register reset to microcode handlers
     + [?.??h] create virtual NotYetDecoded instruction for fetch-first microcode phase
     + [?.??h] microcode handlers should use internalResultBag
-    
-    - [?.??h] add microcode jump to microcode handler itself (we have also extra Microcode.JUMP_AT_INSTRUCTION)
-    - [?.??h] split data propagation and data storing at microcode handlers
-    - [?.??h] registerFile instead of single read should have channels like: out0, out1, outAddress
+    + [?.??h] split data propagation and data storing at microcode handlers
 
-    - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
+    - [?.??h] split data propagation and data storing at CPU
+    - [?.??h] add microcode jump to microcode handler itself (we have also extra Microcode.??)
+    - [?.??h] registerFile instead of single read should have channels like: out0, out1, outAddress
+    - [?.??h] remove MemoryAccess register approach
     - [?.??h] change jnz to jz
+    - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
     - [1.00h] implement store instruction
     - [?.??h] any register support at ld/st
     

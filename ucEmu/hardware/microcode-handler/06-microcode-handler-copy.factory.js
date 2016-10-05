@@ -13,7 +13,7 @@ var MicrocodeHandlerCopy = (function () {
         MEC.prototype = Object.create(AbstractMicrocode.prototype);
         MEC.prototype.constructor = MEC;
 
-        MEC.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+        MEC.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var regOut, regIn0, regResult, address;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
@@ -41,22 +41,6 @@ var MicrocodeHandlerCopy = (function () {
                 Logger.log(3, 'regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
                 Logger.log(3, 'regResult = ' + BitUtil.hex(regResult, BitSize.REGISTER) + " (COPY, save regResult at regOut)");
             }
-
-            if (registerBag.regReset) {
-                registerBag.resetAll();
-            } else {
-                registerBag.registerFile.save(
-                    internalResultBag.registerSaveIndex,
-                    internalResultBag.register
-                );
-                registerBag.regSequencer = internalResultBag.sequencer;
-                registerBag.regInstruction = internalResultBag.instruction;
-                registerBag.regClockTick = internalResultBag.clockTick;
-                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
-                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
-            }
-            registerBag.regReset = inputBag.reset;
         };
 
         return MEC;

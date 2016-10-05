@@ -127,14 +127,14 @@ var Cpu = (function () {
 
             if (this.$$clockPrevious !== this.inputBag.clock) {
                 if (!this.inputBag.clock) {
-                    this.$$clockFallingEdge();
+                    this.$$clockFallingEdge();   // TODO refactor - now we have two methods (propagate, storeResults)
                 }
                 this.$$clockPrevious = this.inputBag.clock;
             }
 
             this.outputBag.memoryRowAddress = this.registerBag.regMemoryRowAddress;
             this.outputBag.memoryWrite = this.registerBag.regMemoryWrite;
-            this.outputBag.memoryWE = this.controlUnit.getMemoryWE(this.inputBag.clock, this.registerBag.regSequencer);  // TODO refactor, take it from internalResultBag
+            this.outputBag.memoryWE = this.internalResultBag.memoryWE;
         };
 
         C.prototype.$$clockFallingEdge = function () {
@@ -142,12 +142,8 @@ var Cpu = (function () {
                 microcodeHandler = this.controlUnit.getMicrocodeHandler(this.registerBag.regSequencer),
                 instruction = this.controlUnit.getInstruction(this.registerBag.regInstruction, microcodeHandler);
 
-            microcodeHandler.finalizePropagationAndStoreResults(
-                this.registerBag,
-                this.inputBag,
-                instruction,
-                this.internalResultBag
-            );
+            microcodeHandler.propagate(this.registerBag, this.inputBag, instruction, this.internalResultBag);
+            microcodeHandler.storeResults(this.internalResultBag, this.inputBag.reset, this.registerBag);
         };
 
         C.prototype.$$dumpStateLoopGroupKey = function (group, current, previous, callback) {

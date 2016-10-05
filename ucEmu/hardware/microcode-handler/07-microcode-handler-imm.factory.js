@@ -13,7 +13,7 @@ var MicrocodeHandlerImm = (function () {
         MEI.prototype = Object.create(AbstractMicrocode.prototype);
         MEI.prototype.constructor = MEI;
 
-        MEI.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+        MEI.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var regOut, regResult, address;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
@@ -40,22 +40,6 @@ var MicrocodeHandlerImm = (function () {
                 Logger.log(3, 'regOut = ' + regOut);
                 Logger.log(3, 'imm = ' + BitUtil.hex(regResult, BitSize.REGISTER) + " (store immediate value at regOut)");
             }
-
-            if (registerBag.regReset) {
-                registerBag.resetAll();
-            } else {
-                registerBag.registerFile.save(
-                    internalResultBag.registerSaveIndex,
-                    internalResultBag.register
-                );
-                registerBag.regSequencer = internalResultBag.sequencer;
-                registerBag.regInstruction = internalResultBag.instruction;
-                registerBag.regClockTick = internalResultBag.clockTick;
-                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
-                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
-            }
-            registerBag.regReset = inputBag.reset;
         };
 
         return MEI;

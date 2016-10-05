@@ -13,7 +13,7 @@ var MicrocodeHandlerSh = (function () {
         MES.prototype = Object.create(AbstractMicrocode.prototype);
         MES.prototype.constructor = MES;
 
-        MES.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+        MES.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var reset, regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult, address;
 
@@ -48,22 +48,6 @@ var MicrocodeHandlerSh = (function () {
                 Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitSize.REGISTER));
                 Logger.log(3, 'result = ' + BitUtil.hex(regResult, BitSize.REGISTER) + ' (BIT SHIFT)');
             }
-
-            if (reset) {
-                registerBag.resetAll();
-            } else {
-                registerBag.registerFile.save(
-                    internalResultBag.registerSaveIndex,
-                    internalResultBag.register
-                );
-                registerBag.regSequencer = internalResultBag.sequencer;
-                registerBag.regInstruction = internalResultBag.instruction;
-                registerBag.regClockTick = internalResultBag.clockTick;
-                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
-                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
-            }
-            registerBag.regReset = inputBag.reset;
         };
 
         return MES;

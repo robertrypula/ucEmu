@@ -73,7 +73,7 @@ var MicrocodeHandlerStFirstA = (function () {
         MESFA.prototype = Object.create(AbstractMicrocode.prototype);
         MESFA.prototype.constructor = MESFA;
 
-        MESFA.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
+        MESFA.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var dummyRegisterValue;
 
             dummyRegisterValue = registerBag.registerFile.read(RegisterFile.DUMMY_REGISTER);
@@ -93,22 +93,6 @@ var MicrocodeHandlerStFirstA = (function () {
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
             }
-
-            if (registerBag.regReset) {
-                registerBag.resetAll();
-            } else {
-                registerBag.registerFile.save(
-                    internalResultBag.registerSaveIndex,
-                    internalResultBag.register
-                );
-                registerBag.regSequencer = internalResultBag.sequencer;
-                registerBag.regInstruction = internalResultBag.instruction;
-                registerBag.regClockTick = internalResultBag.clockTick;
-                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
-                registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
-            }
-            registerBag.regReset = inputBag.reset;
         };
 
         return MESFA;

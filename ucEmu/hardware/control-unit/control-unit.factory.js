@@ -69,16 +69,6 @@ var ControlUnit = (function () {
             return instruction;
         };
 
-        CU.prototype.getMemoryWE = function (clock, regSequencer) {   // TODO refactor
-            var microcodeHandler = this.getMicrocodeHandler(regSequencer);
-
-            return MemoryController.getMemoryWE(
-                clock,
-                microcodeHandler.memoryWEPositive,
-                microcodeHandler.memoryWENegative
-            );
-        };
-
         return CU;
     }
 
