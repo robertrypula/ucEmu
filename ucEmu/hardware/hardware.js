@@ -37,8 +37,8 @@ TODO list:
     + [?.??h] create virtual NotYetDecoded instruction for fetch-first microcode phase
     + [?.??h] microcode handlers should use internalResultBag
     + [?.??h] split data propagation and data storing at microcode handlers
+    + [?.??h] split data propagation and data storing at CPU
 
-    - [?.??h] split data propagation and data storing at CPU
     - [?.??h] add microcode jump to microcode handler itself (we have also extra Microcode.??)
     - [?.??h] registerFile instead of single read should have channels like: out0, out1, outAddress
     - [?.??h] remove MemoryAccess register approach
@@ -91,9 +91,9 @@ var memoryState = [
 Logger.setVerbose(benchmarkMode ? -1 : 4);
 var cpu = new Cpu();
 var staticRam = new StaticRam(
-    cpu.outputBag.memoryRowAddress,
-    cpu.outputBag.memoryWE,
-    cpu.outputBag.memoryWrite
+    cpu.getMemoryRowAddress(),
+    cpu.getMemoryWE(),
+    cpu.getMemoryWrite()
 );
 syncCpuWithStaticRam();
 cpu.setClock(false);
@@ -120,7 +120,7 @@ function triggerCpuResetAndProgramStaticRam() {
 
     for (i = 0; i < 2; i++) {
         Logger.log(1, '[ACTION] reset enable #' + i);
-        cpu.inputBag.reset = true;
+        cpu.setReset(true);
         clockHigh();
         clockLow();
         Logger.log(1, "\n");        
@@ -133,7 +133,7 @@ function triggerCpuResetAndProgramStaticRam() {
     Logger.log(1, "\n");
 
     Logger.log(1, '[ACTION] reset disable');
-    cpu.inputBag.reset = false;
+    cpu.setReset(false);
     clockHigh();
     clockLow();
     Logger.log(1, "\n");
@@ -161,21 +161,6 @@ function runCpu() {
 
         Logger.log(1, '----> clockTicks ' + clockTicks);
         Logger.log(1, "\n");
-        
-        if (cpu.registerBag.regSequencer == Microcode.FETCH_FIRST) {
-            Logger.log(
-                0, 
-                '                                                      ' +
-                '                               clockTicks: ' + BitUtil.hex(clockTicks, BitSize.MEMORY_WIDTH)
-            );
-
-            Logger.log(
-                0,
-                "------------------------------------------------------" +
-                "------------------------------------------------------" +
-                "\n\n"
-            );
-        }
     }
 }
 
@@ -185,7 +170,7 @@ function programStaticRamAndSync(memoryState) {
 
         staticRam.setMemoryWE(false);
 
-        staticRam.setRow(ms.row);
+        staticRam.setRowAddress(ms.row);
         staticRam.setDataIn(BitUtil.byteRowTo32bit(ms.data));
 
         staticRam.setMemoryWE(true);
@@ -195,11 +180,10 @@ function programStaticRamAndSync(memoryState) {
 }
 
 function syncCpuWithStaticRam() {
-    staticRam.setRow(cpu.outputBag.memoryRowAddress);
-    staticRam.setDataIn(cpu.outputBag.memoryWrite);
-    staticRam.setMemoryWE(cpu.outputBag.memoryWE);
-
-    cpu.inputBag.memoryRead = staticRam.getDataOut();
+    staticRam.setRowAddress(cpu.getMemoryRowAddress());
+    staticRam.setDataIn(cpu.getMemoryWrite());
+    staticRam.setMemoryWE(cpu.getMemoryWE());
+    cpu.setMemoryRead(staticRam.getDataOut());
 }
 
 function clockHigh() {
@@ -223,69 +207,12 @@ function clockLow() {
 
 var dumpPrevious;
 
-function cpuLog(hideCpuClockInfo) {
-    var rf = cpu.registerBag.registerFile,
-        c = cpu.registerBag;
-
-    if (!hideCpuClockInfo) {
-        if (cpu.inputBag.clock) {
-            Logger.log(1, '----> CPU state after rising edge of the clock (signals are still propagating thought the CPU)');
-        } else {
-            Logger.log(1, '----> CPU state after faling edge of the clock (results/inputs latched in flipflops)');
-        }
-    }
-    
-    Logger.log(
-        1,
-        'in.clock: ' + cpu.inputBag.clock + ' | ' +
-        'in.memoryRead = ' + BitUtil.hex(cpu.inputBag.memoryRead, BitSize.MEMORY_WIDTH) + ' | ' +
-        'in.reset = ' + BitUtil.hex(cpu.inputBag.reset, BitSize.SINGLE_BIT) + '      ' +
-        'out.memoryRowAddress = ' + BitUtil.hex(cpu.outputBag.memoryRowAddress, BitSize.ADDRESS_ROW) + ' | ' +
-        'out.memoryWrite = ' + BitUtil.hex(cpu.outputBag.memoryWrite, BitSize.MEMORY_WIDTH) + ' | ' +
-        'out.memoryWE = ' + BitUtil.hex(cpu.outputBag.memoryWE, BitSize.SINGLE_BIT)
-    );
-
-    Logger.log(
-        1,
-        'regReset = ' + BitUtil.hex(c.regReset, BitSize.SINGLE_BIT) + ' | ' +
-        'regSequencer = ' + BitUtil.hex(c.regSequencer, BitSize.SEQUENCER) + ' | ' +
-        'regInstruction = ' + BitUtil.hex(c.regInstruction, BitSize.MEMORY_WIDTH) + ' | ' +
-        'regClockTick = ' + BitUtil.hex(c.regClockTick, BitSize.MEMORY_WIDTH)
-    );
-    Logger.log(
-        1,
-        'regMemoryBuffer = ' + BitUtil.hex(c.regMemoryBuffer, BitSize.MEMORY_WIDTH) + ' | ' +
-        'regMemoryRowAddress = ' + BitUtil.hex(c.regMemoryRowAddress, BitSize.ADDRESS_ROW) + ' | ' +
-        'regMemoryWrite = ' + BitUtil.hex(c.regMemoryWrite, BitSize.MEMORY_WIDTH)
-    );
-    Logger.log(
-        1,
-        'reg00 = ' + BitUtil.hex(rf.read(0), BitSize.REGISTER) + ' | ' +
-        'reg01 = ' + BitUtil.hex(rf.read(1), BitSize.REGISTER) + ' | ' +
-        'reg02 = ' + BitUtil.hex(rf.read(2), BitSize.REGISTER) + ' | ' +
-        'reg03 = ' + BitUtil.hex(rf.read(3), BitSize.REGISTER) + ' | ' +
-        'reg04 = ' + BitUtil.hex(rf.read(4), BitSize.REGISTER) + ' | ' +
-        'reg05 = ' + BitUtil.hex(rf.read(5), BitSize.REGISTER) + ' | ' +
-        'reg06 = ' + BitUtil.hex(rf.read(6), BitSize.REGISTER) + ' | ' +
-        'reg07 = ' + BitUtil.hex(rf.read(7), BitSize.REGISTER)
-    );
-    Logger.log(
-        1,
-        'reg08 = ' + BitUtil.hex(rf.read(8), BitSize.REGISTER) + ' | ' +
-        'reg09 = ' + BitUtil.hex(rf.read(9), BitSize.REGISTER) + ' | ' +
-        'reg10 = ' + BitUtil.hex(rf.read(10), BitSize.REGISTER) + ' | ' +
-        'reg11 = ' + BitUtil.hex(rf.read(11), BitSize.REGISTER) + ' | ' +
-        'reg12 = ' + BitUtil.hex(rf.read(12), BitSize.REGISTER) + ' | ' +
-        'reg13 = ' + BitUtil.hex(rf.read(13), BitSize.REGISTER) + ' | ' +
-        'reg14 = ' + BitUtil.hex(rf.read(14), BitSize.REGISTER) + ' | ' +
-        'regPC = ' + BitUtil.hex(rf.read(RegisterFile.PROGRAM_COUNTER), BitSize.REGISTER)
-    );
-
+function cpuLog() {
     if (!benchmarkMode) {
         var dump;
 
         dump = cpu.dumpState(dumpPrevious);
-        // console.log(dump);
+        console.log(dump);
         dumpPrevious = dump;
     }
 }

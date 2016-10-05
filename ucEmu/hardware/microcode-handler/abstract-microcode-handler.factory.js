@@ -11,6 +11,7 @@
             this.memoryWEPositive = memoryWEPositive;
             this.memoryWENegative = memoryWENegative;
             this.name = name;
+            this.isLogEnabled = false;
         };
 
         AM.prototype.storeResults = function (internalResultBag, reset, registerBag) {

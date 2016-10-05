@@ -6,10 +6,10 @@ var StaticRam = (function () {
     function _StaticRam() {
         var SR;
 
-        SR = function (row, memoryWE, dataIn) {
+        SR = function (rowAddress, memoryWE, dataIn) {
             this.data = new Uint32Array(SR.ROWS_COUNT);
             this.input = {
-                row: row,
+                rowAddress: rowAddress,
                 memoryWE: memoryWE,
                 dataIn: dataIn
             };
@@ -42,7 +42,7 @@ var StaticRam = (function () {
         };
 
         SR.prototype.getDataOut = function () {
-            return this.data[this.input.row];
+            return this.data[this.input.rowAddress];
         };
 
         SR.prototype.setMemoryWE = function (memoryWE) {
@@ -50,8 +50,8 @@ var StaticRam = (function () {
             this.$$update();
         };
 
-        SR.prototype.setRow = function (row) {
-            this.input.row = BitUtil.mask(row, BitSize.ADDRESS_ROW);
+        SR.prototype.setRowAddress = function (rowAddress) {
+            this.input.rowAddress = BitUtil.mask(rowAddress, BitSize.ADDRESS_ROW);
             this.$$update();
         };
 
@@ -62,7 +62,7 @@ var StaticRam = (function () {
 
         SR.prototype.$$update = function () {
             if (this.input.memoryWE) {
-                this.data[this.input.row] = this.input.dataIn;
+                this.data[this.input.rowAddress] = this.input.dataIn;
             }
         };
 

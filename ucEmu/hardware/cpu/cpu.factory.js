@@ -105,12 +105,12 @@ var Cpu = (function () {
         var C;
 
         C = function () {
-            this.registerBag = RegisterBagBuilder.build();
-            this.inputBag = InputBagBuilder.build();
-            this.controlUnit = ControlUnitBuilder.build();
-            this.internalResultBag = InternalResultBagBuilder.build();
-            this.outputBag = OutputBagBuilder.build();
-            this.$$clockPrevious = this.inputBag.clock;
+            this.$$registerBag = RegisterBagBuilder.build();
+            this.$$inputBag = InputBagBuilder.build();
+            this.$$controlUnit = ControlUnitBuilder.build();
+            this.$$internalResultBag = InternalResultBagBuilder.build();
+            this.$$outputBag = OutputBagBuilder.build();
+            this.$$clockPrevious = this.$$inputBag.clock;
 
             this.$$microcodeHandler = undefined;
             this.$$instruction = undefined;
@@ -118,29 +118,51 @@ var Cpu = (function () {
             this.$$update();
         };
 
+        C.prototype.setMemoryRead = function (memoryRead) {
+            this.$$inputBag.memoryRead = memoryRead | 0;
+            // memoryRead input will not change any output of the CPU directly - no update needed
+        };
+
+        C.prototype.setReset = function (reset) {
+            this.$$inputBag.reset = reset ? 1 : 0;
+            // reset input is connected directly to the regRegister - no update needed
+        };
+
         C.prototype.setClock = function (clock) {
-            this.inputBag.clock = clock ? 1 : 0;
+            this.$$inputBag.clock = clock ? 1 : 0;
             this.$$update();
         };
 
-        C.prototype.$$update = function () {
-            this.$$microcodeHandler = this.controlUnit.getMicrocodeHandler(this.registerBag.regSequencer);
-            this.$$instruction = this.controlUnit.getInstruction(this.registerBag.regInstruction, this.$$microcodeHandler);
+        C.prototype.getMemoryRowAddress = function () {
+            return this.$$outputBag.memoryRowAddress;
+        };
 
-            this.$$microcodeHandler.propagate(this.registerBag, this.inputBag, this.$$instruction, this.internalResultBag);
+        C.prototype.getMemoryWrite = function () {
+            return this.$$outputBag.memoryWrite;
+        };
+
+        C.prototype.getMemoryWE = function () {
+            return this.$$outputBag.memoryWE;
+        };
+
+        C.prototype.$$update = function () {
+            this.$$microcodeHandler = this.$$controlUnit.getMicrocodeHandler(this.$$registerBag.regSequencer);
+            this.$$instruction = this.$$controlUnit.getInstruction(this.$$registerBag.regInstruction, this.$$microcodeHandler);
+
+            this.$$microcodeHandler.propagate(this.$$registerBag, this.$$inputBag, this.$$instruction, this.$$internalResultBag);
             if (this.$$isFallingClockEdge()) {
-                this.$$microcodeHandler.storeResults(this.internalResultBag, this.inputBag.reset, this.registerBag);
-                this.$$microcodeHandler.propagate(this.registerBag, this.inputBag, this.$$instruction, this.internalResultBag);
+                this.$$microcodeHandler.storeResults(this.$$internalResultBag, this.$$inputBag.reset, this.$$registerBag);
+                this.$$microcodeHandler.propagate(this.$$registerBag, this.$$inputBag, this.$$instruction, this.$$internalResultBag);
             }
 
-            this.$$clockPrevious = this.inputBag.clock;
-            this.outputBag.memoryRowAddress = this.registerBag.regMemoryRowAddress;
-            this.outputBag.memoryWrite = this.registerBag.regMemoryWrite;
-            this.outputBag.memoryWE = this.internalResultBag.memoryWE;
+            this.$$clockPrevious = this.$$inputBag.clock;
+            this.$$outputBag.memoryRowAddress = this.$$registerBag.regMemoryRowAddress;
+            this.$$outputBag.memoryWrite = this.$$registerBag.regMemoryWrite;
+            this.$$outputBag.memoryWE = this.$$internalResultBag.memoryWE;
         };
 
         C.prototype.$$isFallingClockEdge = function () {
-            return this.$$clockPrevious !== this.inputBag.clock && !this.inputBag.clock;
+            return this.$$clockPrevious !== this.$$inputBag.clock && !this.$$inputBag.clock;
         };
 
         C.prototype.$$dumpStateLoopGroupKey = function (group, current, previous, callback) {
@@ -156,10 +178,10 @@ var Cpu = (function () {
         C.prototype.dumpState = function (previous) {
             var dump, rf, rb, i, o, key;
 
-            rf = this.registerBag.registerFile;
-            rb = this.registerBag;
-            i = this.inputBag;
-            o = this.outputBag;
+            rf = this.$$registerBag.registerFile;
+            rb = this.$$registerBag;
+            i = this.$$inputBag;
+            o = this.$$outputBag;
 
             dump = {
                 input: {
@@ -200,8 +222,10 @@ var Cpu = (function () {
                     regPC: { value: rf.read(15), bitSize: BitSize.REGISTER, changed: null }
                 },
                 extra: {
-                    instruction: this.$$instruction,
-                    microcodeHandler: this.$$microcodeHandler
+                    opcode: this.$$instruction.opcode,
+                    opcodeName: this.$$instruction.name,
+                    microcode: this.$$microcodeHandler.microcode,
+                    microcodeName: this.$$microcodeHandler.name
                 }
             };
 

@@ -37,7 +37,7 @@ var MicrocodeHandlerJnz = (function () {
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
             internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
 
-            if (Logger.isEnabled()) {
+            if (this.isLogEnabled) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
