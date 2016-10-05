@@ -6,7 +6,7 @@ var MicrocodeHandlerLdFirst = (function () {
     function _MicrocodeHandlerLdFirst() {
         var MELF;
 
-        MELF = function (microcode, writeEnablePositive, writeEnableNegative, name) {
+        MELF = function (microcode, memoryWEPositive, memoryWENegative, name) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -31,7 +31,7 @@ var MicrocodeHandlerLdFirst = (function () {
             internalResultBag.memoryBuffer = memoryReadShifted;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddressNextRow(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.writeEnable = MemoryController.getWriteEnable(inputBag.clock, this.writeEnablePositive, this.writeEnableNegative);
+            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');

@@ -134,7 +134,7 @@ var Cpu = (function () {
 
             this.outputBag.memoryRowAddress = this.registerBag.regMemoryRowAddress;
             this.outputBag.memoryWrite = this.registerBag.regMemoryWrite;
-            this.outputBag.memoryWE = this.controlUnit.getWriteEnable(this.inputBag.clock, this.registerBag.regSequencer);  // TODO refactor, take it from internalResultBag
+            this.outputBag.memoryWE = this.controlUnit.getMemoryWE(this.inputBag.clock, this.registerBag.regSequencer);  // TODO refactor, take it from internalResultBag
         };
 
         C.prototype.$$clockFallingEdge = function () {

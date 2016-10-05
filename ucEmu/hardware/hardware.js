@@ -190,13 +190,13 @@ function programStaticRamAndSync(memoryState) {
     for (var i = 0; i < memoryState.length; i++) {
         var ms = memoryState[i];
 
-        staticRam.setWriteEnable(false);
+        staticRam.setMemoryWE(false);
 
         staticRam.setRow(ms.row);
         staticRam.setDataIn(BitUtil.byteRowTo32bit(ms.data));
 
-        staticRam.setWriteEnable(true);
-        staticRam.setWriteEnable(false);
+        staticRam.setMemoryWE(true);
+        staticRam.setMemoryWE(false);
     }
     syncCpuWithStaticRam();
 }
@@ -204,7 +204,7 @@ function programStaticRamAndSync(memoryState) {
 function syncCpuWithStaticRam() {
     staticRam.setRow(cpu.outputBag.memoryRowAddress);
     staticRam.setDataIn(cpu.outputBag.memoryWrite);
-    staticRam.setWriteEnable(cpu.outputBag.memoryWE);
+    staticRam.setMemoryWE(cpu.outputBag.memoryWE);
 
     cpu.inputBag.memoryRead = staticRam.getDataOut();
 }

@@ -43,10 +43,10 @@ var MemoryController = (function () {
             );
         }
 
-        function getWriteEnable(clock, writeEnablePositive, writeEnableNegative) {
+        function getMemoryWE(clock, memoryWEPositive, memoryWENegative) {
             var
-                writeEnableActive = writeEnablePositive || writeEnableNegative,
-                result = writeEnableActive && ((clock && writeEnablePositive) || (!clock && writeEnableNegative));
+                memoryWEActive = memoryWEPositive || memoryWENegative,
+                result = memoryWEActive && ((clock && memoryWEPositive) || (!clock && memoryWENegative));
 
             return result ? 1 : 0;
         }
@@ -59,7 +59,7 @@ var MemoryController = (function () {
             getMemoryReadFinal: getMemoryReadFinal,
             getMemoryRowAddress: getMemoryRowAddress,
             getMemoryRowAddressNextRow: getMemoryRowAddressNextRow,
-            getWriteEnable: getWriteEnable
+            getMemoryWE: getMemoryWE
         };
     }
 

@@ -6,11 +6,11 @@ var StaticRam = (function () {
     function _StaticRam() {
         var SR;
 
-        SR = function (row, writeEnable, dataIn) {
+        SR = function (row, memoryWE, dataIn) {
             this.data = new Uint32Array(SR.ROWS_COUNT);
             this.input = {
                 row: row,
-                writeEnable: writeEnable,
+                memoryWE: memoryWE,
                 dataIn: dataIn
             };
 
@@ -45,8 +45,8 @@ var StaticRam = (function () {
             return this.data[this.input.row];
         };
 
-        SR.prototype.setWriteEnable = function (writeEnable) {
-            this.input.writeEnable = writeEnable ? 1 : 0;
+        SR.prototype.setMemoryWE = function (memoryWE) {
+            this.input.memoryWE = memoryWE ? 1 : 0;
             this.$$update();
         };
 
@@ -61,7 +61,7 @@ var StaticRam = (function () {
         };
 
         SR.prototype.$$update = function () {
-            if (this.input.writeEnable) {
+            if (this.input.memoryWE) {
                 this.data[this.input.row] = this.input.dataIn;
             }
         };

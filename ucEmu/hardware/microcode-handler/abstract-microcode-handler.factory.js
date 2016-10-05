@@ -6,10 +6,10 @@
     function _AbstractMicrocode() {
         var AM;
 
-        AM = function (microcode, writeEnablePositive, writeEnableNegative, name) {
+        AM = function (microcode, memoryWEPositive, memoryWENegative, name) {
             this.microcode = microcode;
-            this.writeEnablePositive = writeEnablePositive;
-            this.writeEnableNegative = writeEnableNegative;
+            this.memoryWEPositive = memoryWEPositive;
+            this.memoryWENegative = memoryWENegative;
             this.name = name;
         };
 
