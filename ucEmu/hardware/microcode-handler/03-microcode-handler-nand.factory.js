@@ -14,10 +14,9 @@ var MicrocodeHandlerNand = (function () {
         MEN.prototype.constructor = MEN;
 
         MEN.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
-            var reset, regOut, regIn0, regIn1,
+            var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult, address;
 
-            reset = registerBag.regReset;
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn1 = InstructionRegisterSpliter.getRegIn1(registerBag.regInstruction);
@@ -25,13 +24,19 @@ var MicrocodeHandlerNand = (function () {
             regIn1Value = registerBag.registerFile.read(regIn1);
             regResult = Alu.nand(regIn0Value, regIn1Value);
 
-            address = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+            // TODO when instruction will save to PC it will produce wrong result - fixed?
+            address = RegisterFile.PROGRAM_COUNTER === regOut
+                ? regResult : registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
 
-            internalResultBag.register = regResult;
             internalResultBag.registerSaveIndex = regOut;
+            internalResultBag.register = regResult;
             internalResultBag.sequencer = Microcode.FETCH_FIRST;
+            internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address); // TODO when instruction will save to PC it will produce wrong result
+            internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
+            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
+            internalResultBag.memoryWrite = registerBag.regMemoryWrite;
+            internalResultBag.writeEnable = MemoryController.getWriteEnable(inputBag.clock, this.writeEnablePositive, this.writeEnableNegative);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
@@ -43,7 +48,7 @@ var MicrocodeHandlerNand = (function () {
                 Logger.log(3, 'result = ' + BitUtil.hex(regResult, BitSize.REGISTER) + ' (NAND)');
             }
 
-            if (reset) {
+            if (registerBag.regReset) {
                 registerBag.resetAll();
             } else {
                 registerBag.registerFile.save(
@@ -51,12 +56,11 @@ var MicrocodeHandlerNand = (function () {
                     internalResultBag.register
                 );
                 registerBag.regSequencer = internalResultBag.sequencer;
-                // internalResultBag.instruction
+                registerBag.regInstruction = internalResultBag.instruction;
                 registerBag.regClockTick = internalResultBag.clockTick;
-                // internalResultBag.memoryBuffer
+                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
                 registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                // internalResultBag.memoryWrite;
-                // internalResultBag.writeEnable;
+                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
             }
             registerBag.regReset = inputBag.reset;
         };

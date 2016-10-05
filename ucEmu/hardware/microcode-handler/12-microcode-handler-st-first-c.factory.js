@@ -14,15 +14,21 @@ var MicrocodeHandlerStFirstC = (function () {
         MESFC.prototype.constructor = MESFC;
 
         MESFC.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
-            var reset, regIn0, regIn0Value;
+            var dummyRegisterValue, regIn0, regIn0Value;
 
-            reset = registerBag.regReset;
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
+            dummyRegisterValue = registerBag.registerFile.read(RegisterFile.DUMMY_REGISTER);
 
+            internalResultBag.registerSaveIndex = RegisterFile.DUMMY_REGISTER;
+            internalResultBag.register = dummyRegisterValue;
             internalResultBag.sequencer = Microcode.ST_SECOND_A;
+            internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+            internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
+            internalResultBag.memoryWrite = registerBag.regMemoryWrite;
+            internalResultBag.writeEnable = MemoryController.getWriteEnable(inputBag.clock, this.writeEnablePositive, this.writeEnableNegative);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
@@ -32,18 +38,19 @@ var MicrocodeHandlerStFirstC = (function () {
                 Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER));
             }
 
-            if (reset) {
+            if (registerBag.regReset) {
                 registerBag.resetAll();
             } else {
-                // internalResultBag.register
-                // internalResultBag.registerSaveIndex
+                registerBag.registerFile.save(
+                    internalResultBag.registerSaveIndex,
+                    internalResultBag.register
+                );
                 registerBag.regSequencer = internalResultBag.sequencer;
-                // internalResultBag.instruction
+                registerBag.regInstruction = internalResultBag.instruction;
                 registerBag.regClockTick = internalResultBag.clockTick;
-                // internalResultBag.memoryBuffer
+                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
                 registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                // internalResultBag.memoryWrite
-                // internalResultBag.writeEnable
+                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
             }
             registerBag.regReset = inputBag.reset;
         };

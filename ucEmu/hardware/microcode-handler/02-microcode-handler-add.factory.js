@@ -27,9 +27,9 @@ var MicrocodeHandlerAdd = (function () {
             // TODO when instruction will save to PC it will produce wrong result - fixed?
             address = RegisterFile.PROGRAM_COUNTER === regOut
                 ? regResult : registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
-
-            internalResultBag.register = regResult;
+            
             internalResultBag.registerSaveIndex = regOut;
+            internalResultBag.register = regResult;
             internalResultBag.sequencer = Microcode.FETCH_FIRST;
             internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);

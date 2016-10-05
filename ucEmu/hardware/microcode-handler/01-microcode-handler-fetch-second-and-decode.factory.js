@@ -50,8 +50,8 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
 
             clockTick = registerBag.regClockTick;
 
-            internalResultBag.register = regProgramCounterNext;
             internalResultBag.registerSaveIndex = RegisterFile.PROGRAM_COUNTER;
+            internalResultBag.register = regProgramCounterNext;
             internalResultBag.sequencer = regSequencerNext;
             internalResultBag.instruction = memoryReadFinal;
             internalResultBag.clockTick = ClockTick.getClockTickNext(clockTick);

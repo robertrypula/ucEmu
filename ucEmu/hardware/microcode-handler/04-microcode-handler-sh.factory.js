@@ -25,13 +25,19 @@ var MicrocodeHandlerSh = (function () {
             regIn1Value = registerBag.registerFile.read(regIn1);
             regResult = Alu.sh(regIn0Value, regIn1Value);
 
-            address = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+            // TODO when instruction will save to PC it will produce wrong result - fixed?
+            address = RegisterFile.PROGRAM_COUNTER === regOut
+                ? regResult : registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
 
-            internalResultBag.register = regResult;
             internalResultBag.registerSaveIndex = regOut;
+            internalResultBag.register = regResult;
             internalResultBag.sequencer = Microcode.FETCH_FIRST;
+            internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address); // TODO when instruction will save to PC it will produce wrong result
+            internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
+            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
+            internalResultBag.memoryWrite = registerBag.regMemoryWrite;
+            internalResultBag.writeEnable = MemoryController.getWriteEnable(inputBag.clock, this.writeEnablePositive, this.writeEnableNegative);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
@@ -51,12 +57,11 @@ var MicrocodeHandlerSh = (function () {
                     internalResultBag.register
                 );
                 registerBag.regSequencer = internalResultBag.sequencer;
-                // internalResultBag.instruction
+                registerBag.regInstruction = internalResultBag.instruction;
                 registerBag.regClockTick = internalResultBag.clockTick;
-                // internalResultBag.memoryBuffer
+                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
                 registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                // internalResultBag.memoryWrite;
-                // internalResultBag.writeEnable;
+                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
             }
             registerBag.regReset = inputBag.reset;
         };

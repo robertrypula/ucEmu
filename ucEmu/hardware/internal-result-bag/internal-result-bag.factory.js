@@ -7,8 +7,8 @@ var InternalResultBag = (function () {
         var IRB;
 
         IRB = function () {
-            this.register = undefined;
             this.registerSaveIndex = undefined;
+            this.register = undefined;
 
             this.sequencer = undefined;
             this.instruction = undefined;

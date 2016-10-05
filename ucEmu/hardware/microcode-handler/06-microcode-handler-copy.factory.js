@@ -14,30 +14,35 @@ var MicrocodeHandlerCopy = (function () {
         MEC.prototype.constructor = MEC;
 
         MEC.prototype.finalizePropagationAndStoreResults = function (registerBag, inputBag, instruction, internalResultBag) {
-            var reset, regOut, regIn0, regIn0Value, address;
+            var regOut, regIn0, regResult, address;
 
-            reset = registerBag.regReset;
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
-            regIn0Value = registerBag.registerFile.read(regIn0);
+            regResult = registerBag.registerFile.read(regIn0);
 
-            address = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+            // TODO when instruction will save to PC it will produce wrong result - fixed?
+            address = RegisterFile.PROGRAM_COUNTER === regOut
+                ? regResult : registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
 
-            internalResultBag.register = regIn0Value;
             internalResultBag.registerSaveIndex = regOut;
+            internalResultBag.register = regResult;
             internalResultBag.sequencer = Microcode.FETCH_FIRST;
+            internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
-            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address); // TODO when instruction will save to PC it will produce wrong result
+            internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
+            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
+            internalResultBag.memoryWrite = registerBag.regMemoryWrite;
+            internalResultBag.writeEnable = MemoryController.getWriteEnable(inputBag.clock, this.writeEnablePositive, this.writeEnableNegative);
 
             if (Logger.isEnabled()) {
                 Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
                 Logger.log(1, 'microcodeHandlerName = ' + this.name);
                 Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
                 Logger.log(3, 'regOut, regIn0 <-> ' + regOut + ', ' + regIn0);
-                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER) + " (COPY, save regIn0Value at regOut)");
+                Logger.log(3, 'regResult = ' + BitUtil.hex(regResult, BitSize.REGISTER) + " (COPY, save regResult at regOut)");
             }
 
-            if (reset) {
+            if (registerBag.regReset) {
                 registerBag.resetAll();
             } else {
                 registerBag.registerFile.save(
@@ -45,12 +50,11 @@ var MicrocodeHandlerCopy = (function () {
                     internalResultBag.register
                 );
                 registerBag.regSequencer = internalResultBag.sequencer;
-                // internalResultBag.instruction
+                registerBag.regInstruction = internalResultBag.instruction;
                 registerBag.regClockTick = internalResultBag.clockTick;
-                // internalResultBag.memoryBuffer
+                registerBag.regMemoryBuffer = internalResultBag.memoryBuffer;
                 registerBag.regMemoryRowAddress = internalResultBag.memoryRowAddress;
-                // internalResultBag.memoryWrite
-                // internalResultBag.writeEnable
+                registerBag.regMemoryWrite = internalResultBag.memoryWrite;
             }
             registerBag.regReset = inputBag.reset;
         };
