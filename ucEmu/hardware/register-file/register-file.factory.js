@@ -36,6 +36,18 @@ var RegisterFile = (function () {
             return this.register[number];
         };
 
+        RS.prototype.out0 = function (number) {
+            return this.read(number);
+        };
+
+        RS.prototype.out1 = function (number) {
+            return this.read(number);
+        };
+
+        RS.prototype.outAddress = function (number) {
+            return this.read(number);
+        };
+
         RS.prototype.save = function (number, value) {
             this.register[number] = BitUtil.mask(value, BitSize.REGISTER);
         };

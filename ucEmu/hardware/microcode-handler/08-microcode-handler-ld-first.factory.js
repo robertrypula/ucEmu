@@ -17,8 +17,8 @@ var MicrocodeHandlerLdFirst = (function () {
             var regIn0, address, column, memoryReadShifted, dummyRegisterValue, sequencer;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
-            address = registerBag.registerFile.read(regIn0);
-            dummyRegisterValue = registerBag.registerFile.read(RegisterFile.DUMMY_REGISTER);
+            address = registerBag.registerFile.outAddress(regIn0);
+            dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
 
             column = MemoryController.getColumn(address);
             memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(inputBag.memoryRead, column);

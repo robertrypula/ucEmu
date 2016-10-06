@@ -16,8 +16,8 @@ var MicrocodeHandlerStSecondC = (function () {
         MESSC.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var dummyRegisterValue, address, sequencer;
 
-            address = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
-            dummyRegisterValue = registerBag.registerFile.read(RegisterFile.DUMMY_REGISTER);
+            address = registerBag.registerFile.outAddress(RegisterFile.PROGRAM_COUNTER);
+            dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
 
             sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
                 ? instruction.microcodeJump : this.microcodeJump;

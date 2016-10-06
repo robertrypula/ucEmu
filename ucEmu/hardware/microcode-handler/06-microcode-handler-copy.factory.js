@@ -18,11 +18,11 @@ var MicrocodeHandlerCopy = (function () {
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
-            regResult = registerBag.registerFile.read(regIn0);
+            regResult = registerBag.registerFile.out0(regIn0);
 
             // TODO when instruction will save to PC it will produce wrong result - fixed?
             address = RegisterFile.PROGRAM_COUNTER === regOut
-                ? regResult : registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+                ? regResult : registerBag.registerFile.outAddress(RegisterFile.PROGRAM_COUNTER);
 
             sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
                 ? instruction.microcodeJump : this.microcodeJump;

@@ -39,9 +39,9 @@ TODO list:
     + split data propagation and data storing at microcode handlers
     + split data propagation and data storing at CPU
     + add microcode jump to microcode handler itself (we have also extra Microcode.??)
+    + registerFile instead of single read should have channels like: out0, out1, outAddress
 
-    - registerFile instead of single read should have channels like: out0, out1, outAddress
-    - remove MemoryAccess register approach (also from docs accross files)
+    - remove MemoryAccess register approach (also from docs across files)
     - change jnz to jz
     - add background color to changed log entries
     - figure out how to load regClockTick (check row address 0xFFF at memory controller?)
@@ -81,8 +81,10 @@ CPU outputs:
 // 2.35 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-21
 // 4.50 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-22
 // 3.90 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-30
+// 3.90 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-30
+// 0.80 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-10-06   performance drooped a lot... :(
 var
-    benchmarkMode = null,//3.9,
+    benchmarkMode = null,//0.8,
     staticRamData = [
         { rowAddress: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },
         { rowAddress: 0x0001, data: [0x20, 0x00, 0x30, 0x07] },
@@ -166,10 +168,10 @@ function makeOneClockCycle() {
     getCpuState();
     logSeparator();
     logCpuStateGroup('input');
-    logCpuStateGroup('output');
     logCpuStateGroup('registerSpecialPurpose');
     logCpuStateGroup('registerGeneralPurpose');
     logCpuStateExtraGroup();
+    logCpuStateGroup('output');
 
     cpu.setClock(true);
     syncCpuWithStaticRam();

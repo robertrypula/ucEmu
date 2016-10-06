@@ -18,7 +18,7 @@ var MicrocodeHandlerLdSecond = (function () {
                 memoryReadShifted, memoryReadFinal, address, sequencer;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
-            regIn0Value = registerBag.registerFile.read(regIn0);
+            regIn0Value = registerBag.registerFile.out0(regIn0);
 
             column = MemoryController.getColumn(regIn0Value);
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);
@@ -30,7 +30,7 @@ var MicrocodeHandlerLdSecond = (function () {
 
             // TODO when instruction will save to PC it will produce wrong result - fixed?
             address = RegisterFile.PROGRAM_COUNTER === regOut
-                ? regResult : registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+                ? regResult : registerBag.registerFile.outAddress(RegisterFile.PROGRAM_COUNTER);
 
             sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
                 ? instruction.microcodeJump : this.microcodeJump;

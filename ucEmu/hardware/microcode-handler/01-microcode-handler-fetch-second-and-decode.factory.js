@@ -27,28 +27,27 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
 
         MFSAD.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
-                opcode, byteWidth, address,
+                byteWidth, address,
                 regProgramCounterNext, regMemoryRowAddressNext,
                 regIn0, regIn0Value, clockTick,
                 sequencer;
 
-            address = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+            address = registerBag.registerFile.outAddress(RegisterFile.PROGRAM_COUNTER);
 
             column = MemoryController.getColumn(address);
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);
             memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
-
-            opcode = instruction.opcode;
+            
             byteWidth = instruction.byteWidth;
 
-            regProgramCounterNext = Alu.add(address, byteWidth);
+            regProgramCounterNext = Alu.add(address, byteWidth);       // TODO use address name?
 
             sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
                 ? instruction.microcodeJump : this.microcodeJump;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
-            regIn0Value = registerBag.registerFile.read(regIn0);
+            regIn0Value = registerBag.registerFile.out0(regIn0);
             regMemoryRowAddressNext = instruction.memoryRowAddressFromRegIn0 ? regIn0Value : regProgramCounterNext;
 
             clockTick = registerBag.regClockTick;

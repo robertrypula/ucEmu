@@ -17,8 +17,8 @@ var MicrocodeHandlerStFirstC = (function () {
             var dummyRegisterValue, regIn0, regIn0Value, sequencer;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
-            regIn0Value = registerBag.registerFile.read(regIn0);
-            dummyRegisterValue = registerBag.registerFile.read(RegisterFile.DUMMY_REGISTER);
+            regIn0Value = registerBag.registerFile.outAddress(regIn0);          // TODO use flag: address from reg
+            dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
 
             sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
                 ? instruction.microcodeJump : this.microcodeJump;

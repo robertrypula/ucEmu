@@ -19,10 +19,10 @@ var MicrocodeHandlerJnz = (function () {
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn1 = InstructionRegisterSpliter.getRegIn1(registerBag.regInstruction);
-            regIn0Value = registerBag.registerFile.read(regIn0);
-            regIn1Value = registerBag.registerFile.read(regIn1);
+            regIn0Value = registerBag.registerFile.out0(regIn0);
+            regIn1Value = registerBag.registerFile.out1(regIn1);
             notZeroFlag = regIn1Value !== 0;
-            regPCNext = notZeroFlag ? regIn0Value : registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+            regPCNext = notZeroFlag ? regIn0Value : registerBag.registerFile.outAddress(RegisterFile.PROGRAM_COUNTER); // TODO check with flag: use reg at address
 
             // TODO when instruction will save to PC it will produce wrong result - fixed?
             address = regPCNext;

@@ -21,7 +21,7 @@ var MicrocodeHandlerImm = (function () {
 
             // TODO when instruction will save to PC it will produce wrong result - fixed?
             address = RegisterFile.PROGRAM_COUNTER === regOut
-                ? regResult : registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
+                ? regResult : registerBag.registerFile.outAddress(RegisterFile.PROGRAM_COUNTER);
 
             sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
                 ? instruction.microcodeJump : this.microcodeJump;
