@@ -18,22 +18,22 @@ var ControlUnit = (function () {
                 M = Microcode;
 
             this.$$controlStore.push(
-                MicrocodeHandlerBuilder.build(M.FETCH_FIRST, false, false, 'fetch first'),
-                MicrocodeHandlerBuilder.build(M.FETCH_SECOND_AND_DECODE, false, false, 'fetch second and decode'),
-                MicrocodeHandlerBuilder.build(M.ADD, false, false, 'add'),
-                MicrocodeHandlerBuilder.build(M.NAND, false, false, 'nand'),
-                MicrocodeHandlerBuilder.build(M.SH, false, false, 'sh'),
-                MicrocodeHandlerBuilder.build(M.JNZ, false, false, 'jnz'),
-                MicrocodeHandlerBuilder.build(M.COPY, false, false, 'copy'),
-                MicrocodeHandlerBuilder.build(M.IMM, false, false, 'imm'),
-                MicrocodeHandlerBuilder.build(M.LD_FIRST, false, false, 'ld first'),
-                MicrocodeHandlerBuilder.build(M.LD_SECOND, false, false, 'ld second'),
-                MicrocodeHandlerBuilder.build(M.ST_FIRST_A, false, false, 'st first a'),
-                MicrocodeHandlerBuilder.build(M.ST_FIRST_B, true, false, 'st first b'),
-                MicrocodeHandlerBuilder.build(M.ST_FIRST_C, false, true, 'st first c'),
-                MicrocodeHandlerBuilder.build(M.ST_SECOND_A, false, false, 'st second a'),
-                MicrocodeHandlerBuilder.build(M.ST_SECOND_B, true, false, 'st second b'),
-                MicrocodeHandlerBuilder.build(M.ST_SECOND_C, false, true, 'st second c')
+                MicrocodeHandlerBuilder.build(M.FETCH_FIRST, M.JUMP_IS_AT_INSTRUCTION, false, false, 'fetch first'),
+                MicrocodeHandlerBuilder.build(M.FETCH_SECOND_AND_DECODE, M.JUMP_IS_AT_INSTRUCTION, false, false, 'fetch second and decode'),
+                MicrocodeHandlerBuilder.build(M.ADD, M.FETCH_FIRST, false, false, 'add'),
+                MicrocodeHandlerBuilder.build(M.NAND, M.FETCH_FIRST, false, false, 'nand'),
+                MicrocodeHandlerBuilder.build(M.SH, M.FETCH_FIRST, false, false, 'sh'),
+                MicrocodeHandlerBuilder.build(M.JNZ, M.FETCH_FIRST, false, false, 'jnz'),
+                MicrocodeHandlerBuilder.build(M.COPY, M.FETCH_FIRST, false, false, 'copy'),
+                MicrocodeHandlerBuilder.build(M.IMM, M.FETCH_FIRST, false, false, 'imm'),
+                MicrocodeHandlerBuilder.build(M.LD_FIRST, M.LD_SECOND, false, false, 'ld first'),
+                MicrocodeHandlerBuilder.build(M.LD_SECOND, M.FETCH_FIRST, false, false, 'ld second'),
+                MicrocodeHandlerBuilder.build(M.ST_FIRST_A, M.ST_FIRST_B, false, false, 'st first a'),
+                MicrocodeHandlerBuilder.build(M.ST_FIRST_B, M.ST_FIRST_C, true, false, 'st first b'),
+                MicrocodeHandlerBuilder.build(M.ST_FIRST_C, M.ST_SECOND_A, false, true, 'st first c'),
+                MicrocodeHandlerBuilder.build(M.ST_SECOND_A, M.ST_SECOND_B, false, false, 'st second a'),
+                MicrocodeHandlerBuilder.build(M.ST_SECOND_B, M.ST_SECOND_C, true, false, 'st second b'),
+                MicrocodeHandlerBuilder.build(M.ST_SECOND_C, M.FETCH_FIRST, false, true, 'st second c')
             );
             this.$$instructionSet.push(
                 InstructionBuilder.build(O.ADD, M.ADD, 2, false, 'add', 'Addition'),

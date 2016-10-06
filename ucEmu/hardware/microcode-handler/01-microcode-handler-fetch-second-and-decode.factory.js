@@ -18,7 +18,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
     function _MicrocodeHandlerFetchSecondAndDecode() {
         var MFSAD;
 
-        MFSAD = function (microcode, memoryWEPositive, memoryWENegative, name) {
+        MFSAD = function (microcode, microcodeJump, memoryWEPositive, memoryWENegative, name) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -28,8 +28,9 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
         MFSAD.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
                 opcode, byteWidth, address,
-                regProgramCounterNext, regMemoryRowAddressNext, regSequencerNext,
-                regIn0, regIn0Value, clockTick;
+                regProgramCounterNext, regMemoryRowAddressNext,
+                regIn0, regIn0Value, clockTick,
+                sequencer;
 
             address = registerBag.registerFile.read(RegisterFile.PROGRAM_COUNTER);
 
@@ -42,7 +43,9 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             byteWidth = instruction.byteWidth;
 
             regProgramCounterNext = Alu.add(address, byteWidth);
-            regSequencerNext = instruction.microcodeJump;
+
+            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
+                ? instruction.microcodeJump : this.microcodeJump;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
@@ -52,32 +55,13 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
 
             internalResultBag.registerSaveIndex = RegisterFile.PROGRAM_COUNTER;
             internalResultBag.register = regProgramCounterNext;
-            internalResultBag.sequencer = regSequencerNext;
+            internalResultBag.sequencer = sequencer;
             internalResultBag.instruction = memoryReadFinal;
             internalResultBag.clockTick = ClockTick.getClockTickNext(clockTick);
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(regMemoryRowAddressNext);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
             internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
-
-            if (this.isLogEnabled) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
-                Logger.log(1, 'microcodeHandlerName = ' + this.name);
-                Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
-                Logger.log(3, 'column = ' + column);
-                Logger.log(3, 'input.memoryRead = ' + BitUtil.hex(inputBag.memoryRead, BitSize.MEMORY_WIDTH));
-                Logger.log(3, 'columnFromTheBack = ' + columnFromTheBack);
-                Logger.log(3, 'memoryReadShifted = ' + BitUtil.hex(memoryReadShifted, BitSize.MEMORY_WIDTH));
-                Logger.log(3, 'memoryReadFinal = ' + BitUtil.hex(memoryReadFinal, BitSize.MEMORY_WIDTH));
-                Logger.log(3, 'opcode = ' + opcode);
-                Logger.log(3, 'byteWidth = ' + byteWidth);
-                Logger.log(3, 'address = ' + BitUtil.hex(address, BitSize.REGISTER));
-                Logger.log(3, 'regProgramCounterNext = ' + BitUtil.hex(regProgramCounterNext, BitSize.REGISTER));
-                Logger.log(3, 'regSequencerNext = ' + BitUtil.hex(regSequencerNext, BitSize.SEQUENCER));
-                Logger.log(3, 'regIn0 = ' + regIn0);
-                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER));
-                Logger.log(3, 'regMemoryRowAddressNext = ' + BitUtil.hex(regMemoryRowAddressNext, BitSize.ADDRESS_ROW));
-            }
         };
 
         return MFSAD;

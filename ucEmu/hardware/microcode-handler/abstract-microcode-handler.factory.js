@@ -6,12 +6,12 @@
     function _AbstractMicrocode() {
         var AM;
 
-        AM = function (microcode, memoryWEPositive, memoryWENegative, name) {
+        AM = function (microcode, microcodeJump, memoryWEPositive, memoryWENegative, name) {
             this.microcode = microcode;
+            this.microcodeJump = microcodeJump;
             this.memoryWEPositive = memoryWEPositive;
             this.memoryWENegative = memoryWENegative;
             this.name = name;
-            this.isLogEnabled = false;
         };
 
         AM.prototype.storeResults = function (internalResultBag, reset, registerBag) {

@@ -6,7 +6,7 @@ var MicrocodeHandlerJnz = (function () {
     function _MicrocodeHandlerJnz() {
         var MEJ;
 
-        MEJ = function (microcode, memoryWEPositive, memoryWENegative, name) {
+        MEJ = function (microcode, microcodeJump, memoryWEPositive, memoryWENegative, name) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -15,7 +15,7 @@ var MicrocodeHandlerJnz = (function () {
 
         MEJ.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var regIn0, regIn1, regIn0Value, regIn1Value,
-                notZeroFlag, regPCNext, address;
+                notZeroFlag, regPCNext, address, sequencer;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn1 = InstructionRegisterSpliter.getRegIn1(registerBag.regInstruction);
@@ -27,26 +27,18 @@ var MicrocodeHandlerJnz = (function () {
             // TODO when instruction will save to PC it will produce wrong result - fixed?
             address = regPCNext;
 
+            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
+                ? instruction.microcodeJump : this.microcodeJump;
+
             internalResultBag.registerSaveIndex = RegisterFile.PROGRAM_COUNTER;
             internalResultBag.register = regPCNext;
-            internalResultBag.sequencer = Microcode.FETCH_FIRST;
+            internalResultBag.sequencer = sequencer;
             internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
             internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
-
-            if (this.isLogEnabled) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
-                Logger.log(1, 'microcodeHandlerName = ' + this.name);
-                Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
-                Logger.log(3, 'regIn0, regIn1 <-> ' + regIn0 + ', ' + regIn1);
-                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER));
-                Logger.log(3, 'regIn1Value = ' + BitUtil.hex(regIn1Value, BitSize.REGISTER));
-                Logger.log(3, 'notZeroFlag = ' + (notZeroFlag ? "true (regIn1Value NOT EQUAL zero - jump)" : "false (regIn1Value EQUAL zero - no jump)"));
-                Logger.log(3, 'regPCNext = ' + BitUtil.hex(regPCNext, BitSize.REGISTER));
-            }
         };
 
         return MEJ;

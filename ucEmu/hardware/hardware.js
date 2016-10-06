@@ -25,27 +25,29 @@ TODO list:
     + [0.25h] rename regTimer to regClockTick
     + [0.50h] restructure microcode (rename microcode-execute-* to microcode-handler-*, two directories 'microcode' and 'microcode-handler')
     + [0.50h] move all combinational logic into services without access to CPU, remove CpuAware class
-    + [?.??h] move instruction set creation to control unit
-    + [?.??h] split instructions into separate classes like opcode handlers
-    + [?.??h] change 'instruction decoder' service name to some 'instruction register spliter'
-    + [?.??h] move output update to cpu
-    + [?.??h] new parameter or microcode handlers (instruction), fix undefined methods errors
-    + [?.??h] add WE clock flags to the microcodeHandlers
-    + [?.??h] create RegisterBag class
-    + [?.??h] move common bit sizes to dedicated service
-    + [?.??h] move register reset to microcode handlers
-    + [?.??h] create virtual NotYetDecoded instruction for fetch-first microcode phase
-    + [?.??h] microcode handlers should use internalResultBag
-    + [?.??h] split data propagation and data storing at microcode handlers
-    + [?.??h] split data propagation and data storing at CPU
+    + move instruction set creation to control unit
+    + split instructions into separate classes like opcode handlers
+    + change 'instruction decoder' service name to some 'instruction register spliter'
+    + move output update to cpu
+    + new parameter or microcode handlers (instruction), fix undefined methods errors
+    + add WE clock flags to the microcodeHandlers
+    + create RegisterBag class
+    + move common bit sizes to dedicated service
+    + move register reset to microcode handlers
+    + create virtual NotYetDecoded instruction for fetch-first microcode phase
+    + microcode handlers should use internalResultBag
+    + split data propagation and data storing at microcode handlers
+    + split data propagation and data storing at CPU
+    + add microcode jump to microcode handler itself (we have also extra Microcode.??)
 
-    - [?.??h] add microcode jump to microcode handler itself (we have also extra Microcode.??)
-    - [?.??h] registerFile instead of single read should have channels like: out0, out1, outAddress
-    - [?.??h] remove MemoryAccess register approach
-    - [?.??h] change jnz to jz
-    - [0.50h] figure out how to load regClockTick (check row address 0xFFF at memory controller?)
-    - [1.00h] implement store instruction
-    - [?.??h] any register support at ld/st
+    - registerFile instead of single read should have channels like: out0, out1, outAddress
+    - remove MemoryAccess register approach (also from docs accross files)
+    - change jnz to jz
+    - add background color to changed log entries
+    - figure out how to load regClockTick (check row address 0xFFF at memory controller?)
+    - improve performance by spiting 'propagate' method into propagateDataNeededAtFallingClockEdge, propagateDataNeededAtClockLevel
+    - implement store instruction
+    - any register support at ld/st
     
         :: fun starts here ::
     - [1.5h] add DI and clean up
@@ -117,10 +119,10 @@ function initialize() {
     // -----
 
     secondsStart = new Date().getTime();
-    Logger.log(0, '\n\n***************\n     START\n***************\n\n');
+    Logger.log(0, '\n\n***************\nSTART\n***************\n\n');
     runCpu();
     secondsEnd = new Date().getTime();
-    Logger.log(0, '\n\n*************************\n     STOP ' + (secondsEnd - secondsStart) + ' ms\n*************************\n\n');
+    Logger.log(0, '\n\n*************************\nSTOP ' + (secondsEnd - secondsStart) + ' ms\n*************************\n\n');
     if (benchmarkMode) {
         alert((secondsEnd - secondsStart) + ' ms');
     }

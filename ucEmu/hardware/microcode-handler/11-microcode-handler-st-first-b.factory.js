@@ -6,7 +6,7 @@ var MicrocodeHandlerStFirstB = (function () {
     function _MicrocodeHandlerStFirstB() {
         var MESFB;
 
-        MESFB = function (microcode, memoryWEPositive, memoryWENegative, name) {
+        MESFB = function (microcode, microcodeJump, memoryWEPositive, memoryWENegative, name) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -14,25 +14,22 @@ var MicrocodeHandlerStFirstB = (function () {
         MESFB.prototype.constructor = MESFB;
 
         MESFB.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
-            var dummyRegisterValue;
+            var dummyRegisterValue, sequencer;
 
             dummyRegisterValue = registerBag.registerFile.read(RegisterFile.DUMMY_REGISTER);
 
+            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
+                ? instruction.microcodeJump : this.microcodeJump;
+
             internalResultBag.registerSaveIndex = RegisterFile.DUMMY_REGISTER;
             internalResultBag.register = dummyRegisterValue;
-            internalResultBag.sequencer = Microcode.ST_FIRST_C;
+            internalResultBag.sequencer = sequencer;
             internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = registerBag.regMemoryRowAddress;
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
             internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
-
-            if (this.isLogEnabled) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
-                Logger.log(1, 'microcodeHandlerName = ' + this.name);
-                Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
-            }
         };
 
         return MESFB;

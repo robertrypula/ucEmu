@@ -6,7 +6,7 @@ var MicrocodeHandlerStFirstC = (function () {
     function _MicrocodeHandlerStFirstC() {
         var MESFC;
 
-        MESFC = function (microcode, memoryWEPositive, memoryWENegative, name) {
+        MESFC = function (microcode, microcodeJump, memoryWEPositive, memoryWENegative, name) {
             AbstractMicrocode.apply(this, arguments);
         };
 
@@ -14,29 +14,24 @@ var MicrocodeHandlerStFirstC = (function () {
         MESFC.prototype.constructor = MESFC;
 
         MESFC.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
-            var dummyRegisterValue, regIn0, regIn0Value;
+            var dummyRegisterValue, regIn0, regIn0Value, sequencer;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.read(regIn0);
             dummyRegisterValue = registerBag.registerFile.read(RegisterFile.DUMMY_REGISTER);
 
+            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
+                ? instruction.microcodeJump : this.microcodeJump;
+
             internalResultBag.registerSaveIndex = RegisterFile.DUMMY_REGISTER;
             internalResultBag.register = dummyRegisterValue;
-            internalResultBag.sequencer = Microcode.ST_SECOND_A;
+            internalResultBag.sequencer = sequencer;
             internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
             internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
-
-            if (this.isLogEnabled) {
-                Logger.log(0, ':: [SIGNALS PROPAGATION FINISHED]');
-                Logger.log(1, 'microcodeHandlerName = ' + this.name);
-                Logger.log(1, 'instructionName = ' + instruction.name + ', ' + instruction.nameFull);
-                Logger.log(3, 'regIn0 = ' + regIn0);
-                Logger.log(3, 'regIn0Value = ' + BitUtil.hex(regIn0Value, BitSize.REGISTER));
-            }
         };
 
         return MESFC;

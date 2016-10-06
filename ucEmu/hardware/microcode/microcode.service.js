@@ -21,7 +21,7 @@ var Microcode = (function () {
             ST_SECOND_A: 13,
             ST_SECOND_B: 14,
             ST_SECOND_C: 15,
-            JUMP_AT_INSTRUCTION: -1   // actually it's not 'real' microcode entry
+            JUMP_IS_AT_INSTRUCTION: -1   // actually it's not 'real' microcode entry
         };
     }
 
