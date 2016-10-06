@@ -6,27 +6,27 @@ var StaticRam = (function () {
     function _StaticRam() {
         var SR;
 
-        SR = function (rowAddress, memoryWE, dataIn) {
+        SR = function () {
             this.data = new Uint32Array(SR.ROWS_COUNT);
-            this.input = {
-                rowAddress: rowAddress,
-                memoryWE: memoryWE,
-                dataIn: dataIn
-            };
+            this.rowAddress = 0;
+            this.memoryWE = 0;
+            this.dataIn = 0;
 
             this.$$initialize();
         };
 
         SR.ROWS_COUNT = Math.pow(2, BitSize.ADDRESS_ROW);
 
-        SR.prototype.log = function (startRow, stopRow) {
-            var i;
+        SR.prototype.log = function (addressRowStart, addressRowStop) {     // TODO remove Logger and change method name
+            var i, memoryDump;
 
-            startRow = startRow < 0 ? 0 : startRow;
-            for (i = startRow; i < SR.ROWS_COUNT; i++) {
-                if (i > stopRow) {
+            memoryDump = [];
+            addressRowStart = addressRowStart < 0 ? 0 : addressRowStart;
+            for (i = addressRowStart; i < SR.ROWS_COUNT; i++) {
+                if (i > addressRowStop) {
                     break;
                 }
+                memoryDump.push(this.data[i]);
 
                 if (Logger.isEnabled()) {
                     Logger.log(
@@ -37,37 +37,40 @@ var StaticRam = (function () {
                     );
                 }
             }
+            Logger.log(0, '');
 
-            Logger.log(0, '\n');
+            return memoryDump;
         };
 
         SR.prototype.getDataOut = function () {
-            return this.data[this.input.rowAddress];
+            return this.data[this.rowAddress];
         };
 
         SR.prototype.setMemoryWE = function (memoryWE) {
-            this.input.memoryWE = memoryWE ? 1 : 0;
+            this.memoryWE = memoryWE ? 1 : 0;
             this.$$update();
         };
 
         SR.prototype.setRowAddress = function (rowAddress) {
-            this.input.rowAddress = BitUtil.mask(rowAddress, BitSize.ADDRESS_ROW);
+            this.rowAddress = BitUtil.mask(rowAddress, BitSize.ADDRESS_ROW);
             this.$$update();
         };
 
         SR.prototype.setDataIn = function (dataIn) {
-            this.input.dataIn = BitUtil.mask(dataIn, BitSize.MEMORY_WIDTH);
+            this.dataIn = BitUtil.mask(dataIn, BitSize.MEMORY_WIDTH);
             this.$$update();
         };
 
         SR.prototype.$$update = function () {
-            if (this.input.memoryWE) {
-                this.data[this.input.rowAddress] = this.input.dataIn;
+            if (this.memoryWE) {
+                this.data[this.rowAddress] = this.dataIn;
             }
         };
 
         SR.prototype.$$initialize = function () {
-            for (var i = 0; i < SR.ROWS_COUNT; i++) {
+            var i;
+
+            for (i = 0; i < SR.ROWS_COUNT; i++) {
                 this.data[i] = BitUtil.random(BitSize.MEMORY_WIDTH);
             }
             this.$$update();

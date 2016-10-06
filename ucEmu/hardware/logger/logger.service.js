@@ -7,14 +7,15 @@ var Logger = (function () {
         var $$verbose = 0;
 
         function $$logHtml(verbose, str) {
-            var strParsed, i;
-            
+            var strParsed, i, element;
+
+            element = document.getElementById('output');
             for (i = 0; i < verbose * 1; i++) {
-                document.write("&nbsp;");
+                element.innerHTML += '&nbsp;';
             }
             strParsed = str.replace(/\n/g, '<br/>');
-            strParsed = strParsed.replace(/ /g, '&nbsp;');
-            document.write(strParsed + "<br/>");
+            // strParsed = strParsed.replace(/ /g, '&nbsp;');
+            element.innerHTML += strParsed + '<br/>';
         }
 
         function $$logConsole(str) {

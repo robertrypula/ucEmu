@@ -2,7 +2,7 @@
 TODO list:
     + [0.50h] move output computing to handlers (default value at abstract)
     + [0.25h] remember to update output when cpu boots because we dont have faling edge at thus point
-    + [1.00h] remove dumpHex and use hex
+    + [1.00h] remove cpuStateHex and use hex
     + [0.50h] new services for object creation (remove all 'new' aross code), AluProvider.create(cpu) / AluCreator.create(cpu) / AluBuilder.create()
     + [0.75h] service for logging with verbose levels
     + [0.50h] add aliases for cpu internals at abstract-sequencer-handler, CHECK PERFORMANCE -> no change :/
@@ -13,11 +13,11 @@ TODO list:
                 + STATE@seqauencer -> MICROCODE
                 + STATE@sequencerBuilder -> moved to ControlUnit
                 + state param @sequencerBuilder.build() -> microcode
-    + [1.00h] change structure of dumping cpu state
-                + create dumpState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
-                + ability to pass previous dumpState to mark changes values - changed = true/false/null
+    + [1.00h] change structure of cpuStateing cpu state
+                + create cpuStateState method that returns array with name, value, and bitSize - all divided into sections register, input, output, extra
+                + ability to pass previous cpuStateState to mark changes values - changed = true/false/null
                 + move Instruction State and Microcode State to separate file (also method for fetching key by value)
-                + return instr/microcode state at extra field in cpu dump
+                + return instr/microcode state at extra field in cpu cpuState
     + [1.50h] create new MemoryController and move all code related to col/row/shift/mask manipulation
     + [0.25h] rename registerSet to registerFile
     + [0.25h] introduce registers for memoryWrite and memoryRowAddress
@@ -79,104 +79,78 @@ CPU outputs:
 // 2.35 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-21
 // 4.50 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-22
 // 3.90 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-30
-var benchmarkMode = null;//3.9;
+var
+    benchmarkMode = null,//3.9,
+    staticRamData = [
+        { rowAddress: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },
+        { rowAddress: 0x0001, data: [0x20, 0x00, 0x30, 0x07] },
+        { rowAddress: 0x0002, data: [0x45, 0x00, 0x50, 0x00] },
+        { rowAddress: 0x0003, data: [0xff, 0xff, 0x60, 0x10] },
+        { rowAddress: 0x0004, data: [0x70, 0x10, 0x00, 0x00] }
+    ],
+    cpu = new Cpu(),
+    staticRam = new StaticRam(),
+    secondsStart,
+    secondsEnd,
+    cpuState,
+    cpuStatePrevious;
 
-var memoryState = [
-    { row: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },
-    { row: 0x0001, data: [0x20, 0x00, 0x30, 0x07] },
-    { row: 0x0002, data: [0x45, 0x00, 0x50, 0x00] },
-    { row: 0x0003, data: [0xff, 0xff, 0x60, 0x10] },
-    { row: 0x0004, data: [0x70, 0x10, 0x00, 0x00] }
-];
 Logger.setVerbose(benchmarkMode ? -1 : 4);
-var cpu = new Cpu();
-var staticRam = new StaticRam(
-    cpu.getMemoryRowAddress(),
-    cpu.getMemoryWE(),
-    cpu.getMemoryWrite()
-);
-syncCpuWithStaticRam();
-cpu.setClock(false);
-staticRam.log(0, 4);
-cpuLog(true);
-Logger.log(0, "\n");
 
-triggerCpuResetAndProgramStaticRam();
-
-var secondsStart = new Date().getTime();
-document.write('START<br/>');
-
-runCpu();
-
-var secondsEnd = new Date().getTime();
-document.write('STOP<br/> ' + (secondsEnd - secondsStart) + ' ms' + '<br/>');
-
-function triggerCpuResetAndProgramStaticRam() {
+function initialize() {
     var i;
 
-    Logger.log(1, '------------------------------------------------------------------------------------------------------------');
-    Logger.log(1, '                                                                                       reset & program BEGIN');    
-    Logger.log(1, '\n');
-
+    syncCpuWithStaticRam();
     for (i = 0; i < 2; i++) {
-        Logger.log(1, '[ACTION] reset enable #' + i);
         cpu.setReset(true);
-        clockHigh();
-        clockLow();
-        Logger.log(1, "\n");        
+        makeOneClockCycle();
     }
 
-    Logger.log(1, '[ACTION] program loop');
-    programStaticRamAndSync(memoryState);
     staticRam.log(0, 4);
-    cpuLog(true);
-    Logger.log(1, "\n");
+    staticRamFillWithData(staticRamData);
+    makeOneClockCycle();
+    staticRam.log(0, 4);
 
-    Logger.log(1, '[ACTION] reset disable');
     cpu.setReset(false);
-    clockHigh();
-    clockLow();
-    Logger.log(1, "\n");
+    makeOneClockCycle();
 
-    Logger.log(0, '                                                                                         reset & program END');
-    Logger.log(0, '------------------------------------------------------------------------------------------------------------');
-    Logger.log(0, "\n");
+    // -----
+
+    secondsStart = new Date().getTime();
+    Logger.log(0, '\n\n***************\n     START\n***************\n\n');
+    runCpu();
+    secondsEnd = new Date().getTime();
+    Logger.log(0, '\n\n*************************\n     STOP ' + (secondsEnd - secondsStart) + ' ms\n*************************\n\n');
+    if (benchmarkMode) {
+        alert((secondsEnd - secondsStart) + ' ms');
+    }
 }
 
 function runCpu() {
-    var
-        clockTicks = 0,
-        clockTicksToDo;
+    var clockTicks, clockTicksToDo;
 
+    clockTicks = 0;
     clockTicksToDo = benchmarkMode ? Math.round(benchmarkMode * 1000 * 1000) : 30;
-
     while (clockTicks < clockTicksToDo) {
         clockTicks++;
-        clockHigh();
-        clockLow();
-
-        if (!Logger.isEnabled()) {
-            continue;
-        }
-
-        Logger.log(1, '----> clockTicks ' + clockTicks);
-        Logger.log(1, "\n");
+        makeOneClockCycle();
     }
 }
 
-function programStaticRamAndSync(memoryState) {
-    for (var i = 0; i < memoryState.length; i++) {
-        var ms = memoryState[i];
+function staticRamFillWithData(staticRamData) {
+    var i, ms;
+
+    for (i = 0; i < staticRamData.length; i++) {
+        ms = staticRamData[i];
 
         staticRam.setMemoryWE(false);
 
-        staticRam.setRowAddress(ms.row);
+        staticRam.setRowAddress(ms.rowAddress);
         staticRam.setDataIn(BitUtil.byteRowTo32bit(ms.data));
 
         staticRam.setMemoryWE(true);
         staticRam.setMemoryWE(false);
     }
-    syncCpuWithStaticRam();
 }
 
 function syncCpuWithStaticRam() {
@@ -186,94 +160,91 @@ function syncCpuWithStaticRam() {
     cpu.setMemoryRead(staticRam.getDataOut());
 }
 
-function clockHigh() {
+function makeOneClockCycle() {
+    getCpuState();
+    logSeparator();
+    logCpuStateGroup('input');
+    logCpuStateGroup('output');
+    logCpuStateGroup('registerSpecialPurpose');
+    logCpuStateGroup('registerGeneralPurpose');
+    logCpuStateExtraGroup();
+
     cpu.setClock(true);
     syncCpuWithStaticRam();
+    logClockInfo(true);
 
-    if (Logger.isEnabled()) {
-        cpuLog();  // not needed that much - we can comment it
-    }
+    getCpuState();
+    logCpuStateGroup('input');
+    logCpuStateGroup('output');
 
-}
-
-function clockLow() {
     cpu.setClock(false);
     syncCpuWithStaticRam();
-
-    if (Logger.isEnabled()) {
-        cpuLog();
-    }
+    logClockInfo(false);
 }
 
-var dumpPrevious;
-
-function cpuLog() {
+function getCpuState() {
     if (!benchmarkMode) {
-        var dump;
-
-        dump = cpu.dumpState(dumpPrevious);
-        console.log(dump);
-        dumpPrevious = dump;
+        cpuState = cpu.getState(cpuStatePrevious);
+        cpuStatePrevious = cpuState;
     }
 }
 
-staticRam.log(0, 4);
-staticRam.log(0x100, 0x102);
+function logCpuStateExtraGroup() {
+    if (benchmarkMode) {
+        return;
+    }
 
+    Logger.log(0, ':::: INSTRUCTION: ' + cpuState.extra.opcode.value + ', ' + cpuState.extra.instructionName.value);
+    Logger.log(0, ':::: MICROCODE: ' + cpuState.extra.microcode.value + ', ' + cpuState.extra.microcodeName.value);
+}
 
-/*
-    inputs + registers
-    instruction + opcode
-    outputs
-    [clock HIGH] :: sync with ram ::
-    inputs
-    outputs
-    [clock LOW] :: sync with ram ::
+function logCpuStateGroup(groupName) {
+    var group, key, entry, str;
 
- */
+    if (benchmarkMode) {
+        return;
+    }
 
+    group = cpuState[groupName];
+    str = '';
+    for (key in group) {
+        entry = group[key];
+        switch (groupName) {
+            case 'input':
+                str += 'INPUT : ';
+                break;
+            case 'output':
+                str += 'OUTPUT: ';
+                break;
+        }
+        str += key + ' = ' + BitUtil.hex(entry.value, entry.bitSize) + ' | ';
+    }
+    Logger.log(0, str);
+}
 
+function logClockInfo(clock) {
+    if (benchmarkMode) {
+        return;
+    }
+    if (clock) {
+        Logger.log(0, ':: CLOCK HIGH');
+    } else {
+        Logger.log(0, ':: CLOCK LOW - results stored in registers');
+    }
 
+}
 
+function logSeparator() {
+    var microcodeValue;
 
+    if (benchmarkMode) {
+        return;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    microcodeValue = cpuState.extra.microcode.value;
+    if (microcodeValue === Microcode.FETCH_FIRST) {
+        Logger.log(0, '\n================================================================================\n');
+    } else {
+        Logger.log(0, '--------------------');
+    }
+}

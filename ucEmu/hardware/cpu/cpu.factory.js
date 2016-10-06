@@ -120,7 +120,7 @@ var Cpu = (function () {
 
         C.prototype.setMemoryRead = function (memoryRead) {
             this.$$inputBag.memoryRead = memoryRead | 0;
-            // memoryRead input will not change any output of the CPU directly - no update needed
+            this.$$update();
         };
 
         C.prototype.setReset = function (reset) {
@@ -165,25 +165,27 @@ var Cpu = (function () {
             return this.$$clockPrevious !== this.$$inputBag.clock && !this.$$inputBag.clock;
         };
 
-        C.prototype.$$dumpStateLoopGroupKey = function (group, current, previous, callback) {
-            var key;
+        C.prototype.$$loopKeysInsideGroup = function (group, currentState, previousState) {
+            var key, current, previous;
 
-            for (key in current[group]) {
-                if (typeof current[group][key].changed !== 'undefined') {
-                    callback(current[group][key], previous[group][key]);
+            for (key in currentState[group]) {
+                if (typeof currentState[group][key].changed !== 'undefined') {
+                    current = currentState[group][key];
+                    previous = previousState[group][key];
+                    current.changed = previousState.value !== current.value;
                 }
             }
         };
 
-        C.prototype.dumpState = function (previous) {
-            var dump, rf, rb, i, o, key;
+        C.prototype.getState = function (previousState) {
+            var currentState, rf, rb, i, o, group;
 
             rf = this.$$registerBag.registerFile;
             rb = this.$$registerBag;
             i = this.$$inputBag;
             o = this.$$outputBag;
 
-            dump = {
+            currentState = {
                 input: {
                     clock: { value: i.clock, bitSize: BitSize.SINGLE_BIT, changed: null },
                     memoryRead: { value: i.memoryRead, bitSize: BitSize.MEMORY_WIDTH, changed: null },
@@ -218,27 +220,24 @@ var Cpu = (function () {
                     reg11: { value: rf.read(11), bitSize: BitSize.REGISTER, changed: null },
                     reg12: { value: rf.read(12), bitSize: BitSize.REGISTER, changed: null },
                     reg13: { value: rf.read(13), bitSize: BitSize.REGISTER, changed: null },
-                    regMA: { value: rf.read(14), bitSize: BitSize.REGISTER, changed: null },
+                    reg14: { value: rf.read(14), bitSize: BitSize.REGISTER, changed: null },
                     regPC: { value: rf.read(15), bitSize: BitSize.REGISTER, changed: null }
                 },
                 extra: {
-                    opcode: this.$$instruction.opcode,
-                    opcodeName: this.$$instruction.name,
-                    microcode: this.$$microcodeHandler.microcode,
-                    microcodeName: this.$$microcodeHandler.name
+                    opcode: { value: this.$$instruction.opcode, changed: null },
+                    instructionName: { value: this.$$instruction.name, changed: null },
+                    microcode: { value: this.$$microcodeHandler.microcode, changed: null },
+                    microcodeName: { value: this.$$microcodeHandler.name, changed: null }
                 }
             };
 
-            // set changed flag
-            if (previous) {
-                for (key in dump) {
-                    this.$$dumpStateLoopGroupKey(key, dump, previous, function (current, previous) {
-                        current.changed = previous.value !== current.value;
-                    });
+            if (previousState) {
+                for (group in currentState) {
+                    this.$$loopKeysInsideGroup(group, currentState, previousState);
                 }
             }
 
-            return dump;
+            return currentState;
         };
 
         return C;
