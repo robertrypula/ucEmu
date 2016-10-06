@@ -51,6 +51,10 @@ var MemoryController = (function () {
             return result ? 1 : 0;
         }
 
+        function getRegisterResultFromMemoryReadFinal(memoryReadFinal) {
+            return BitUtil.shiftRight(memoryReadFinal, 2 * BitSize.MEMORY_COLUMN);  // TODO verify that
+        }
+
         return {
             getColumn: getColumn,
             getMemoryReadShiftedLeft: getMemoryReadShiftedLeft,
@@ -59,7 +63,8 @@ var MemoryController = (function () {
             getMemoryReadFinal: getMemoryReadFinal,
             getMemoryRowAddress: getMemoryRowAddress,
             getMemoryRowAddressNextRow: getMemoryRowAddressNextRow,
-            getMemoryWE: getMemoryWE
+            getMemoryWE: getMemoryWE,
+            getRegisterResultFromMemoryReadFinal: getRegisterResultFromMemoryReadFinal
         };
     }
 

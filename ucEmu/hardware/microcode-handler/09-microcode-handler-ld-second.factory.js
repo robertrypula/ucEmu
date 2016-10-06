@@ -17,6 +17,7 @@ var MicrocodeHandlerLdSecond = (function () {
             var regIn0, regIn0Value, regOut, regResult, column, columnFromTheBack,
                 memoryReadShifted, memoryReadFinal, address, sequencer;
 
+            regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.out0(regIn0);
 
@@ -25,8 +26,7 @@ var MicrocodeHandlerLdSecond = (function () {
             memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
 
-            regResult = memoryReadFinal;           // TODO bug, map memoryReadFinal to register at MemoryController
-            regOut = RegisterFile.MEMORY_ACCESS;   // TODO it could be at some point any register...
+            regResult = MemoryController.getRegisterResultFromMemoryReadFinal(memoryReadFinal);
 
             // TODO when instruction will save to PC it will produce wrong result - fixed?
             address = RegisterFile.PROGRAM_COUNTER === regOut

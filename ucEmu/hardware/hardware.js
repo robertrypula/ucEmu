@@ -40,8 +40,8 @@ TODO list:
     + split data propagation and data storing at CPU
     + add microcode jump to microcode handler itself (we have also extra Microcode.??)
     + registerFile instead of single read should have channels like: out0, out1, outAddress
+    + remove MemoryAccess register approach (also from docs across files)
 
-    - remove MemoryAccess register approach (also from docs across files)
     - change jnz to jz
     - add background color to changed log entries
     - figure out how to load regClockTick (check row address 0xFFF at memory controller?)
@@ -53,28 +53,6 @@ TODO list:
     - [1.5h] add DI and clean up
     - [?.?h] test performance with dedicated Register and Signal classes (masking by bitSize and toString would be inside)
     - [1.0h] move project to separate GitHub repo ('SimpleCPU')
-
-CPU inputs:
-    - [1 bit] clock
-    - [1 bit] reset
-    - [32 bit] memoryRead
-
-CPU outputs:
-    - [14 bit] memoryRowAddress
-    - [32 bit] memoryWrite
-    - [1 bit] memoryWE
-
- */
-
-/*
- ? cycles   | 0x0R 0xRR            | 00 | add     regOut, regIn0, regIn1        | regOut = regIn0 + regIn1
- ? cycles   | 0x1R 0xRR            | 01 | nand    regOut, regIn0, regIn1        | regOut = regIn0 nand regIn1
- ? cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1>=0) ? (regIn0 << regIn1) : (regIn0 >>> abs(regIn1))
- ? cycles   | 0x3_ 0xRR            | 03 | jnz     regIn0, regIn1                | if (regIn1!=0) jump to address from regIn0
- ? cycles   | 0x4R 0xR_            | 04 | copy    regOut, regIn0                | regOut = regIn0
- ? cycles   | 0x5R 0x__ 0xCC 0xCC  | 05 | imm     regOut, _constant16bit_       | regOut = _constant16bit_
- ? cycles   | 0x6_ 0xR_            | 06 | ld      regIn0                        | regMem = MemoryAt[regIn0]
- ? cycles   | 0x7_ 0xR_            | 07 | st      regIn0                        | MemoryAt[regIn0] = regMem
  */
 
 // 3.95 emulated MHz / second @ 3.6 GHz real cpu      # old score
@@ -83,6 +61,7 @@ CPU outputs:
 // 3.90 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-30
 // 3.90 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-30
 // 0.80 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-10-06   performance drooped a lot... :(
+
 var
     benchmarkMode = null,//0.8,
     staticRamData = [

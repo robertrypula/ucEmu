@@ -1,5 +1,5 @@
 /*
-    CPU emulator - 2015.08.15
+    CPU emulator - 2015.08.15     TODO review that all information below:
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Instruction set:
@@ -7,17 +7,18 @@
         -----------+----------------------+----+---------------------------------------+-----------------------------------------------
         cycles     | memory               | nr | instruction                           | action
         -----------+----------------------+----+---------------------------------------+-----------------------------------------------
-        ? cycles   | 0x0R 0xRR            | 00 | add     regOut, regIn0, regIn1        | regOut = regIn0 + regIn1
-        ? cycles   | 0x1R 0xRR            | 01 | nand    regOut, regIn0, regIn1        | regOut = regIn0 nand regIn1
-        ? cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1 >= 0) ? (regIn0 << regIn1) : (regIn0 >>> abs(regIn1))
-        ? cycles   | 0x3_ 0xRR            | 03 | jnz     regIn0, regIn1                | if (regIn1 != 0) jump to address from regIn0
-        ? cycles   | 0x4R 0xR_            | 04 | copy    regOut, regIn0                | regOut = regIn0
-        ? cycles   | 0x5R 0x__ 0xCC 0xCC  | 05 | imm     regOut, _constant16bit_       | regOut = _constant16bit_
-        ? cycles   | 0x6_ 0xR_            | 06 | ld      regIn0                        | regMem = MemoryAt[regIn0]
-        ? cycles   | 0x7_ 0xR_            | 07 | st      regIn0                        | MemoryAt[regIn0] = regMem
+        3 cycles   | 0x0R 0xRR            | 00 | add     regOut, regIn0, regIn1        | regOut = regIn0 + regIn1
+        3 cycles   | 0x1R 0xRR            | 01 | nand    regOut, regIn0, regIn1        | regOut = regIn0 nand regIn1
+        3 cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1 >= 0) ? (regIn0 << regIn1) : (regIn0 >>> abs(regIn1))
+        3 cycles   | 0x3_ 0xRR            | 03 | jnz     regIn0, regIn1                | if (regIn1 != 0) jump to address from regIn0
+        3 cycles   | 0x4R 0xR_            | 04 | copy    regOut, regIn0                | regOut = regIn0
+        3 cycles   | 0x5R 0x__ 0xCC 0xCC  | 05 | imm     regOut, _constant16bit_       | regOut = _constant16bit_
+        4 cycles   | 0x6R 0xR_            | 06 | ld      regOut, regIn0                | regOut = MemoryAt[regIn0]
+        8 cycles   | 0x7_ 0xRR            | 07 | st      regIn0, regIn1                | MemoryAt[regIn0] = regIn1
         -----------+----------------------+----+---------------------------------------+-----------------------------------------------
 
         Alternative version of last three instructions. It can save lot of space in memory after program compilation.
+        TODO review this again
 
         ...        | ...                  | .. | ...                                   | ...
         ? cycles   | 0x4R 0xCC 0xCC       | 05 | imm     regOut, _constant16bit_       | regOut = _constant16bit_
@@ -29,10 +30,9 @@
 
         We have 16 registers. Each can hold 16 bits of data.
 
-        reg00-11          Normal
-        reg12     regFP   FramePointer
-        reg13     regSP   StackPointer
-        reg14     regMA   MemoryAccess     (hardware)
+        reg00-12          Normal
+        reg13     regFP   FramePointer     (software)
+        reg14     regSP   StackPointer     (software)
         reg15     regPC   ProgramCounter   (hardware)
 
     Memory:
@@ -42,10 +42,11 @@
         wide so it contains 16384 rows 4 bytes each. It means that we can reduce address bus bits from 16 to 14. In total we will
         still have 64KB of memory.
 
-        0000: 00 00 00 00
-        0004: 00 00 00 00
-        0008: 00 00 00 00
-        000C: 00 00 00 00
+        rowAddress byteAddress data
+        0000       0000        00 00 00 00
+        0001       0004        00 00 00 00
+        0002       0008        00 00 00 00
+        0003       000C        00 00 00 00
              . . .
 
 

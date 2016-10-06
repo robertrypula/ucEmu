@@ -13,7 +13,6 @@ var RegisterFile = (function () {
 
         RS.REGISTERS_SIZE = 16;
         RS.PROGRAM_COUNTER = RS.REGISTERS_SIZE - 1;
-        RS.MEMORY_ACCESS = RS.REGISTERS_SIZE - 2;
         RS.DUMMY_REGISTER = 0;
 
         RS.prototype.$$initialize = function () {
