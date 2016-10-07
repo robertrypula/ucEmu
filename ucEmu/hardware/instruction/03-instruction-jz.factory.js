@@ -1,9 +1,9 @@
-var InstructionJnz = (function () {
+var InstructionJz = (function () {
     'use strict';
 
-    _InstructionJnz.$inject = [];
+    _InstructionJz.$inject = [];
 
-    function _InstructionJnz() {
+    function _InstructionJz() {
         var IJ;
 
         IJ = function (opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull) {
@@ -16,6 +16,6 @@ var InstructionJnz = (function () {
         return IJ;
     }
 
-    return _InstructionJnz();        // TODO change it to dependency injection
+    return _InstructionJz();        // TODO change it to dependency injection
 
 })();

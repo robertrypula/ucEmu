@@ -10,7 +10,7 @@
         3 cycles   | 0x0R 0xRR            | 00 | add     regOut, regIn0, regIn1        | regOut = regIn0 + regIn1
         3 cycles   | 0x1R 0xRR            | 01 | nand    regOut, regIn0, regIn1        | regOut = regIn0 nand regIn1
         3 cycles   | 0x2R 0xRR            | 02 | sh      regOut, regIn0, regIn1        | regOut = (regIn1 >= 0) ? (regIn0 << regIn1) : (regIn0 >>> abs(regIn1))
-        3 cycles   | 0x3_ 0xRR            | 03 | jnz     regIn0, regIn1                | if (regIn1 != 0) jump to address from regIn0
+        3 cycles   | 0x3_ 0xRR            | 03 | jz      regIn0, regIn1                | if (regIn1 == 0) jump to address from regIn0
         3 cycles   | 0x4R 0xR_            | 04 | copy    regOut, regIn0                | regOut = regIn0
         3 cycles   | 0x5R 0x__ 0xCC 0xCC  | 05 | imm     regOut, _constant16bit_       | regOut = _constant16bit_
         4 cycles   | 0x6R 0xR_            | 06 | ld      regOut, regIn0                | regOut = MemoryAt[regIn0]
@@ -173,7 +173,8 @@ var Cpu = (function () {
                 if (typeof currentState[group][key].changed !== 'undefined') {
                     current = currentState[group][key];
                     previous = previousState[group][key];
-                    current.changed = previousState.value !== current.value;
+                    
+                    current.changed = previous.value !== current.value;
                 }
             }
         };

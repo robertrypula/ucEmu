@@ -26,8 +26,8 @@ var InstructionBuilder = (function () {
                         opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
                     );
                     break;
-                case O.JNZ:
-                    instruction = new InstructionJnz(
+                case O.JZ:
+                    instruction = new InstructionJz(
                         opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
                     );
                     break;

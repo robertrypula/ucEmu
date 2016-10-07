@@ -1,9 +1,9 @@
-var MicrocodeHandlerJnz = (function () {
+var MicrocodeHandlerJz = (function () {
     'use strict';
 
-    _MicrocodeHandlerJnz.$inject = [];
+    _MicrocodeHandlerJz.$inject = [];
 
-    function _MicrocodeHandlerJnz() {
+    function _MicrocodeHandlerJz() {
         var MEJ;
 
         MEJ = function (microcode, microcodeJump, memoryWEPositive, memoryWENegative, name) {
@@ -15,14 +15,14 @@ var MicrocodeHandlerJnz = (function () {
 
         MEJ.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
             var regIn0, regIn1, regIn0Value, regIn1Value,
-                notZeroFlag, regPCNext, address, sequencer;
+                zeroFlag, regPCNext, address, sequencer;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn1 = InstructionRegisterSpliter.getRegIn1(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.out0(regIn0);
             regIn1Value = registerBag.registerFile.out1(regIn1);
-            notZeroFlag = regIn1Value !== 0;
-            regPCNext = notZeroFlag ? regIn0Value : registerBag.registerFile.outAddress(RegisterFile.PROGRAM_COUNTER); // TODO check with flag: use reg at address
+            zeroFlag = regIn1Value === 0;
+            regPCNext = zeroFlag ? regIn0Value : registerBag.registerFile.outAddress(RegisterFile.PROGRAM_COUNTER); // TODO check with flag: use reg at address
 
             // TODO when instruction will save to PC it will produce wrong result - fixed?
             address = regPCNext;
@@ -44,6 +44,6 @@ var MicrocodeHandlerJnz = (function () {
         return MEJ;
     }
 
-    return _MicrocodeHandlerJnz();        // TODO change it to dependency injection
+    return _MicrocodeHandlerJz();        // TODO change it to dependency injection
 
 })();

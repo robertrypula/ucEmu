@@ -41,9 +41,9 @@ TODO list:
     + add microcode jump to microcode handler itself (we have also extra Microcode.??)
     + registerFile instead of single read should have channels like: out0, out1, outAddress
     + remove MemoryAccess register approach (also from docs across files)
+    + change jnz to jz
+    + add background color to changed log entries
 
-    - change jnz to jz
-    - add background color to changed log entries
     - figure out how to load regClockTick (check row address 0xFFF at memory controller?)
     - improve performance by spiting 'propagate' method into propagateDataNeededAtFallingClockEdge, propagateDataNeededAtClockLevel
     - implement store instruction
@@ -66,7 +66,7 @@ var
     benchmarkMode = null,//0.8,
     staticRamData = [
         { rowAddress: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },
-        { rowAddress: 0x0001, data: [0x20, 0x00, 0x30, 0x07] },
+        { rowAddress: 0x0001, data: [0x20, 0x00, 0x30, 0x00] },
         { rowAddress: 0x0002, data: [0x45, 0x00, 0x50, 0x00] },
         { rowAddress: 0x0003, data: [0xff, 0xff, 0x60, 0x10] },
         { rowAddress: 0x0004, data: [0x70, 0x10, 0x00, 0x00] }
@@ -76,12 +76,18 @@ var
     secondsStart,
     secondsEnd,
     cpuState,
-    cpuStatePrevious;
+    cpuStatePrevious,
+    fullLog = false;
 
 Logger.setVerbose(benchmarkMode ? -1 : 4);
 
 function initialize() {
     var i;
+
+    fullLog = !!document.getElementById('full-log').checked;
+
+    Logger.clear();
+    tryToLoadInputs();
 
     syncCpuWithStaticRam();
     for (i = 0; i < 2; i++) {
@@ -106,6 +112,27 @@ function initialize() {
     Logger.log(0, '\n\n*************************\nSTOP ' + (secondsEnd - secondsStart) + ' ms\n*************************\n\n');
     if (benchmarkMode) {
         alert((secondsEnd - secondsStart) + ' ms');
+    }
+}
+
+function tryToLoadInputs() {
+    var i, j, element, data, dataParsed;
+
+    element = document.getElementById('use-input');
+    if (!element.checked) {
+        return;
+    }
+
+    staticRamData = [];
+    for (i = 0; i < 6; i++) {
+        element = document.getElementById('input-' + i);
+        data = (element.value + '').split(' ');
+        for (j = 0; j < data.length; j++) {
+            data[j] = parseInt(data[j], 16);
+        }
+        staticRamData.push(
+            { rowAddress: i, data: data }
+        );
     }
 }
 
@@ -146,19 +173,25 @@ function syncCpuWithStaticRam() {
 function makeOneClockCycle() {
     getCpuState();
     logSeparator();
-    logCpuStateGroup('input');
-    logCpuStateGroup('registerSpecialPurpose');
+    if (fullLog) {
+        logCpuStateGroup('input');
+        logCpuStateGroup('registerSpecialPurpose');
+    }
     logCpuStateGroup('registerGeneralPurpose');
     logCpuStateExtraGroup();
-    logCpuStateGroup('output');
+    if (fullLog) {
+        logCpuStateGroup('output');
+    }
 
     cpu.setClock(true);
     syncCpuWithStaticRam();
     logClockInfo(true);
 
-    getCpuState();
-    logCpuStateGroup('input');
-    logCpuStateGroup('output');
+    if (fullLog) {
+        getCpuState();
+        logCpuStateGroup('input');
+        logCpuStateGroup('output');
+    }
 
     cpu.setClock(false);
     syncCpuWithStaticRam();
@@ -172,17 +205,32 @@ function getCpuState() {
     }
 }
 
+function wrapWithSpan(html) {
+    return '<span style="background-color: rgba(0, 255, 0, 0.3)">' + html + '</span>';
+}
+
 function logCpuStateExtraGroup() {
+    var html;
+
     if (benchmarkMode) {
         return;
     }
 
-    Logger.log(0, ':::: INSTRUCTION: ' + cpuState.extra.opcode.value + ', ' + cpuState.extra.instructionName.value);
-    Logger.log(0, ':::: MICROCODE: ' + cpuState.extra.microcode.value + ', ' + cpuState.extra.microcodeName.value);
+    html = cpuState.extra.opcode.value + ', ' + cpuState.extra.instructionName.value;
+    if (cpuState.extra.opcode.changed) {
+        html = wrapWithSpan(html);
+    }
+    Logger.log(0, ':::: INSTRUCTION: ' + html);
+
+    html = cpuState.extra.microcode.value + ', ' + cpuState.extra.microcodeName.value;
+    if (cpuState.extra.microcode.changed) {
+        html = wrapWithSpan(html);
+    }
+    Logger.log(0, ':::: MICROCODE: ' + html);
 }
 
 function logCpuStateGroup(groupName) {
-    var group, key, entry, str;
+    var group, key, entry, entryHtml, str;
 
     if (benchmarkMode) {
         return;
@@ -200,7 +248,11 @@ function logCpuStateGroup(groupName) {
                 str += 'OUTPUT: ';
                 break;
         }
-        str += key + ' = ' + BitUtil.hex(entry.value, entry.bitSize) + ' | ';
+        entryHtml = key + ' = ' + BitUtil.hex(entry.value, entry.bitSize);
+        if (entry.changed) {
+            entryHtml = wrapWithSpan(entryHtml);
+        }
+        str += entryHtml + ' | ';
     }
     Logger.log(0, str);
 }

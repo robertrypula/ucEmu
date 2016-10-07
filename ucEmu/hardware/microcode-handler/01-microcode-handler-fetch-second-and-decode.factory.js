@@ -36,7 +36,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
 
             column = MemoryController.getColumn(address);
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);
-            memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
+            memoryReadShifted = MemoryController.getMemoryReadShiftedRight(inputBag.memoryRead, columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
             
             byteWidth = instruction.byteWidth;
@@ -57,7 +57,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             internalResultBag.sequencer = sequencer;
             internalResultBag.instruction = memoryReadFinal;
             internalResultBag.clockTick = ClockTick.getClockTickNext(clockTick);
-            internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
+            internalResultBag.memoryBuffer = memoryReadFinal;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(regMemoryRowAddressNext);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
             internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);

@@ -35,8 +35,8 @@ var MicrocodeHandlerBuilder = (function () {
                         microcode, microcodeJump, memoryWEPositive, memoryWENegative, name
                     );
                     break;
-                case M.JNZ:
-                    microcodeHandler = new MicrocodeHandlerJnz(
+                case M.JZ:
+                    microcodeHandler = new MicrocodeHandlerJz(
                         microcode, microcodeJump, memoryWEPositive, memoryWENegative, name
                     );
                     break;

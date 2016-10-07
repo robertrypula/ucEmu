@@ -43,11 +43,16 @@ var Logger = (function () {
             return $$verbose >= 0;
         }
 
+        function clear() {
+            document.getElementById('output').innerHTML = '';
+        }
+
         return {
             log: log,
             getVerbose: getVerbose,
             setVerbose: setVerbose,
-            isEnabled: isEnabled
+            isEnabled: isEnabled,
+            clear: clear
         };
     }
 

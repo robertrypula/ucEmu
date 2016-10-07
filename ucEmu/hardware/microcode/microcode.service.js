@@ -10,7 +10,7 @@ var Microcode = (function () {
             ADD: 2,
             NAND: 3,
             SH: 4,
-            JNZ: 5,
+            JZ: 5,
             COPY: 6,
             IMM: 7,
             LD_FIRST: 8,

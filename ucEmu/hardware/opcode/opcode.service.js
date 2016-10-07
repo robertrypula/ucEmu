@@ -8,7 +8,7 @@ var Opcode = (function () {
             ADD: 0,
             NAND: 1,
             SH: 2,
-            JNZ: 3,
+            JZ: 3,
             COPY: 4,
             IMM: 5,
             LD: 6,
