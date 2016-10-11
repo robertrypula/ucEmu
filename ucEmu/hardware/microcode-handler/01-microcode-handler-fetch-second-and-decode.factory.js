@@ -38,7 +38,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);
             memoryReadShifted = MemoryController.getMemoryReadShiftedRight(inputBag.memoryRead, columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
-            
+
             byteWidth = instruction.byteWidth;
 
             regProgramCounterNext = Alu.add(address, byteWidth);       // TODO use address name?

@@ -14,10 +14,10 @@ var MicrocodeHandlerStFirstC = (function () {
         MESFC.prototype.constructor = MESFC;
 
         MESFC.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
-            var dummyRegisterValue, regIn0, regIn0Value, sequencer;
+            var dummyRegisterValue, regIn0, address, sequencer;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
-            regIn0Value = registerBag.registerFile.outAddress(regIn0);          // TODO use flag: address from reg
+            address = registerBag.registerFile.outAddress(regIn0);          // TODO use flag: address from reg
             dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
 
             sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
@@ -29,7 +29,7 @@ var MicrocodeHandlerStFirstC = (function () {
             internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
-            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddressNextRow(regIn0Value);
+            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddressNextRow(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
             internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };

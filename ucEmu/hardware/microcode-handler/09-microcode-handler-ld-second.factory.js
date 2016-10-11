@@ -23,7 +23,7 @@ var MicrocodeHandlerLdSecond = (function () {
 
             column = MemoryController.getColumn(regIn0Value);
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);
-            memoryReadShifted = MemoryController.getMemoryReadShiftedRight(columnFromTheBack);
+            memoryReadShifted = MemoryController.getMemoryReadShiftedRight(inputBag.memoryRead, columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
 
             regResult = MemoryController.getRegisterResultFromMemoryReadFinal(memoryReadFinal);

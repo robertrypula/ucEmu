@@ -44,10 +44,10 @@ TODO list:
     + change jnz to jz
     + add background color to changed log entries
 
-    - figure out how to load regClockTick (check row address 0xFFF at memory controller?)
+    - reduce byteWidth of imm instruction
     - improve performance by spiting 'propagate' method into propagateDataNeededAtFallingClockEdge, propagateDataNeededAtClockLevel
+    - figure out how to load regClockTick (check row address 0xFFF at memory controller?)
     - implement store instruction
-    - any register support at ld/st
     
         :: fun starts here ::
     - [1.5h] add DI and clean up
@@ -68,7 +68,7 @@ var
         { rowAddress: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },
         { rowAddress: 0x0001, data: [0x20, 0x00, 0x30, 0x00] },
         { rowAddress: 0x0002, data: [0x45, 0x00, 0x50, 0x00] },
-        { rowAddress: 0x0003, data: [0xff, 0xff, 0x60, 0x10] },
+        { rowAddress: 0x0003, data: [0x00, 0x07, 0x61, 0x00] },
         { rowAddress: 0x0004, data: [0x70, 0x10, 0x00, 0x00] }
     ],
     cpu = new Cpu(),
@@ -116,7 +116,7 @@ function initialize() {
 }
 
 function tryToLoadInputs() {
-    var i, j, element, data, dataParsed;
+    var i, j, element, data;
 
     element = document.getElementById('use-input');
     if (!element.checked) {
@@ -173,10 +173,8 @@ function syncCpuWithStaticRam() {
 function makeOneClockCycle() {
     getCpuState();
     logSeparator();
-    if (fullLog) {
-        logCpuStateGroup('input');
-        logCpuStateGroup('registerSpecialPurpose');
-    }
+    logCpuStateGroup('input');
+    logCpuStateGroup('registerSpecialPurpose');
     logCpuStateGroup('registerGeneralPurpose');
     logCpuStateExtraGroup();
     if (fullLog) {
@@ -238,16 +236,16 @@ function logCpuStateGroup(groupName) {
 
     group = cpuState[groupName];
     str = '';
+    switch (groupName) {
+        case 'input':
+            str += 'INPUT: ';
+            break;
+        case 'output':
+            str += 'OUTPUT: ';
+            break;
+    }
     for (key in group) {
         entry = group[key];
-        switch (groupName) {
-            case 'input':
-                str += 'INPUT : ';
-                break;
-            case 'output':
-                str += 'OUTPUT: ';
-                break;
-        }
         entryHtml = key + ' = ' + BitUtil.hex(entry.value, entry.bitSize);
         if (entry.changed) {
             entryHtml = wrapWithSpan(entryHtml);
@@ -258,7 +256,7 @@ function logCpuStateGroup(groupName) {
 }
 
 function logClockInfo(clock) {
-    if (benchmarkMode) {
+    if (benchmarkMode || !fullLog) {
         return;
     }
     if (clock) {
