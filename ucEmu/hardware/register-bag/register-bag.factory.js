@@ -21,17 +21,30 @@ var RegisterBag = (function () {
         };
 
         RB.prototype.resetAll = function () {
-            this.regSequencer = 0;
-            this.regInstruction = 0;
-            this.regClockTick = 0;
-
-            this.regMemoryBuffer = 0;
-            this.regMemoryRowAddress = 0;
-            this.regMemoryWrite = 0;
-
             this.registerFile.reset();
 
             // !!! regReset register is excluded from reset !!!
+            this.regSequencer = 0;
+            this.regInstruction = 0;
+            this.regClockTick = 0;
+            this.regMemoryBuffer = 0;
+            this.regMemoryRowAddress = 0;
+            this.regMemoryWrite = 0;
+        };
+
+        RB.prototype.serialize = function () {
+            var out;
+
+            out = this.registerFile.serialize();
+            out += this.regReset;
+            out += this.regSequencer;
+            out += this.regInstruction;
+            out += this.regClockTick;
+            out += this.regMemoryBuffer;
+            out += this.regMemoryRowAddress;
+            out += this.regMemoryWrite;
+
+            return out;
         };
 
         return RB;

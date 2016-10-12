@@ -100,6 +100,10 @@ var Cpu = (function () {
 
             this.$$microcodeHandler = undefined;
             this.$$instruction = undefined;
+
+            this.$$propagateCallPayloadNewRegisterData = '';
+            this.$$propagateCallPayloadMemoryWE = '';
+            this.$$firstUpdate = true;
             
             this.$$update();
         };
@@ -135,16 +139,66 @@ var Cpu = (function () {
             this.$$microcodeHandler = this.$$controlUnit.getMicrocodeHandler(this.$$registerBag.regSequencer);
             this.$$instruction = this.$$controlUnit.getInstruction(this.$$registerBag.regInstruction, this.$$microcodeHandler);
 
-            this.$$microcodeHandler.propagate(this.$$registerBag, this.$$inputBag, this.$$instruction, this.$$internalResultBag);
+            if (this.$$firstUpdate) {
+                this.$$propagateNewRegisterData();
+                this.$$firstUpdate = false;
+            }
+            this.$$propagateMemoryWE();
+
             if (this.$$isFallingClockEdge()) {
+                this.$$propagateNewRegisterData();
                 this.$$microcodeHandler.storeResults(this.$$internalResultBag, this.$$inputBag.reset, this.$$registerBag);
-                this.$$microcodeHandler.propagate(this.$$registerBag, this.$$inputBag, this.$$instruction, this.$$internalResultBag);
+                this.$$propagateNewRegisterData();
+                this.$$propagateMemoryWE();
+                // console.log('__________________falling edge of the clock');
             }
 
             this.$$clockPrevious = this.$$inputBag.clock;
             this.$$outputBag.memoryRowAddress = this.$$registerBag.regMemoryRowAddress;
             this.$$outputBag.memoryWrite = this.$$registerBag.regMemoryWrite;
             this.$$outputBag.memoryWE = this.$$internalResultBag.memoryWE;
+        };
+
+        C.prototype.$$propagateNewRegisterData = function () {
+            // var propagateCallPayloadNewRegisterData;
+
+            // TODO refactor this method when we will have dedicated class for signals/registers
+            /*
+            var rb = this.$$registerBag;
+            var r = rb.registerFile.register;
+            var registerBagSerialized = '' +
+                r[0] + r[1] + r[2] + r[3] + r[4] + r[5] + r[6] + r[7] +
+                r[8] + r[9] + r[10] + r[11] + r[12] + r[13] + r[14] + r[15] +
+                rb.regReset + rb.regSequencer + rb.regInstruction + rb.regClockTick +
+                rb.regMemoryBuffer + rb.regMemoryRowAddress + rb.regMemoryWrite;
+
+            if (this.$$registerBag.serialize() !== registerBagSerialized) {
+                alert('INTEGRITY ERROR');
+            }
+
+            propagateCallPayloadNewRegisterData = registerBagSerialized + this.$$inputBag.memoryRead;
+            */
+            // console.log(propagateCallPayloadNewRegisterData);
+            // if (propagateCallPayloadNewRegisterData !== this.$$propagateCallPayloadNewRegisterData) {
+                this.$$microcodeHandler.propagateNewRegisterData(this.$$registerBag, this.$$inputBag.memoryRead, this.$$instruction, this.$$internalResultBag);
+                // console.log('propagateNewRegisterData called');
+                /*
+                this.$$propagateCallPayloadNewRegisterData = propagateCallPayloadNewRegisterData;
+            }
+            */
+        };
+
+        C.prototype.$$propagateMemoryWE = function () {
+            var propagateCallPayloadMemoryWE;
+
+            // TODO refactor this method when we will have dedicated class for signals/registers
+
+            propagateCallPayloadMemoryWE = this.$$inputBag.clock ? '1' : '0';
+            if (propagateCallPayloadMemoryWE !== this.$$propagateCallPayloadMemoryWE) {
+                this.$$microcodeHandler.propagateMemoryWE(this.$$inputBag.clock, this.$$internalResultBag);
+                // console.log('propagateMemoryWE called');
+                this.$$propagateCallPayloadMemoryWE = propagateCallPayloadMemoryWE;
+            }
         };
 
         C.prototype.$$isFallingClockEdge = function () {

@@ -106,6 +106,7 @@ var BitUtil = (function () {
             BYTE_2: 16,
             BYTE_3: 24,
             BYTE_4: 32,
+            SERIALIZE_RADIX: 16,
             mask: mask,
             maskOneBit: maskOneBit,
             random: random,

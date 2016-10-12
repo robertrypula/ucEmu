@@ -13,7 +13,7 @@ var MicrocodeHandlerJz = (function () {
         MEJ.prototype = Object.create(AbstractMicrocode.prototype);
         MEJ.prototype.constructor = MEJ;
 
-        MEJ.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
+        MEJ.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
             var regIn0, regIn1, regIn0Value, regIn1Value,
                 zeroFlag, regPCNext, address, sequencer;
 
@@ -38,7 +38,6 @@ var MicrocodeHandlerJz = (function () {
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };
 
         return MEJ;

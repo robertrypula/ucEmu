@@ -13,7 +13,7 @@ var MicrocodeHandlerStSecondC = (function () {
         MESSC.prototype = Object.create(AbstractMicrocode.prototype);
         MESSC.prototype.constructor = MESSC;
 
-        MESSC.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
+        MESSC.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
             var dummyRegisterValue, address, sequencer;
 
             address = registerBag.registerFile.outAddress(RegisterFile.PROGRAM_COUNTER);
@@ -30,7 +30,6 @@ var MicrocodeHandlerStSecondC = (function () {
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };
 
         return MESSC;

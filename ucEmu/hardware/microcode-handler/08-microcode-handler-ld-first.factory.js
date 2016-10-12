@@ -13,7 +13,7 @@ var MicrocodeHandlerLdFirst = (function () {
         MELF.prototype = Object.create(AbstractMicrocode.prototype);
         MELF.prototype.constructor = MELF;
 
-        MELF.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
+        MELF.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
             var regIn0, address, column, memoryReadShifted, dummyRegisterValue, sequencer;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
@@ -21,7 +21,7 @@ var MicrocodeHandlerLdFirst = (function () {
             dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
 
             column = MemoryController.getColumn(address);
-            memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(inputBag.memoryRead, column);
+            memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(memoryRead, column);
 
             sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
                 ? instruction.microcodeJump : this.microcodeJump;
@@ -34,7 +34,6 @@ var MicrocodeHandlerLdFirst = (function () {
             internalResultBag.memoryBuffer = memoryReadShifted;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddressNextRow(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };
 
         return MELF;

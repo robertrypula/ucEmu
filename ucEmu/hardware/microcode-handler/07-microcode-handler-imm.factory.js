@@ -13,7 +13,7 @@ var MicrocodeHandlerImm = (function () {
         MEI.prototype = Object.create(AbstractMicrocode.prototype);
         MEI.prototype.constructor = MEI;
 
-        MEI.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
+        MEI.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
             var regOut, regResult, address, sequencer;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
@@ -34,7 +34,6 @@ var MicrocodeHandlerImm = (function () {
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };
 
         return MEI;

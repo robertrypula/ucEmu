@@ -13,7 +13,7 @@ var MicrocodeHandlerCopy = (function () {
         MEC.prototype = Object.create(AbstractMicrocode.prototype);
         MEC.prototype.constructor = MEC;
 
-        MEC.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
+        MEC.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
             var regOut, regIn0, regResult, address, sequencer;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
@@ -35,7 +35,6 @@ var MicrocodeHandlerCopy = (function () {
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };
 
         return MEC;

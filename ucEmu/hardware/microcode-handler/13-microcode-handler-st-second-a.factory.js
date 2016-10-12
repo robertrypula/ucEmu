@@ -13,7 +13,7 @@ var MicrocodeHandlerStSecondA = (function () {
         MESSA.prototype = Object.create(AbstractMicrocode.prototype);
         MESSA.prototype.constructor = MESSA;
 
-        MESSA.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
+        MESSA.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
             var dummyRegisterValue, sequencer;
 
             dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
@@ -29,7 +29,6 @@ var MicrocodeHandlerStSecondA = (function () {
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = registerBag.regMemoryRowAddress;
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };
 
         return MESSA;

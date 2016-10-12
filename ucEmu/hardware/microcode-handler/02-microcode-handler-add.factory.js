@@ -13,7 +13,7 @@ var MicrocodeHandlerAdd = (function () {
         MEA.prototype = Object.create(AbstractMicrocode.prototype);
         MEA.prototype.constructor = MEA;
 
-        MEA.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
+        MEA.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
             var regOut, regIn0, regIn1,
                 regIn0Value, regIn1Value, regResult, address, sequencer;
 
@@ -39,7 +39,6 @@ var MicrocodeHandlerAdd = (function () {
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };
 
         return MEA;

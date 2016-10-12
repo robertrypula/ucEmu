@@ -25,7 +25,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
         MFSAD.prototype = Object.create(AbstractMicrocode.prototype);
         MFSAD.prototype.constructor = MFSAD;
 
-        MFSAD.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
+        MFSAD.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
             var column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
                 byteWidth, address,
                 regProgramCounterNext, regMemoryRowAddressNext,
@@ -36,7 +36,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
 
             column = MemoryController.getColumn(address);
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);
-            memoryReadShifted = MemoryController.getMemoryReadShiftedRight(inputBag.memoryRead, columnFromTheBack);
+            memoryReadShifted = MemoryController.getMemoryReadShiftedRight(memoryRead, columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
 
             byteWidth = instruction.byteWidth;
@@ -60,7 +60,6 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             internalResultBag.memoryBuffer = memoryReadFinal;             // TODO probably not needed
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(regMemoryRowAddressNext);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };
 
         return MFSAD;

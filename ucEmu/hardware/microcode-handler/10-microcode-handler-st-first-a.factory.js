@@ -73,7 +73,7 @@ var MicrocodeHandlerStFirstA = (function () {
         MESFA.prototype = Object.create(AbstractMicrocode.prototype);
         MESFA.prototype.constructor = MESFA;
 
-        MESFA.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
+        MESFA.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
             var dummyRegisterValue, sequencer;
 
             dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
@@ -89,7 +89,6 @@ var MicrocodeHandlerStFirstA = (function () {
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = registerBag.regMemoryRowAddress;
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };
 
         return MESFA;

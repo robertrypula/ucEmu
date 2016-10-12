@@ -32,6 +32,10 @@
             registerBag.regReset = reset;
         };
 
+        AM.prototype.propagateMemoryWE = function (clock, internalResultBag) {
+            internalResultBag.memoryWE = MemoryController.getMemoryWE(clock, this.memoryWEPositive, this.memoryWENegative);
+        };
+
         return AM;
     }
 

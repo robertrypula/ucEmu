@@ -13,7 +13,7 @@ var MicrocodeHandlerFetchFirst = (function () {
         MFF.prototype = Object.create(AbstractMicrocode.prototype);
         MFF.prototype.constructor = MFF;
 
-        MFF.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
+        MFF.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
             var column, memoryReadShifted, clockTick, address, dummyRegisterValue, sequencer;
 
             address = registerBag.registerFile.outAddress(RegisterFile.PROGRAM_COUNTER);
@@ -23,7 +23,7 @@ var MicrocodeHandlerFetchFirst = (function () {
                 ? instruction.microcodeJump : this.microcodeJump;
 
             column = MemoryController.getColumn(address);
-            memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(inputBag.memoryRead, column);
+            memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(memoryRead, column);
             clockTick = registerBag.regClockTick;
 
             internalResultBag.registerSaveIndex = RegisterFile.DUMMY_REGISTER;
@@ -34,7 +34,6 @@ var MicrocodeHandlerFetchFirst = (function () {
             internalResultBag.memoryBuffer = memoryReadShifted;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddressNextRow(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };
 
         return MFF;

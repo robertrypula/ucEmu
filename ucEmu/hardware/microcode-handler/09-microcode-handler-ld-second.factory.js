@@ -13,7 +13,7 @@ var MicrocodeHandlerLdSecond = (function () {
         MELS.prototype = Object.create(AbstractMicrocode.prototype);
         MELS.prototype.constructor = MELS;
 
-        MELS.prototype.propagate = function (registerBag, inputBag, instruction, internalResultBag) {
+        MELS.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
             var regIn0, regIn0Value, regOut, regResult, column, columnFromTheBack,
                 memoryReadShifted, memoryReadFinal, address, sequencer;
 
@@ -23,7 +23,7 @@ var MicrocodeHandlerLdSecond = (function () {
 
             column = MemoryController.getColumn(regIn0Value);
             columnFromTheBack = MemoryController.getColumnFromTheBack(column);
-            memoryReadShifted = MemoryController.getMemoryReadShiftedRight(inputBag.memoryRead, columnFromTheBack);
+            memoryReadShifted = MemoryController.getMemoryReadShiftedRight(memoryRead, columnFromTheBack);
             memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
 
             regResult = MemoryController.getRegisterResultFromMemoryReadFinal(memoryReadFinal);
@@ -43,7 +43,6 @@ var MicrocodeHandlerLdSecond = (function () {
             internalResultBag.memoryBuffer = memoryReadFinal;      // TODO probably not needed
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
-            internalResultBag.memoryWE = MemoryController.getMemoryWE(inputBag.clock, this.memoryWEPositive, this.memoryWENegative);
         };
 
         return MELS;

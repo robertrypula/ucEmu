@@ -44,15 +44,16 @@ TODO list:
     + change jnz to jz
     + add background color to changed log entries
     + reduce byteWidth of imm instruction
+    + improve performance by spiting 'propagate' method into propagateDataNeededAtFallingClockEdge, propagateDataNeededAtClockLevel
 
-    - improve performance by spiting 'propagate' method into propagateDataNeededAtFallingClockEdge, propagateDataNeededAtClockLevel
-    - figure out how to load regClockTick (check row address 0xFFF at memory controller?)
+    - figure out how to load regClockTick (check last row address 0x3FFF at memory controller?)
     - implement store instruction
+    - split address propagation to improve performance more?
     
         :: fun starts here ::
-    - [1.5h] add DI and clean up
-    - [?.?h] test performance with dedicated Register and Signal classes (masking by bitSize and toString would be inside)
-    - [1.0h] move project to separate GitHub repo ('SimpleCPU')
+    - add DI and clean up
+    - test performance with dedicated Register and Signal classes (masking by bitSize and toString would be inside)
+    - move project to separate GitHub repo ('SimpleCPU')
  */
 
 // 3.95 emulated MHz / second @ 3.6 GHz real cpu      # old score
@@ -61,14 +62,15 @@ TODO list:
 // 3.90 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-30
 // 3.90 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-30
 // 0.80 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-10-06   performance drooped a lot... :(
+// 1.65 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-10-12   little better :)
 
 var
-    benchmarkMode = null,//0.8,
+    benchmarkMode = null,//1.65,
     staticRamData = [
         { rowAddress: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },
         { rowAddress: 0x0001, data: [0x20, 0x00, 0x30, 0x00] },
         { rowAddress: 0x0002, data: [0x45, 0x00, 0x50, 0x00] },
-        { rowAddress: 0x0003, data: [0x07, 0x61, 0x00, 0x70] },
+        { rowAddress: 0x0003, data: [0x0f, 0x61, 0x00, 0x70] },
         { rowAddress: 0x0004, data: [0x10, 0x00, 0x00, 0x00] }
     ],
     cpu = new Cpu(),
