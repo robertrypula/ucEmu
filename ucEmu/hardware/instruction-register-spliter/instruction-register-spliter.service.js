@@ -33,7 +33,10 @@ var InstructionRegisterSpliter = (function () {
         }
 
         function getImm(regInstruction) {
-            return regInstruction & 0x0000FFFF;
+            return BitUtil.shiftRight(
+                regInstruction & 0x00FFFF00,
+                BitUtil.BYTE_1
+            );
         }
 
         return {

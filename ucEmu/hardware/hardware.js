@@ -43,8 +43,8 @@ TODO list:
     + remove MemoryAccess register approach (also from docs across files)
     + change jnz to jz
     + add background color to changed log entries
+    + reduce byteWidth of imm instruction
 
-    - reduce byteWidth of imm instruction
     - improve performance by spiting 'propagate' method into propagateDataNeededAtFallingClockEdge, propagateDataNeededAtClockLevel
     - figure out how to load regClockTick (check row address 0xFFF at memory controller?)
     - implement store instruction
@@ -68,8 +68,8 @@ var
         { rowAddress: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },
         { rowAddress: 0x0001, data: [0x20, 0x00, 0x30, 0x00] },
         { rowAddress: 0x0002, data: [0x45, 0x00, 0x50, 0x00] },
-        { rowAddress: 0x0003, data: [0x00, 0x07, 0x61, 0x00] },
-        { rowAddress: 0x0004, data: [0x70, 0x10, 0x00, 0x00] }
+        { rowAddress: 0x0003, data: [0x07, 0x61, 0x00, 0x70] },
+        { rowAddress: 0x0004, data: [0x10, 0x00, 0x00, 0x00] }
     ],
     cpu = new Cpu(),
     staticRam = new StaticRam(),
@@ -171,29 +171,53 @@ function syncCpuWithStaticRam() {
 }
 
 function makeOneClockCycle() {
+    if (fullLog) {
+        makeOneClockCycleFullLog();
+    } else {
+        makeOneClockCycleShortLog();
+    }
+}
+
+function makeOneClockCycleFullLog() {
     getCpuState();
     logSeparator();
     logCpuStateGroup('input');
     logCpuStateGroup('registerSpecialPurpose');
     logCpuStateGroup('registerGeneralPurpose');
     logCpuStateExtraGroup();
-    if (fullLog) {
-        logCpuStateGroup('output');
-    }
+    logCpuStateGroup('output');
 
     cpu.setClock(true);
     syncCpuWithStaticRam();
     logClockInfo(true);
 
-    if (fullLog) {
-        getCpuState();
-        logCpuStateGroup('input');
-        logCpuStateGroup('output');
-    }
+    getCpuState();
+    logCpuStateGroup('input');
+    logCpuStateGroup('output');
 
     cpu.setClock(false);
     syncCpuWithStaticRam();
     logClockInfo(false);
+}
+
+
+function makeOneClockCycleShortLog() {
+    getCpuState();
+    logSeparator();
+
+    logCpuStateGroup('registerGeneralPurpose');
+    logOneEntry('output', 'memoryRowAddress');
+    logOneEntry('input', 'memoryRead');
+    logOneEntry('registerSpecialPurpose', 'regInstruction');
+    logCpuStateExtraGroup();
+
+    // TODO add also memory write data
+
+    cpu.setClock(true);
+    syncCpuWithStaticRam();
+
+    cpu.setClock(false);
+    syncCpuWithStaticRam();
 }
 
 function getCpuState() {
@@ -205,6 +229,17 @@ function getCpuState() {
 
 function wrapWithSpan(html) {
     return '<span style="background-color: rgba(0, 255, 0, 0.3)">' + html + '</span>';
+}
+
+function getEntryHtml(key, entry) {
+    var entryHtml = '';
+
+    entryHtml = key + ' = ' + BitUtil.hex(entry.value, entry.bitSize);
+    if (entry.changed) {
+        entryHtml = wrapWithSpan(entryHtml);
+    }
+
+    return entryHtml;
 }
 
 function logCpuStateExtraGroup() {
@@ -227,6 +262,18 @@ function logCpuStateExtraGroup() {
     Logger.log(0, ':::: MICROCODE: ' + html);
 }
 
+function logOneEntry(groupName, key) {
+    var group, entry;
+
+    if (benchmarkMode) {
+        return;
+    }
+
+    group = cpuState[groupName];
+    entry = group[key];
+    Logger.log(0, getEntryHtml(key, entry));
+}
+
 function logCpuStateGroup(groupName) {
     var group, key, entry, entryHtml, str;
 
@@ -246,17 +293,14 @@ function logCpuStateGroup(groupName) {
     }
     for (key in group) {
         entry = group[key];
-        entryHtml = key + ' = ' + BitUtil.hex(entry.value, entry.bitSize);
-        if (entry.changed) {
-            entryHtml = wrapWithSpan(entryHtml);
-        }
+        entryHtml = getEntryHtml(key, entry);
         str += entryHtml + ' | ';
     }
     Logger.log(0, str);
 }
 
 function logClockInfo(clock) {
-    if (benchmarkMode || !fullLog) {
+    if (benchmarkMode) {
         return;
     }
     if (clock) {

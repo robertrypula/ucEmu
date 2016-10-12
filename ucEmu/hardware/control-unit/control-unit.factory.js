@@ -41,7 +41,7 @@ var ControlUnit = (function () {
                 InstructionBuilder.build(O.SH, M.SH, 2, false, 'sh', 'Logical bit shift'),
                 InstructionBuilder.build(O.JZ, M.JZ, 2, false, 'jz', 'Jump if zero'),
                 InstructionBuilder.build(O.COPY, M.COPY, 2, false, 'copy', 'Copy'),
-                InstructionBuilder.build(O.IMM, M.IMM, 4, false, 'imm', 'Immediate value'),
+                InstructionBuilder.build(O.IMM, M.IMM, 3, false, 'imm', 'Immediate value'),
                 InstructionBuilder.build(O.LD, M.LD_FIRST, 2, true, 'ld', 'Load'),
                 InstructionBuilder.build(O.ST, M.ST_FIRST_A, 2, true, 'st', 'Store')
             );
