@@ -143,15 +143,14 @@ var Cpu = (function () {
                 this.$$propagateNewRegisterData();
                 this.$$firstUpdate = false;
             }
-            this.$$propagateMemoryWE();
 
             if (this.$$isFallingClockEdge()) {
                 this.$$propagateNewRegisterData();
                 this.$$microcodeHandler.storeResults(this.$$internalResultBag, this.$$inputBag.reset, this.$$registerBag);
-                this.$$propagateNewRegisterData();
-                this.$$propagateMemoryWE();
                 // console.log('__________________falling edge of the clock');
             }
+
+            this.$$propagateMemoryWE();
 
             this.$$clockPrevious = this.$$inputBag.clock;
             this.$$outputBag.memoryRowAddress = this.$$registerBag.regMemoryRowAddress;
