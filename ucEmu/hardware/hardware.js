@@ -65,13 +65,13 @@ TODO list:
 // 1.65 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-10-12   little better :)
 
 var
-    benchmarkMode = null,//1.65,
+    benchmarkMode = null,//2.50,
     staticRamData = [
         { rowAddress: 0x0000, data: [0x00, 0x00, 0x10, 0x00] },
         { rowAddress: 0x0001, data: [0x20, 0x00, 0x30, 0x00] },
         { rowAddress: 0x0002, data: [0x45, 0x00, 0x50, 0x00] },
         { rowAddress: 0x0003, data: [0x0f, 0x61, 0x00, 0x70] },
-        { rowAddress: 0x0004, data: [0x10, 0x00, 0x00, 0x00] }
+        { rowAddress: 0x0004, data: [0x61, 0x00, 0x00, 0x00] }
     ],
     cpu = new Cpu(),
     staticRam = new StaticRam(),
@@ -115,6 +115,8 @@ function initialize() {
     if (benchmarkMode) {
         alert((secondsEnd - secondsStart) + ' ms');
     }
+
+    staticRam.log(0, 4);
 }
 
 function tryToLoadInputs() {
@@ -142,7 +144,7 @@ function runCpu() {
     var clockTicks, clockTicksToDo;
 
     clockTicks = 0;
-    clockTicksToDo = benchmarkMode ? Math.round(benchmarkMode * 1000 * 1000) : 30;
+    clockTicksToDo = benchmarkMode ? Math.round(benchmarkMode * 1000 * 1000) : 34;
     while (clockTicks < clockTicksToDo) {
         clockTicks++;
         makeOneClockCycle();
@@ -173,53 +175,61 @@ function syncCpuWithStaticRam() {
 }
 
 function makeOneClockCycle() {
+    logClockLow();
+
+    cpu.setClock(true);
+    syncCpuWithStaticRam();
+
+    logClockHigh();
+
+    cpu.setClock(false);
+    syncCpuWithStaticRam();
+
+    logAfterClockFallingEdge();
+}
+
+function logClockLow() {
     if (fullLog) {
-        makeOneClockCycleFullLog();
+        logSeparator();
+        getCpuState();
+        staticRam.log(0, 4);
+        logCpuStateGroup('registerGeneralPurpose');
+        logOneEntry('output', 'memoryRowAddress');
+        logOneEntry('input', 'memoryRead');
+        logCpuStateGroup('input');
+        logCpuStateGroup('registerSpecialPurpose');
+        logCpuStateExtraGroup();
+        logCpuStateGroup('output');
     } else {
-        makeOneClockCycleShortLog();
+        getCpuState();
+        logSeparator();
+        logCpuStateGroup('registerGeneralPurpose');
+        logOneEntry('output', 'memoryRowAddress');
+        logOneEntry('input', 'memoryRead');
+        logOneEntry('registerSpecialPurpose', 'regInstruction');
+        logCpuStateExtraGroup();
+        // TODO add also memory write data
     }
 }
 
-function makeOneClockCycleFullLog() {
-    getCpuState();
-    logSeparator();
-    logCpuStateGroup('input');
-    logCpuStateGroup('registerSpecialPurpose');
-    logCpuStateGroup('registerGeneralPurpose');
-    logCpuStateExtraGroup();
-    logCpuStateGroup('output');
-
-    cpu.setClock(true);
-    syncCpuWithStaticRam();
-    logClockInfo(true);
-
-    getCpuState();
-    logCpuStateGroup('input');
-    logCpuStateGroup('output');
-
-    cpu.setClock(false);
-    syncCpuWithStaticRam();
-    logClockInfo(false);
+function logClockHigh() {
+    if (fullLog) {
+        logClockInfo(true);
+        getCpuState();
+        staticRam.log(0, 4);
+        logOneEntry('output', 'memoryRowAddress');
+        logOneEntry('input', 'memoryRead');
+        logCpuStateGroup('output');
+        logCpuStateGroup('input');
+    } else {
+    }
 }
 
-
-function makeOneClockCycleShortLog() {
-    getCpuState();
-    logSeparator();
-
-    logCpuStateGroup('registerGeneralPurpose');
-    logOneEntry('output', 'memoryRowAddress');
-    logOneEntry('input', 'memoryRead');
-    logOneEntry('registerSpecialPurpose', 'regInstruction');
-    logCpuStateExtraGroup();
-
-    // TODO add also memory write data
-
-    cpu.setClock(true);
-    syncCpuWithStaticRam();
-
-    cpu.setClock(false);
-    syncCpuWithStaticRam();
+function logAfterClockFallingEdge() {
+    if (fullLog) {
+        logClockInfo(false);
+    } else {
+    }
 }
 
 function getCpuState() {
@@ -234,7 +244,7 @@ function wrapWithSpan(html) {
 }
 
 function getEntryHtml(key, entry) {
-    var entryHtml = '';
+    var entryHtml;
 
     entryHtml = key + ' = ' + BitUtil.hex(entry.value, entry.bitSize);
     if (entry.changed) {
@@ -316,7 +326,7 @@ function logClockInfo(clock) {
 function logSeparator() {
     var microcodeValue;
 
-    if (benchmarkMode) {
+    if (benchmarkMode || !cpuState) {
         return;
     }
 

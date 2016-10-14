@@ -31,13 +31,12 @@ var StaticRam = (function () {
                 if (Logger.isEnabled()) {
                     Logger.log(
                         0,
-                        'StaticRam:  ' +
+                        '--- [RAM] --- ' +
                         BitUtil.hex(i, BitSize.ADDRESS_ROW) + ' | ' +
                         BitUtil.hex(this.data[i], BitSize.MEMORY_WIDTH)
                     );
                 }
             }
-            Logger.log(0, '');
 
             return memoryDump;
         };
