@@ -224,6 +224,7 @@ var Cpu = (function () {
                     opcode: { value: this.$$instruction.opcode, changed: null },
                     instructionName: { value: this.$$instruction.name, changed: null },
                     microcode: { value: this.$$microcodeHandler.microcode, changed: null },
+                    microcodeJump: { value: this.$$microcodeHandler.microcodeJump, changed: null },
                     microcodeName: { value: this.$$microcodeHandler.name, changed: null }
                 }
             };

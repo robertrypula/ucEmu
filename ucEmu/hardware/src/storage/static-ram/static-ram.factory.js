@@ -17,8 +17,8 @@ var StaticRam = (function () {
 
         SR.ROWS_COUNT = Math.pow(2, CpuBitSize.ADDRESS_ROW);
 
-        SR.prototype.log = function (addressRowStart, addressRowStop) {     // TODO remove Logger and change method name
-            var i, memoryDump;
+        SR.prototype.log = function (addressRowStart, addressRowStop, programCounter) {     // TODO remove Logger and change method name
+            var i, memoryDump, dataLog;
 
             memoryDump = [];
             addressRowStart = addressRowStart < 0 ? 0 : addressRowStart;
@@ -29,11 +29,20 @@ var StaticRam = (function () {
                 memoryDump.push(this.data[i]);
 
                 if (Logger.isEnabled()) {
+                    dataLog = BitUtil.hex(this.data[i], CpuBitSize.MEMORY_WIDTH);
+
+                    if (typeof programCounter !== 'undefined') {
+                        if (i * 4 <= programCounter && programCounter < (i + 1) * 4) {
+                            dataLog += ' <--';
+                        }
+                    }
+
                     Logger.log(
                         0,
                         '--- [RAM] --- ' +
                         BitUtil.hex(i, CpuBitSize.ADDRESS_ROW) + ' | ' +
-                        BitUtil.hex(this.data[i], CpuBitSize.MEMORY_WIDTH)
+                        BitUtil.hex(i * 4, CpuBitSize.REGISTER) + ' | ' +      // TODO fix hardcoded '4'
+                        dataLog
                     );
                 }
             }
