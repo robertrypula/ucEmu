@@ -67,7 +67,7 @@ TODO list:
 var
     benchmarkMode = null,//2.50,
     staticRamData = [
-        { rowAddress: 0x0000, data: [0x50, 0x00, 0x09, 0x55] },
+        { rowAddress: 0x0000, data: [0x50, 0x00, 0x04, 0x55] },
         { rowAddress: 0x0001, data: [0x00, 0x01, 0x56, 0xFF] },
         { rowAddress: 0x0002, data: [0xFF, 0x59, 0xFF, 0xF1] },
         { rowAddress: 0x0003, data: [0x01, 0x06, 0x57, 0x00] },
@@ -141,8 +141,10 @@ function runAuto() {
 }
 
 function runStepByStep() {
+    var cs = cpu.getState();
+    
     Logger.clear();
-    staticRam.log(0, 22, cpuState.registerGeneralPurpose.regPC.value);
+    staticRam.log(0, 22, cs.registerGeneralPurpose.regPC.value);
     while (true) {
         makeOneClockCycle();
         if (cpuState.extra.microcodeJump.value === Microcode.FETCH_FIRST) {
