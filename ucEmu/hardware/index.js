@@ -82,7 +82,7 @@ var
         { rowAddress: 0x000c, data: [0x36, 0x30, 0xA7, 0x5F] },
         { rowAddress: 0x000d, data: [0x00, 0x3D, 0x04, 0x42] },
         { rowAddress: 0x000e, data: [0x03, 0x35, 0x5F, 0x00] },
-        { rowAddress: 0x000f, data: [0x26, 0x57, 0x00, 0x01] },
+        { rowAddress: 0x000f, data: [0x2a, 0x57, 0x00, 0x01] },
         { rowAddress: 0x0010, data: [0x5A, 0x00, 0x48, 0x30] },
         { rowAddress: 0x0011, data: [0xA4, 0x57, 0x00, 0x00] },
         { rowAddress: 0x0012, data: [0x5A, 0x00, 0x50, 0x30] },
@@ -132,8 +132,7 @@ function runAuto() {
     if (benchmarkMode) {
         cpuState = cpu.getState(cpuStatePrevious);
         alert(
-            (secondsEnd - secondsStart) + ' ms. Results at reg01 = ' +
-            cpuState.registerGeneralPurpose.reg05.value
+            (secondsEnd - secondsStart) + ' ms.'
         );
     }
 
@@ -178,7 +177,7 @@ function runCpu() {
     var clockTicks, clockTicksToDo;
 
     clockTicks = 0;
-    clockTicksToDo = benchmarkMode ? Math.round(benchmarkMode * 1000 * 1000) : 400;
+    clockTicksToDo = benchmarkMode ? Math.round(benchmarkMode * 1000 * 1000) : 10;
     while (clockTicks < clockTicksToDo) {
         clockTicks++;
         makeOneClockCycle();

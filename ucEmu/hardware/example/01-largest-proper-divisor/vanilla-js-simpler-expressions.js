@@ -7,10 +7,12 @@ var onePlus;       // reg05
 var oneMinus;      // reg06
 var cond;          // reg07
 var rDivisorDiff;  // reg08
+var leftmostBit;   // reg09
 
 number = 24323;
 onePlus = 1;
 oneMinus = -1;
+leftmostBit = -15;
 divisor = number + oneMinus;
 while (true) {
     cond = 1;
@@ -22,11 +24,11 @@ while (true) {
     }
     r = number;
     q = 0;
+    divisorMinus = ~(divisor & divisor);
+    divisorMinus = divisorMinus + onePlus;
     while (true) {
-        divisorMinus = ~(divisor & divisor);
-        divisorMinus = divisorMinus + onePlus;
         rDivisorDiff = r + divisorMinus;
-        cond = rDivisorDiff >>> 31; // 15 on SimpleCPU
+        cond = rDivisorDiff >>> -leftmostBit;   // get sign
         if (cond) {
             break;
         }
