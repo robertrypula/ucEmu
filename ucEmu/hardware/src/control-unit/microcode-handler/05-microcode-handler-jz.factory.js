@@ -27,8 +27,7 @@ var MicrocodeHandlerJz = (function () {
             // TODO when instruction will save to PC it will produce wrong result - fixed?
             address = regPCNext;
 
-            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
-                ? instruction.microcodeJump : this.microcodeJump;
+            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION ? instruction.microcodeJump : this.microcodeJump;
 
             internalResultBag.registerSaveIndex = RegisterFile.PROGRAM_COUNTER;
             internalResultBag.register = regPCNext;

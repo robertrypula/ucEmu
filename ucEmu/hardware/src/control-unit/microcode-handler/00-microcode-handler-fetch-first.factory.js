@@ -14,21 +14,20 @@ var MicrocodeHandlerFetchFirst = (function () {
         MFF.prototype.constructor = MFF;
 
         MFF.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
-            var column, memoryReadShifted, clockTick, address, register, sequencer, addressRowForAlu, addressRow;
+            var memoryReadShifted, clockTick, addressByte, register, sequencer, addressRowAsWord, addressRow;
 
             register = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
 
             sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION ? instruction.microcodeJump : this.microcodeJump;
 
-            address = registerBag.registerFile.getProgramCounter();
-            column = MemoryController.getColumn(address);
-            memoryReadShifted = MemoryController.getMemoryReadShiftedLeft(memoryRead, column);
+            addressByte = registerBag.registerFile.getProgramCounter();
+            memoryReadShifted = MemoryController.getMemoryReadShiftedPhaseOne(addressByte, memoryRead);
 
             clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
 
-            addressRowForAlu = MemoryController.getAddressRowForAlu(address);
-            addressRowForAlu = Alu.add(addressRowForAlu, 1);     // TODO add '1' as microcode parameter
-            addressRow = MemoryController.getAddressRow(addressRowForAlu);
+            addressRowAsWord = MemoryController.getAddressRowAsWord(addressByte);
+            addressRowAsWord = Alu.add(addressRowAsWord, 1);     // TODO add '1' as microcode parameter
+            addressRow = MemoryController.getAddressRowFromAddressRowAsWord(addressRowAsWord);
 
             internalResultBag.registerSaveIndex = RegisterFile.DUMMY_REGISTER;
             internalResultBag.register = register;

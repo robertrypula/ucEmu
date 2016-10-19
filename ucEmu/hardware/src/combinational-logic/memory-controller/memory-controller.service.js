@@ -35,23 +35,15 @@ var MemoryController = (function () {
             );
         }
 
-        function getMemoryRowAddressNextRow(address) {
-            // TODO check if this incrementation could be done in ALU
-            return BitUtil.mask(
-                this.getMemoryRowAddress(address) + 1,
-                CpuBitSize.ADDRESS_ROW
-            );
-        }
-
-        function getAddressRowForAlu(address) {
+        function getAddressRowAsWord(address) {
             // converts address into addressRow but width the same width as register (needed for alu)
             return BitUtil.shiftRight(address, CpuBitSize.ADDRESS_ROW_OFFSET);
         }
 
-        function getAddressRow(addressRowForAlu) {
+        function getAddressRowFromAddressRowAsWord(addressRowAsWord) {
             // change registerWidth wide signal into addressRowWidth wide signal
             return BitUtil.mask(
-                addressRowForAlu,
+                addressRowAsWord,
                 CpuBitSize.ADDRESS_ROW
             );
         }
@@ -68,18 +60,30 @@ var MemoryController = (function () {
             return BitUtil.shiftRight(memoryReadFinal, 2 * CpuBitSize.MEMORY_COLUMN);  // TODO verify that
         }
 
+        function getMemoryReadShiftedPhaseOne(addressByte, memoryRead) {
+            var column = getColumn(addressByte);
+
+            return getMemoryReadShiftedLeft(memoryRead, column);
+        }
+
+        function getMemoryReadShiftedPhaseTwo(addressByte, memoryRead, regMemoryBuffer) {
+            var
+                column = getColumn(addressByte),
+                columnFromTheBack = getColumnFromTheBack(column),
+                memoryReadShifted = getMemoryReadShiftedRight(memoryRead, columnFromTheBack),
+                memoryReadFinal = getMemoryReadFinal(memoryReadShifted, regMemoryBuffer);
+
+            return memoryReadFinal;
+        }
+
         return {
-            getColumn: getColumn,
-            getMemoryReadShiftedLeft: getMemoryReadShiftedLeft,
-            getMemoryReadShiftedRight: getMemoryReadShiftedRight,
-            getColumnFromTheBack: getColumnFromTheBack,
-            getMemoryReadFinal: getMemoryReadFinal,
             getMemoryRowAddress: getMemoryRowAddress,
-            getMemoryRowAddressNextRow: getMemoryRowAddressNextRow,
-            getAddressRowForAlu: getAddressRowForAlu,
-            getAddressRow: getAddressRow,
+            getAddressRowAsWord: getAddressRowAsWord,
+            getAddressRowFromAddressRowAsWord: getAddressRowFromAddressRowAsWord,
             getMemoryWE: getMemoryWE,
-            getRegisterResultFromMemoryReadFinal: getRegisterResultFromMemoryReadFinal
+            getRegisterResultFromMemoryReadFinal: getRegisterResultFromMemoryReadFinal,
+            getMemoryReadShiftedPhaseOne: getMemoryReadShiftedPhaseOne,
+            getMemoryReadShiftedPhaseTwo: getMemoryReadShiftedPhaseTwo
         };
     }
 

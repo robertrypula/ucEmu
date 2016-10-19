@@ -78,8 +78,7 @@ var MicrocodeHandlerStFirstA = (function () {
 
             dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
 
-            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
-                ? instruction.microcodeJump : this.microcodeJump;
+            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION ? instruction.microcodeJump : this.microcodeJump;
 
             internalResultBag.registerSaveIndex = RegisterFile.DUMMY_REGISTER;
             internalResultBag.register = dummyRegisterValue;

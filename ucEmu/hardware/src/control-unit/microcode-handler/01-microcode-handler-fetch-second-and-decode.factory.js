@@ -26,22 +26,16 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
         MFSAD.prototype.constructor = MFSAD;
 
         MFSAD.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
-            var column, columnFromTheBack, memoryReadShifted, memoryReadFinal,
-                address,
+            var memoryReadFinal,
+                addressByte,
                 register, regMemoryRowAddressNext,
                 regIn0, regIn0Value, clockTick,
-                sequencer, addressRowForAlu, addressRow;
+                sequencer, addressRowAsWord, addressRow;
 
-            address = registerBag.registerFile.getProgramCounter();
-
-            register = Alu.add(address, instruction.byteWidth);
-
+            addressByte = registerBag.registerFile.getProgramCounter();
+            register = Alu.add(addressByte, instruction.byteWidth);
             sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION ? instruction.microcodeJump : this.microcodeJump;
-
-            column = MemoryController.getColumn(address);
-            columnFromTheBack = MemoryController.getColumnFromTheBack(column);
-            memoryReadShifted = MemoryController.getMemoryReadShiftedRight(memoryRead, columnFromTheBack);
-            memoryReadFinal = MemoryController.getMemoryReadFinal(memoryReadShifted, registerBag.regMemoryBuffer);
+            memoryReadFinal = MemoryController.getMemoryReadShiftedPhaseTwo(addressByte, memoryRead, registerBag.regMemoryBuffer);
 
             clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
 
@@ -49,15 +43,15 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             regIn0Value = registerBag.registerFile.out0(regIn0);
             regMemoryRowAddressNext = instruction.memoryRowAddressFromRegIn0 ? regIn0Value : register;
 
-            addressRowForAlu = MemoryController.getAddressRowForAlu(regMemoryRowAddressNext);
-            addressRow = MemoryController.getAddressRow(addressRowForAlu);
+            addressRowAsWord = MemoryController.getAddressRowAsWord(regMemoryRowAddressNext);
+            addressRow = MemoryController.getAddressRowFromAddressRowAsWord(addressRowAsWord);
 
             internalResultBag.registerSaveIndex = RegisterFile.PROGRAM_COUNTER;
             internalResultBag.register = register;
             internalResultBag.sequencer = sequencer;
             internalResultBag.instruction = memoryReadFinal;
             internalResultBag.clockTick = clockTick;
-            internalResultBag.memoryBuffer = memoryReadFinal;             // TODO probably not needed
+            internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = addressRow;
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
         };

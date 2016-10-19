@@ -25,11 +25,9 @@ var MicrocodeHandlerNand = (function () {
             regResult = Alu.nand(regIn0Value, regIn1Value);
 
             // TODO when instruction will save to PC it will produce wrong result - fixed?
-            address = RegisterFile.PROGRAM_COUNTER === regOut
-                ? regResult : registerBag.registerFile.getProgramCounter();
+            address = RegisterFile.PROGRAM_COUNTER === regOut ? regResult : registerBag.registerFile.getProgramCounter();
 
-            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION
-                ? instruction.microcodeJump : this.microcodeJump;
+            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION ? instruction.microcodeJump : this.microcodeJump;
 
             internalResultBag.registerSaveIndex = regOut;
             internalResultBag.register = regResult;
