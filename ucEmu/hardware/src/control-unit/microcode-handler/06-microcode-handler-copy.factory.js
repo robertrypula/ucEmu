@@ -14,7 +14,7 @@ var MicrocodeHandlerCopy = (function () {
         MEC.prototype.constructor = MEC;
 
         MEC.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
-            var regOut, regIn0, regResult, address, sequencer;
+            var regOut, regIn0, regResult, address;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
@@ -23,13 +23,9 @@ var MicrocodeHandlerCopy = (function () {
             // TODO when instruction will save to PC it will produce wrong result - fixed?
             address = RegisterFile.PROGRAM_COUNTER === regOut ? regResult : registerBag.registerFile.getProgramCounter();
 
-            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION ? instruction.microcodeJump : this.microcodeJump;
-
             internalResultBag.registerSaveIndex = regOut;
             internalResultBag.register = regResult;
-            internalResultBag.sequencer = sequencer;
             internalResultBag.instruction = registerBag.regInstruction;
-            internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;

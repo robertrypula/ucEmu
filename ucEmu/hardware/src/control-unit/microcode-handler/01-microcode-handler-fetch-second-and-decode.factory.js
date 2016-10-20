@@ -29,15 +29,12 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
             var memoryReadFinal,
                 addressByte,
                 register, regMemoryRowAddressNext,
-                regIn0, regIn0Value, clockTick,
-                sequencer, addressRowAsWord, addressRow;
+                regIn0, regIn0Value,
+                addressRowAsWord, addressRow;
 
             addressByte = registerBag.registerFile.getProgramCounter();
             register = Alu.add(addressByte, instruction.byteWidth);
-            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION ? instruction.microcodeJump : this.microcodeJump;
             memoryReadFinal = MemoryController.getMemoryReadShiftedPhaseTwo(addressByte, memoryRead, registerBag.regMemoryBuffer);
-
-            clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn0Value = registerBag.registerFile.out0(regIn0);
@@ -48,9 +45,7 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
 
             internalResultBag.registerSaveIndex = RegisterFile.PROGRAM_COUNTER;
             internalResultBag.register = register;
-            internalResultBag.sequencer = sequencer;
             internalResultBag.instruction = memoryReadFinal;
-            internalResultBag.clockTick = clockTick;
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = addressRow;
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;

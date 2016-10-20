@@ -14,6 +14,11 @@
             this.name = name;
         };
 
+        AM.prototype.propagateNewRegisterDataCommon = function (registerBag, memoryRead, instruction, internalResultBag) {
+            internalResultBag.sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION ? instruction.microcodeJump : this.microcodeJump;
+            internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
+        };
+
         AM.prototype.storeResults = function (internalResultBag, reset, registerBag) {
             if (registerBag.regReset) {
                 registerBag.resetAll();

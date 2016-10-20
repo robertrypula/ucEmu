@@ -139,7 +139,10 @@ var Cpu = (function () {
 
         C.prototype.$$update = function () {
             if (this.$$isFallingClockEdge()) {
+                // to calls because of performance reasons
+                this.$$microcodeHandler.propagateNewRegisterDataCommon(this.$$registerBag, this.$$inputBag.memoryRead, this.$$instruction, this.$$internalResultBag);
                 this.$$microcodeHandler.propagateNewRegisterData(this.$$registerBag, this.$$inputBag.memoryRead, this.$$instruction, this.$$internalResultBag);
+
                 this.$$microcodeHandler.storeResults(this.$$internalResultBag, this.$$inputBag.reset, this.$$registerBag);
                 // console.log('__________________falling edge of the clock');
                 this.$$microcodeHandler = this.$$controlUnit.getMicrocodeHandler(this.$$registerBag.regSequencer);

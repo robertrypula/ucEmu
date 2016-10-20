@@ -15,7 +15,7 @@ var MicrocodeHandlerLdSecond = (function () {
 
         MELS.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
             var regIn0, addressByteFromReg, regOut, regResult,
-                memoryReadFinal, addressByte, sequencer,
+                memoryReadFinal, addressByte,
                 addressRow, addressRowAsWord;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
@@ -31,13 +31,9 @@ var MicrocodeHandlerLdSecond = (function () {
             addressRowAsWord = MemoryController.getAddressRowAsWord(addressByte);
             addressRow = MemoryController.getAddressRowFromAddressRowAsWord(addressRowAsWord);
 
-            sequencer = this.microcodeJump === Microcode.JUMP_IS_AT_INSTRUCTION ? instruction.microcodeJump : this.microcodeJump;
-
             internalResultBag.registerSaveIndex = regOut;
             internalResultBag.register = regResult;
-            internalResultBag.sequencer = sequencer;
             internalResultBag.instruction = registerBag.regInstruction;
-            internalResultBag.clockTick = ClockTick.getClockTickNext(registerBag.regClockTick);
             internalResultBag.memoryBuffer = memoryReadFinal;      // TODO probably not needed
             internalResultBag.memoryRowAddress = addressRow;
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
