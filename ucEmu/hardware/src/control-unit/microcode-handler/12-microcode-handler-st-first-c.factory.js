@@ -14,21 +14,19 @@ var MicrocodeHandlerStFirstC = (function () {
         MESFC.prototype.constructor = MESFC;
 
         MESFC.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
-            var dummyRegisterValue, regIn0, addressByteFromReg, addressRowAsWord, addressRow;
+            var dummyRegisterValue, regIn0, addressByteReg, addressByteNextRow;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
-            addressByteFromReg = registerBag.registerFile.out0(regIn0);          // TODO use flag: address from reg
+            addressByteReg = registerBag.registerFile.out0(regIn0);
             dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
 
-            addressRowAsWord = MemoryController.getAddressRowAsWord(addressByteFromReg);
-            addressRowAsWord = Alu.add(addressRowAsWord, 1);     // TODO add '1' as microcode parameter
-            addressRow = MemoryController.getAddressRowFromAddressRowAsWord(addressRowAsWord);
+            addressByteNextRow = Alu.add(addressByteReg, CpuBitSize.MEMORY_COLUMN_IN_ROW);
 
             internalResultBag.registerSaveIndex = RegisterFile.DUMMY_REGISTER;
             internalResultBag.register = dummyRegisterValue;
             internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
-            internalResultBag.memoryRowAddress = addressRow;
+            internalResultBag.memoryRowAddress = MemoryController.getAddressRow(addressByteNextRow);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
         };
 

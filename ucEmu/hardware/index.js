@@ -63,9 +63,10 @@ TODO list:
 // 3.90 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-09-30
 // 0.80 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-10-06   performance drooped a lot... :(
 // 1.65 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-10-12   little better :)
+// 2.53 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-10-20   better :)
 
 var
-    benchmarkMode = null,//2.50,
+    benchmarkMode = null,//2.35,
     staticRamData = [
         { rowAddress: 0x0000, data: [0x50, 0x00, 0x0A, 0x55] },
         { rowAddress: 0x0001, data: [0x00, 0x01, 0x56, 0xFF] },

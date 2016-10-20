@@ -14,24 +14,20 @@ var MicrocodeHandlerJz = (function () {
         MEJ.prototype.constructor = MEJ;
 
         MEJ.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
-            var regIn0, regIn1, regIn0Value, regIn1Value,
-                zeroFlag, regPCNext, address;
+            var regIn0, regIn1, addressByteReg, regIn1Value, zeroFlag, addressByte;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             regIn1 = InstructionRegisterSpliter.getRegIn1(registerBag.regInstruction);
-            regIn0Value = registerBag.registerFile.out0(regIn0);
+            addressByteReg = registerBag.registerFile.out0(regIn0);
             regIn1Value = registerBag.registerFile.out1(regIn1);
-            zeroFlag = regIn1Value === 0;
-            regPCNext = zeroFlag ? regIn0Value : registerBag.registerFile.getProgramCounter(); // TODO check with flag: use reg at address
-
-            // TODO when instruction will save to PC it will produce wrong result - fixed?
-            address = regPCNext;
+            zeroFlag = regIn1Value === 0;                              // TODO add isZero at ALU
+            addressByte = zeroFlag ? addressByteReg : registerBag.registerFile.getProgramCounter();
 
             internalResultBag.registerSaveIndex = RegisterFile.PROGRAM_COUNTER;
-            internalResultBag.register = regPCNext;
+            internalResultBag.register = addressByte;
             internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
-            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
+            internalResultBag.memoryRowAddress = MemoryController.getAddressRow(addressByte);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
         };
 

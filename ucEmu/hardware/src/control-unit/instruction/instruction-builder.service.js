@@ -4,7 +4,7 @@ var InstructionBuilder = (function () {
     _InstructionBuilder.$inject = [];
 
     function _InstructionBuilder() {
-        function build(opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull) {
+        function build(opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull) {
             var instruction, O;
 
             O = Opcode;
@@ -13,47 +13,47 @@ var InstructionBuilder = (function () {
             switch (opcode) {
                 case O.ADD:
                     instruction = new InstructionAdd(
-                        opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
+                        opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull
                     );
                     break;
                 case O.NAND:
                     instruction = new InstructionNand(
-                        opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
+                        opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull
                     );
                     break;
                 case O.SH:
                     instruction = new InstructionSh(
-                        opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
+                        opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull
                     );
                     break;
                 case O.JZ:
                     instruction = new InstructionJz(
-                        opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
+                        opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull
                     );
                     break;
                 case O.COPY:
                     instruction = new InstructionCopy(
-                        opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
+                        opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull
                     );
                     break;
                 case O.IMM:
                     instruction = new InstructionImm(
-                        opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
+                        opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull
                     );
                     break;
                 case O.LD:
                     instruction = new InstructionLd(
-                        opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
+                        opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull
                     );
                     break;
                 case O.ST:
                     instruction = new InstructionSt(
-                        opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
+                        opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull
                     );
                     break;
                 case O.NOT_YET_DECODED:
                     instruction = new InstructionNotYetDecoded(
-                        opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull
+                        opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull
                     );
                     break;
             }

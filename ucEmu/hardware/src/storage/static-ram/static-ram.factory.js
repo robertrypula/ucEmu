@@ -41,7 +41,7 @@ var StaticRam = (function () {
                         0,
                         '--- [RAM] --- ' +
                         BitUtil.hex(i, CpuBitSize.ADDRESS_ROW) + ' | ' +
-                        BitUtil.hex(i * 4, CpuBitSize.REGISTER) + ' | ' +      // TODO fix hardcoded '4'
+                        BitUtil.hex(i * 4, CpuBitSize.WORD) + ' | ' +      // TODO fix hardcoded '4'
                         dataLog
                     );
                 }

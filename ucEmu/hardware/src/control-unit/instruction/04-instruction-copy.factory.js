@@ -6,7 +6,7 @@ var InstructionCopy = (function () {
     function _InstructionCopy() {
         var IC;
 
-        IC = function (opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull) {
+        IC = function (opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull) {
             AbstractInstruction.apply(this, arguments);
         };
 

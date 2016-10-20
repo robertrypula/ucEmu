@@ -26,28 +26,21 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
         MFSAD.prototype.constructor = MFSAD;
 
         MFSAD.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
-            var memoryReadFinal,
-                addressByte,
-                register, regMemoryRowAddressNext,
-                regIn0, regIn0Value,
-                addressRowAsWord, addressRow;
+            var memoryReadFinal, addressBytePC, addressBytePCNext, addressByte, regIn0, addressByteReg;
 
-            addressByte = registerBag.registerFile.getProgramCounter();
-            register = Alu.add(addressByte, instruction.byteWidth);
-            memoryReadFinal = MemoryController.getMemoryReadShiftedPhaseTwo(addressByte, memoryRead, registerBag.regMemoryBuffer);
-
+            addressBytePC = registerBag.registerFile.getProgramCounter();
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
-            regIn0Value = registerBag.registerFile.out0(regIn0);
-            regMemoryRowAddressNext = instruction.memoryRowAddressFromRegIn0 ? regIn0Value : register;
+            addressByteReg = registerBag.registerFile.out0(regIn0);
+            memoryReadFinal = MemoryController.getMemoryReadShiftedPhaseTwo(addressBytePC, memoryRead, registerBag.regMemoryBuffer);
 
-            addressRowAsWord = MemoryController.getAddressRowAsWord(regMemoryRowAddressNext);
-            addressRow = MemoryController.getAddressRowFromAddressRowAsWord(addressRowAsWord);
+            addressBytePCNext = Alu.add(addressBytePC, instruction.byteWidth);
+            addressByte = instruction.addressByteFromReg ? addressByteReg : addressBytePCNext;
 
             internalResultBag.registerSaveIndex = RegisterFile.PROGRAM_COUNTER;
-            internalResultBag.register = register;
+            internalResultBag.register = addressBytePCNext;
             internalResultBag.instruction = memoryReadFinal;
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
-            internalResultBag.memoryRowAddress = addressRow;
+            internalResultBag.memoryRowAddress = MemoryController.getAddressRow(addressByte);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
         };
 

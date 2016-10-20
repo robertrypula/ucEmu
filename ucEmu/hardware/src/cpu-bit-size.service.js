@@ -5,17 +5,20 @@ var CpuBitSize = (function () {
 
     function _CpuBitSize() {
         var
-            register = BitUtil.BYTE_2,
+            memoryWidth = BitUtil.BYTE_4,
+            memoryColumnWidth = BitUtil.BYTE_1,
+            word = BitUtil.BYTE_2,
             bitPerAddressRowOffset = 2;
 
         return {
-            ADDRESS_ROW: register - bitPerAddressRowOffset,
+            ADDRESS_ROW: word - bitPerAddressRowOffset,
             ADDRESS_ROW_OFFSET: bitPerAddressRowOffset,
-            REGISTER: register,
+            WORD: word,
             SINGLE_BIT: BitUtil.BIT_1,
             SEQUENCER: BitUtil.BYTE_HALF,
-            MEMORY_WIDTH: BitUtil.BYTE_4,
-            MEMORY_COLUMN: BitUtil.BYTE_1
+            MEMORY_WIDTH: memoryWidth,
+            MEMORY_COLUMN_WIDTH: memoryColumnWidth,
+            MEMORY_COLUMN_IN_ROW: memoryWidth / memoryColumnWidth      // TODO change to MEMORY_BYTE_PER_ROW
         };
     }
 

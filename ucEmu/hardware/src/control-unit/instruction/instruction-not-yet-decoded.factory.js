@@ -6,7 +6,7 @@ var InstructionNotYetDecoded = (function () {
     function _InstructionNotYetDecoded() {
         var INYD;
 
-        INYD = function (opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull) {
+        INYD = function (opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull) {
             AbstractInstruction.apply(this, arguments);
         };
 

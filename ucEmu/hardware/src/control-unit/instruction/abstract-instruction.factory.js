@@ -6,11 +6,11 @@ var AbstractInstruction = (function () {
     function _AbstractInstruction() {
         var AI;
         
-        AI = function (opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull) {
+        AI = function (opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull) {
             this.opcode = opcode;
             this.microcodeJump = microcodeJump;
             this.byteWidth = byteWidth;
-            this.memoryRowAddressFromRegIn0 = memoryRowAddressFromRegIn0;
+            this.addressByteFromReg = addressByteFromReg;
             this.name = name;
             this.nameFull = nameFull;
         };

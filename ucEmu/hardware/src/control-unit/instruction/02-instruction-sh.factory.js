@@ -6,7 +6,7 @@ var InstructionSh = (function () {
     function _InstructionSh() {
         var IS;
 
-        IS = function (opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull) {
+        IS = function (opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull) {
             AbstractInstruction.apply(this, arguments);
         };
 

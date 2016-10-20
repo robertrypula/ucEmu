@@ -14,19 +14,18 @@ var MicrocodeHandlerImm = (function () {
         MEI.prototype.constructor = MEI;
 
         MEI.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
-            var regOut, regResult, address;
+            var regOut, result, addressByte;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
-            regResult = InstructionRegisterSpliter.getImm(registerBag.regInstruction);
-
-            // TODO when instruction will save to PC it will produce wrong result - fixed?
-            address = RegisterFile.PROGRAM_COUNTER === regOut ? regResult : registerBag.registerFile.getProgramCounter();
+            result = InstructionRegisterSpliter.getImm(registerBag.regInstruction);
+            
+            addressByte = RegisterFile.PROGRAM_COUNTER === regOut ? result : registerBag.registerFile.getProgramCounter();
 
             internalResultBag.registerSaveIndex = regOut;
-            internalResultBag.register = regResult;
+            internalResultBag.register = result;
             internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
-            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
+            internalResultBag.memoryRowAddress = MemoryController.getAddressRow(addressByte);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
         };
 

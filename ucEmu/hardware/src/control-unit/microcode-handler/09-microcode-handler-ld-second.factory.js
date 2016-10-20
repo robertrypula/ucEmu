@@ -14,28 +14,22 @@ var MicrocodeHandlerLdSecond = (function () {
         MELS.prototype.constructor = MELS;
 
         MELS.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
-            var regIn0, addressByteFromReg, regOut, regResult,
-                memoryReadFinal, addressByte,
-                addressRow, addressRowAsWord;
+            var regIn0, addressByteReg, regOut, result, memoryReadFinal, addressByte;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
-            addressByteFromReg = registerBag.registerFile.out0(regIn0);
+            addressByteReg = registerBag.registerFile.out0(regIn0);
 
-            memoryReadFinal = MemoryController.getMemoryReadShiftedPhaseTwo(addressByteFromReg, memoryRead, registerBag.regMemoryBuffer);
-            regResult = MemoryController.getRegisterResultFromMemoryReadFinal(memoryReadFinal);
+            memoryReadFinal = MemoryController.getMemoryReadShiftedPhaseTwo(addressByteReg, memoryRead, registerBag.regMemoryBuffer);
+            result = MemoryController.getWordFromMemoryReadFinal(memoryReadFinal);
 
-            // TODO when instruction will save to PC it will produce wrong result - fixed?
-            addressByte = RegisterFile.PROGRAM_COUNTER === regOut ? regResult : registerBag.registerFile.getProgramCounter();
-
-            addressRowAsWord = MemoryController.getAddressRowAsWord(addressByte);
-            addressRow = MemoryController.getAddressRowFromAddressRowAsWord(addressRowAsWord);
+            addressByte = RegisterFile.PROGRAM_COUNTER === regOut ? result : registerBag.registerFile.getProgramCounter();
 
             internalResultBag.registerSaveIndex = regOut;
-            internalResultBag.register = regResult;
+            internalResultBag.register = result;
             internalResultBag.instruction = registerBag.regInstruction;
-            internalResultBag.memoryBuffer = memoryReadFinal;      // TODO probably not needed
-            internalResultBag.memoryRowAddress = addressRow;
+            internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
+            internalResultBag.memoryRowAddress = MemoryController.getAddressRow(addressByte);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
         };
 

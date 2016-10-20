@@ -19,7 +19,7 @@ var RegisterFile = (function () {
             var i;
 
             for (i = 0; i < RF.REGISTERS_SIZE; i++) {
-                this.register[i] = BitUtil.random(CpuBitSize.REGISTER);
+                this.register[i] = BitUtil.random(CpuBitSize.WORD);
             }
         };
 
@@ -48,7 +48,7 @@ var RegisterFile = (function () {
         };
 
         RF.prototype.save = function (number, value) {
-            this.register[number] = BitUtil.mask(value, CpuBitSize.REGISTER);
+            this.register[number] = BitUtil.mask(value, CpuBitSize.WORD);
         };
         
         RF.prototype.serialize = function () {

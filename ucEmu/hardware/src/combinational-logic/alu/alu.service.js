@@ -6,31 +6,31 @@ var Alu = (function () {
     function _Alu() {
 
         function add(a, b) {
-            a = BitUtil.mask(a, CpuBitSize.REGISTER);
-            b = BitUtil.mask(b, CpuBitSize.REGISTER);
+            a = BitUtil.mask(a, CpuBitSize.WORD);
+            b = BitUtil.mask(b, CpuBitSize.WORD);
 
-            return BitUtil.mask(a + b, CpuBitSize.REGISTER);
+            return BitUtil.mask(a + b, CpuBitSize.WORD);
         }
 
         function sh(value, amount) {
             var shifted, negative, amountAbsolute;
 
-            value = BitUtil.mask(value, CpuBitSize.REGISTER);
-            amount = BitUtil.mask(amount, CpuBitSize.REGISTER);
+            value = BitUtil.mask(value, CpuBitSize.WORD);
+            amount = BitUtil.mask(amount, CpuBitSize.WORD);
 
-            negative = BitUtil.maskOneBit(amount, CpuBitSize.REGISTER);
+            negative = BitUtil.maskOneBit(amount, CpuBitSize.WORD);
             amountAbsolute = negative
-                ? BitUtil.invertSignU2(amount, CpuBitSize.REGISTER)
+                ? BitUtil.invertSignU2(amount, CpuBitSize.WORD)
                 : amount;
             shifted = negative
                 ? BitUtil.shiftRight(value, amountAbsolute)
                 : BitUtil.shiftLeft(value, amountAbsolute);
 
-            return BitUtil.mask(shifted, CpuBitSize.REGISTER);
+            return BitUtil.mask(shifted, CpuBitSize.WORD);
         }
 
         function nand(a, b) {
-            return BitUtil.mask(~(a & b), CpuBitSize.REGISTER);
+            return BitUtil.mask(~(a & b), CpuBitSize.WORD);
         }
 
         return {

@@ -6,7 +6,7 @@ var InstructionJz = (function () {
     function _InstructionJz() {
         var IJ;
 
-        IJ = function (opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull) {
+        IJ = function (opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull) {
             AbstractInstruction.apply(this, arguments);
         };
 

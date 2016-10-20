@@ -5,46 +5,46 @@ var MemoryController = (function () {
 
     function _MemoryController() {
 
-        function getColumn(value) {
-            return BitUtil.mask(value, CpuBitSize.ADDRESS_ROW_OFFSET)
+        function $$getColumn(value) {
+            return BitUtil.mask(value, CpuBitSize.ADDRESS_ROW_OFFSET);
         }
 
-        function getMemoryReadShiftedLeft(memoryRead, column) {
+        function $$getMemoryReadShiftedLeft(memoryRead, column) {
             // don't need to mask because JavaScript logic operators returns 32 bit long value
-            return BitUtil.shiftLeft(memoryRead, column * CpuBitSize.MEMORY_COLUMN);
+            return BitUtil.shiftLeft(memoryRead, column * CpuBitSize.MEMORY_COLUMN_WIDTH);
         }
 
-        function getMemoryReadShiftedRight(memoryRead, columnFromTheBack) {
-            return BitUtil.shiftRight(memoryRead, columnFromTheBack * CpuBitSize.MEMORY_COLUMN);
+        function $$getMemoryReadShiftedRight(memoryRead, columnFromTheBack) {
+            return BitUtil.shiftRight(memoryRead, columnFromTheBack * CpuBitSize.MEMORY_COLUMN_WIDTH);
         }
 
-        function getColumnFromTheBack(column) {
-            var columnInRow = CpuBitSize.MEMORY_WIDTH / CpuBitSize.MEMORY_COLUMN;
-
-            return columnInRow - column;
+        function $$getColumnFromTheBack(column) {
+            return CpuBitSize.MEMORY_COLUMN_IN_ROW - column;
         }
 
-        function getMemoryReadFinal(memoryReadShifted, regMemoryBuffer) {
+        function $$getMemoryReadFinal(memoryReadShifted, regMemoryBuffer) {
             return memoryReadShifted | regMemoryBuffer;
         }
 
-        function getMemoryRowAddress(address) {
+        function getAddressRow(addressByte) {
             return BitUtil.mask(
-                BitUtil.shiftRight(address, CpuBitSize.ADDRESS_ROW_OFFSET),
+                BitUtil.shiftRight(addressByte, CpuBitSize.ADDRESS_ROW_OFFSET),
                 CpuBitSize.ADDRESS_ROW
             );
         }
 
-        function getAddressRowAsWord(address) {
-            // converts address into addressRow but width the same width as register (needed for alu)
-            return BitUtil.shiftRight(address, CpuBitSize.ADDRESS_ROW_OFFSET);
+        function getAddressRowAsWord(addressByte) {
+            // converts addressByte into addressRow but width the same width as register (needed for alu)
+            return BitUtil.mask(
+                BitUtil.shiftRight(addressByte, CpuBitSize.ADDRESS_ROW_OFFSET),
+                CpuBitSize.WORD
+            );
         }
 
-        function getAddressRowFromAddressRowAsWord(addressRowAsWord) {
-            // change registerWidth wide signal into addressRowWidth wide signal
+        function getAddressByteFromAddressRowAsWord(addressRowAsWord) {
             return BitUtil.mask(
-                addressRowAsWord,
-                CpuBitSize.ADDRESS_ROW
+                BitUtil.shiftLeft(addressRowAsWord, CpuBitSize.ADDRESS_ROW_OFFSET),
+                CpuBitSize.WORD
             );
         }
 
@@ -56,32 +56,32 @@ var MemoryController = (function () {
             return result ? 1 : 0;
         }
 
-        function getRegisterResultFromMemoryReadFinal(memoryReadFinal) {
-            return BitUtil.shiftRight(memoryReadFinal, 2 * CpuBitSize.MEMORY_COLUMN);  // TODO verify that
+        function getWordFromMemoryReadFinal(memoryReadFinal) {
+            return BitUtil.shiftRight(memoryReadFinal, 2 * CpuBitSize.MEMORY_COLUMN_WIDTH);  // TODO verify that
         }
 
         function getMemoryReadShiftedPhaseOne(addressByte, memoryRead) {
-            var column = getColumn(addressByte);
+            var column = $$getColumn(addressByte);
 
-            return getMemoryReadShiftedLeft(memoryRead, column);
+            return $$getMemoryReadShiftedLeft(memoryRead, column);
         }
 
         function getMemoryReadShiftedPhaseTwo(addressByte, memoryRead, regMemoryBuffer) {
             var
-                column = getColumn(addressByte),
-                columnFromTheBack = getColumnFromTheBack(column),
-                memoryReadShifted = getMemoryReadShiftedRight(memoryRead, columnFromTheBack),
-                memoryReadFinal = getMemoryReadFinal(memoryReadShifted, regMemoryBuffer);
+                column = $$getColumn(addressByte),
+                columnFromTheBack = $$getColumnFromTheBack(column),
+                memoryReadShifted = $$getMemoryReadShiftedRight(memoryRead, columnFromTheBack),
+                memoryReadFinal = $$getMemoryReadFinal(memoryReadShifted, regMemoryBuffer);
 
             return memoryReadFinal;
         }
 
         return {
-            getMemoryRowAddress: getMemoryRowAddress,
+            getAddressRow: getAddressRow,
             getAddressRowAsWord: getAddressRowAsWord,
-            getAddressRowFromAddressRowAsWord: getAddressRowFromAddressRowAsWord,
+            getAddressByteFromAddressRowAsWord: getAddressByteFromAddressRowAsWord,
             getMemoryWE: getMemoryWE,
-            getRegisterResultFromMemoryReadFinal: getRegisterResultFromMemoryReadFinal,
+            getWordFromMemoryReadFinal: getWordFromMemoryReadFinal,
             getMemoryReadShiftedPhaseOne: getMemoryReadShiftedPhaseOne,
             getMemoryReadShiftedPhaseTwo: getMemoryReadShiftedPhaseTwo
         };

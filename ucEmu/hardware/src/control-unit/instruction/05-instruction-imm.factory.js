@@ -6,7 +6,7 @@ var InstructionImm = (function () {
     function _InstructionImm() {
         var II;
 
-        II = function (opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull) {
+        II = function (opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull) {
             AbstractInstruction.apply(this, arguments);
         };
 

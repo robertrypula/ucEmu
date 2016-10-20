@@ -96,6 +96,7 @@ var Cpu = (function () {
             this.$$controlUnit = ControlUnitBuilder.build();
             this.$$internalResultBag = InternalResultBagBuilder.build();
             this.$$outputBag = OutputBagBuilder.build();
+
             this.$$clockPrevious = undefined;
 
             this.$$microcodeHandler = undefined;
@@ -105,13 +106,14 @@ var Cpu = (function () {
         };
 
         C.prototype.setMemoryRead = function (memoryRead) {
-            this.$$inputBag.memoryRead = memoryRead | 0;
+            this.$$inputBag.memoryRead = BitUtil.mask(memoryRead, CpuBitSize.MEMORY_WIDTH);
             this.$$update();
         };
 
         C.prototype.setReset = function (reset) {
             this.$$inputBag.reset = reset ? 1 : 0;
-            // reset input is connected directly to the regRegister - no update needed
+            // reset input is connected directly to the regRegister - $$update() call is not needed,
+            // we need to wait for falling clock edge in order to make CPU aware of new reset state
         };
 
         C.prototype.setClock = function (clock) {
@@ -132,26 +134,22 @@ var Cpu = (function () {
         };
 
         C.prototype.$$initialize = function () {
-            this.$$microcodeHandler = this.$$controlUnit.getMicrocodeHandler(this.$$registerBag.regSequencer);
-            this.$$instruction = this.$$controlUnit.getInstruction(this.$$registerBag.regInstruction, this.$$microcodeHandler);
+            this.$$updateControlUnitContext();
             this.$$update();
         };
 
         C.prototype.$$update = function () {
             if (this.$$isFallingClockEdge()) {
-                // to calls because of performance reasons
+                // two calls because of performance reasons
                 this.$$microcodeHandler.propagateNewRegisterDataCommon(this.$$registerBag, this.$$inputBag.memoryRead, this.$$instruction, this.$$internalResultBag);
                 this.$$microcodeHandler.propagateNewRegisterData(this.$$registerBag, this.$$inputBag.memoryRead, this.$$instruction, this.$$internalResultBag);
 
                 this.$$microcodeHandler.storeResults(this.$$internalResultBag, this.$$inputBag.reset, this.$$registerBag);
-                // console.log('__________________falling edge of the clock');
-                this.$$microcodeHandler = this.$$controlUnit.getMicrocodeHandler(this.$$registerBag.regSequencer);
-                this.$$instruction = this.$$controlUnit.getInstruction(this.$$registerBag.regInstruction, this.$$microcodeHandler);
+                this.$$updateControlUnitContext();
             }
 
-            if (this.$$clockPrevious !== this.$$inputBag.clock) {
+            if (this.$$isClockDifferentThanBefore()) {
                 this.$$microcodeHandler.propagateMemoryWE(this.$$inputBag.clock, this.$$internalResultBag);
-                // console.log('propagateMemoryWE called');
             }
 
             this.$$clockPrevious = this.$$inputBag.clock;
@@ -160,8 +158,17 @@ var Cpu = (function () {
             this.$$outputBag.memoryWE = this.$$internalResultBag.memoryWE;
         };
 
+        C.prototype.$$updateControlUnitContext = function () {
+            this.$$microcodeHandler = this.$$controlUnit.getMicrocodeHandler(this.$$registerBag.regSequencer);
+            this.$$instruction = this.$$controlUnit.getInstruction(this.$$registerBag.regInstruction, this.$$microcodeHandler);
+        };
+
+        C.prototype.$$isClockDifferentThanBefore = function () {
+            return this.$$clockPrevious !== this.$$inputBag.clock;
+        };
+
         C.prototype.$$isFallingClockEdge = function () {
-            return !this.$$inputBag.clock && this.$$clockPrevious !== this.$$inputBag.clock;
+            return !this.$$inputBag.clock && this.$$isClockDifferentThanBefore();
         };
 
         C.prototype.$$loopKeysInsideGroup = function (group, currentState, previousState) {
@@ -206,22 +213,22 @@ var Cpu = (function () {
                     regMemoryWrite: { value: rb.regMemoryWrite, bitSize: CpuBitSize.MEMORY_WIDTH, changed: null }
                 },
                 registerGeneralPurpose: {
-                    reg00: { value: rf.out0(0), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg01: { value: rf.out0(1), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg02: { value: rf.out0(2), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg03: { value: rf.out0(3), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg04: { value: rf.out0(4), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg05: { value: rf.out0(5), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg06: { value: rf.out0(6), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg07: { value: rf.out0(7), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg08: { value: rf.out0(8), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg09: { value: rf.out0(9), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg10: { value: rf.out0(10), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg11: { value: rf.out0(11), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg12: { value: rf.out0(12), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg13: { value: rf.out0(13), bitSize: CpuBitSize.REGISTER, changed: null },
-                    reg14: { value: rf.out0(14), bitSize: CpuBitSize.REGISTER, changed: null },
-                    regPC: { value: rf.out0(15), bitSize: CpuBitSize.REGISTER, changed: null }
+                    reg00: { value: rf.out0(0), bitSize: CpuBitSize.WORD, changed: null },
+                    reg01: { value: rf.out0(1), bitSize: CpuBitSize.WORD, changed: null },
+                    reg02: { value: rf.out0(2), bitSize: CpuBitSize.WORD, changed: null },
+                    reg03: { value: rf.out0(3), bitSize: CpuBitSize.WORD, changed: null },
+                    reg04: { value: rf.out0(4), bitSize: CpuBitSize.WORD, changed: null },
+                    reg05: { value: rf.out0(5), bitSize: CpuBitSize.WORD, changed: null },
+                    reg06: { value: rf.out0(6), bitSize: CpuBitSize.WORD, changed: null },
+                    reg07: { value: rf.out0(7), bitSize: CpuBitSize.WORD, changed: null },
+                    reg08: { value: rf.out0(8), bitSize: CpuBitSize.WORD, changed: null },
+                    reg09: { value: rf.out0(9), bitSize: CpuBitSize.WORD, changed: null },
+                    reg10: { value: rf.out0(10), bitSize: CpuBitSize.WORD, changed: null },
+                    reg11: { value: rf.out0(11), bitSize: CpuBitSize.WORD, changed: null },
+                    reg12: { value: rf.out0(12), bitSize: CpuBitSize.WORD, changed: null },
+                    reg13: { value: rf.out0(13), bitSize: CpuBitSize.WORD, changed: null },
+                    reg14: { value: rf.out0(14), bitSize: CpuBitSize.WORD, changed: null },
+                    regPC: { value: rf.out0(15), bitSize: CpuBitSize.WORD, changed: null }
                 },
                 extra: {
                     opcode: { value: this.$$instruction.opcode, changed: null },

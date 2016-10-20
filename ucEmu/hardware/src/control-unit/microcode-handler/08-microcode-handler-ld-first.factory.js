@@ -14,25 +14,21 @@ var MicrocodeHandlerLdFirst = (function () {
         MELF.prototype.constructor = MELF;
 
         MELF.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
-            var
-                regIn0, addressByte, memoryReadShifted, dummyRegisterValue,
-                addressRowAsWord, addressRow;
+            var regIn0, addressByteReg, memoryReadShifted, dummyRegisterValue, addressByteNextRow;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
-            addressByte = registerBag.registerFile.out0(regIn0);
+            addressByteReg = registerBag.registerFile.out0(regIn0);
             dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
 
-            memoryReadShifted = MemoryController.getMemoryReadShiftedPhaseOne(addressByte, memoryRead);
+            memoryReadShifted = MemoryController.getMemoryReadShiftedPhaseOne(addressByteReg, memoryRead);
 
-            addressRowAsWord = MemoryController.getAddressRowAsWord(addressByte);
-            addressRowAsWord = Alu.add(addressRowAsWord, 1);     // TODO add '1' as microcode parameter
-            addressRow = MemoryController.getAddressRowFromAddressRowAsWord(addressRowAsWord);
+            addressByteNextRow = Alu.add(addressByteReg, CpuBitSize.MEMORY_COLUMN_IN_ROW);
 
             internalResultBag.registerSaveIndex = RegisterFile.DUMMY_REGISTER;
             internalResultBag.register = dummyRegisterValue;
             internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.memoryBuffer = memoryReadShifted;
-            internalResultBag.memoryRowAddress = addressRow;
+            internalResultBag.memoryRowAddress = MemoryController.getAddressRow(addressByteNextRow);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
         };
 

@@ -14,16 +14,16 @@ var MicrocodeHandlerStSecondC = (function () {
         MESSC.prototype.constructor = MESSC;
 
         MESSC.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
-            var dummyRegisterValue, address;
+            var dummyRegisterValue, addressByte;
 
-            address = registerBag.registerFile.getProgramCounter();
+            addressByte = registerBag.registerFile.getProgramCounter();
             dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
 
             internalResultBag.registerSaveIndex = RegisterFile.DUMMY_REGISTER;
             internalResultBag.register = dummyRegisterValue;
             internalResultBag.instruction = registerBag.regInstruction;
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
-            internalResultBag.memoryRowAddress = MemoryController.getMemoryRowAddress(address);
+            internalResultBag.memoryRowAddress = MemoryController.getAddressRow(addressByte);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
         };
 

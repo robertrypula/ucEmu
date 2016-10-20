@@ -6,7 +6,7 @@ var InstructionRegisterSpliter = (function () {
     function _InstructionRegisterSpliter() {
         function getOpcode(regInstruction) {
             return BitUtil.shiftRight(
-                regInstruction & 0x70000000,
+                regInstruction & 0x70000000,      // TODO add CpuBitSize for this value and mask it
                 BitUtil.BYTE_3 + BitUtil.BYTE_HALF
             );
         }
@@ -20,21 +20,21 @@ var InstructionRegisterSpliter = (function () {
 
         function getRegIn0(regInstruction) {
             return BitUtil.shiftRight(
-                regInstruction & 0x00F00000,
+                regInstruction & 0x00F00000,     // TODO add CpuBitSize for this value and mask it
                 BitUtil.BYTE_2 + BitUtil.BYTE_HALF
             );
         }
 
         function getRegIn1(regInstruction) {
             return BitUtil.shiftRight(
-                regInstruction & 0x000F0000,
+                regInstruction & 0x000F0000,    // TODO add CpuBitSize for this value and mask it
                 BitUtil.BYTE_2
             );
         }
 
         function getImm(regInstruction) {
             return BitUtil.shiftRight(
-                regInstruction & 0x00FFFF00,
+                regInstruction & 0x00FFFF00,    // TODO add CpuBitSize for this value and mask it
                 BitUtil.BYTE_1
             );
         }

@@ -6,7 +6,7 @@ var InstructionNand = (function () {
     function _InstructionNand() {
         var IN;
 
-        IN = function (opcode, microcodeJump, byteWidth, memoryRowAddressFromRegIn0, name, nameFull) {
+        IN = function (opcode, microcodeJump, byteWidth, addressByteFromReg, name, nameFull) {
             AbstractInstruction.apply(this, arguments);
         };
 
