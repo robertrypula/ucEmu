@@ -13,7 +13,7 @@ var MicrocodeHandlerStSecondC = (function () {
         MESSC.prototype = Object.create(AbstractMicrocode.prototype);
         MESSC.prototype.constructor = MESSC;
 
-        MESSC.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
+        MESSC.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
             var dummyRegisterValue, addressByte;
 
             addressByte = registerBag.registerFile.getProgramCounter();

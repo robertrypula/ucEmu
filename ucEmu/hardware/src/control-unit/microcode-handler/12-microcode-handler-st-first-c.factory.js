@@ -13,7 +13,7 @@ var MicrocodeHandlerStFirstC = (function () {
         MESFC.prototype = Object.create(AbstractMicrocode.prototype);
         MESFC.prototype.constructor = MESFC;
 
-        MESFC.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
+        MESFC.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
             var dummyRegisterValue, regIn0, addressByteReg, addressByteNextRow;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);

@@ -56,17 +56,17 @@ var MemoryController = (function () {
             return result ? 1 : 0;
         }
 
-        function getWordFromMemoryReadFinal(memoryReadFinal) {
+        function getWordFromMemoryRead(memoryReadFinal) {
             return BitUtil.shiftRight(memoryReadFinal, 2 * CpuBitSize.MEMORY_COLUMN_WIDTH);  // TODO verify that
         }
 
-        function getMemoryReadShiftedPhaseOne(addressByte, memoryRead) {
+        function getMemoryReadPhaseOne(addressByte, memoryRead) {
             var column = $$getColumn(addressByte);
 
             return $$getMemoryReadShiftedLeft(memoryRead, column);
         }
 
-        function getMemoryReadShiftedPhaseTwo(addressByte, memoryRead, regMemoryBuffer) {
+        function getMemoryReadPhaseTwo(addressByte, memoryRead, regMemoryBuffer) {
             var
                 column = $$getColumn(addressByte),
                 columnFromTheBack = $$getColumnFromTheBack(column),
@@ -76,14 +76,32 @@ var MemoryController = (function () {
             return memoryReadFinal;
         }
 
+        function getMemoryWritePhaseOne(addressByte, memoryRead, dataToWrite) {
+            // TODO this is only mock - implement full method
+            return BitUtil.mask(
+                dataToWrite,
+                CpuBitSize.WORD
+            );
+        }
+
+        function getMemoryWritePhaseTwo(addressByte, memoryRead, dataToWrite) {
+            // TODO this is only mock - implement full method
+            return BitUtil.mask(
+                dataToWrite,
+                CpuBitSize.WORD
+            );
+        }
+
         return {
             getAddressRow: getAddressRow,
             getAddressRowAsWord: getAddressRowAsWord,
             getAddressByteFromAddressRowAsWord: getAddressByteFromAddressRowAsWord,
             getMemoryWE: getMemoryWE,
-            getWordFromMemoryReadFinal: getWordFromMemoryReadFinal,
-            getMemoryReadShiftedPhaseOne: getMemoryReadShiftedPhaseOne,
-            getMemoryReadShiftedPhaseTwo: getMemoryReadShiftedPhaseTwo
+            getWordFromMemoryRead: getWordFromMemoryRead,
+            getMemoryReadPhaseOne: getMemoryReadPhaseOne,
+            getMemoryReadPhaseTwo: getMemoryReadPhaseTwo,
+            getMemoryWritePhaseOne: getMemoryWritePhaseOne,
+            getMemoryWritePhaseTwo: getMemoryWritePhaseTwo
         };
     }
 

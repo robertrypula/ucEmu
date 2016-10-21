@@ -26,19 +26,19 @@ var MicrocodeHandlerFetchSecondAndDecode = (function () {
         MFSAD.prototype.constructor = MFSAD;
 
         MFSAD.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
-            var memoryReadFinal, addressBytePC, addressBytePCNext, addressByte, regIn0, addressByteReg;
+            var memoryReadPhaseTwo, addressBytePC, addressBytePCNext, addressByte, regIn0, addressByteReg;
 
             addressBytePC = registerBag.registerFile.getProgramCounter();
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             addressByteReg = registerBag.registerFile.out0(regIn0);
-            memoryReadFinal = MemoryController.getMemoryReadShiftedPhaseTwo(addressBytePC, memoryRead, registerBag.regMemoryBuffer);
+            memoryReadPhaseTwo = MemoryController.getMemoryReadPhaseTwo(addressBytePC, memoryRead, registerBag.regMemoryBuffer);
 
             addressBytePCNext = Alu.add(addressBytePC, instruction.byteWidth);
             addressByte = instruction.addressByteFromReg ? addressByteReg : addressBytePCNext;
 
             internalResultBag.registerSaveIndex = RegisterFile.PROGRAM_COUNTER;
             internalResultBag.register = addressBytePCNext;
-            internalResultBag.instruction = memoryReadFinal;
+            internalResultBag.instruction = memoryReadPhaseTwo;
             internalResultBag.memoryBuffer = registerBag.regMemoryBuffer;
             internalResultBag.memoryRowAddress = MemoryController.getAddressRow(addressByte);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;

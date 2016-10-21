@@ -13,7 +13,7 @@ var MicrocodeHandlerJz = (function () {
         MEJ.prototype = Object.create(AbstractMicrocode.prototype);
         MEJ.prototype.constructor = MEJ;
 
-        MEJ.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
+        MEJ.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
             var regIn0, regIn1, addressByteReg, regIn1Value, zeroFlag, addressByte;
 
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);

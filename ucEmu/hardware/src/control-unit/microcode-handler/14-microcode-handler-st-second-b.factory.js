@@ -13,7 +13,7 @@ var MicrocodeHandlerStSecondB = (function () {
         MESSB.prototype = Object.create(AbstractMicrocode.prototype);
         MESSB.prototype.constructor = MESSB;
 
-        MESSB.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
+        MESSB.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
             var dummyRegisterValue;
 
             dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);

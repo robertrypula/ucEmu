@@ -14,14 +14,14 @@ var MicrocodeHandlerLdSecond = (function () {
         MELS.prototype.constructor = MELS;
 
         MELS.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
-            var regIn0, addressByteReg, regOut, result, memoryReadFinal, addressByte;
+            var regIn0, addressByteReg, regOut, result, memoryReadPhaseTwo, addressByte;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
             regIn0 = InstructionRegisterSpliter.getRegIn0(registerBag.regInstruction);
             addressByteReg = registerBag.registerFile.out0(regIn0);
 
-            memoryReadFinal = MemoryController.getMemoryReadShiftedPhaseTwo(addressByteReg, memoryRead, registerBag.regMemoryBuffer);
-            result = MemoryController.getWordFromMemoryReadFinal(memoryReadFinal);
+            memoryReadPhaseTwo = MemoryController.getMemoryReadPhaseTwo(addressByteReg, memoryRead, registerBag.regMemoryBuffer);
+            result = MemoryController.getWordFromMemoryRead(memoryReadPhaseTwo);
 
             addressByte = RegisterFile.PROGRAM_COUNTER === regOut ? result : registerBag.registerFile.getProgramCounter();
 

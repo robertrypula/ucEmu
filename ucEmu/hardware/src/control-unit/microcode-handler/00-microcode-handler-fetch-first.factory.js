@@ -14,19 +14,19 @@ var MicrocodeHandlerFetchFirst = (function () {
         MFF.prototype.constructor = MFF;
 
         MFF.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
-            var memoryReadShifted, addressBytePC, dummyRegisterValue, addressByteNextRow;
+            var memoryReadPhaseOne, addressBytePC, dummyRegisterValue, addressByteNextRow;
 
             dummyRegisterValue = registerBag.registerFile.out0(RegisterFile.DUMMY_REGISTER);
 
             addressBytePC = registerBag.registerFile.getProgramCounter();
-            memoryReadShifted = MemoryController.getMemoryReadShiftedPhaseOne(addressBytePC, memoryRead);
+            memoryReadPhaseOne = MemoryController.getMemoryReadPhaseOne(addressBytePC, memoryRead);
 
             addressByteNextRow = Alu.add(addressBytePC, CpuBitSize.MEMORY_COLUMN_IN_ROW);
 
             internalResultBag.registerSaveIndex = RegisterFile.DUMMY_REGISTER;
             internalResultBag.register = dummyRegisterValue;
-            internalResultBag.instruction = memoryReadShifted;      // TODO add dedicated signal and splitter from memoryReadShifted
-            internalResultBag.memoryBuffer = memoryReadShifted;
+            internalResultBag.instruction = memoryReadPhaseOne;      // TODO add dedicated signal and splitter from memoryReadPhaseOne
+            internalResultBag.memoryBuffer = memoryReadPhaseOne;
             internalResultBag.memoryRowAddress = MemoryController.getAddressRow(addressByteNextRow);
             internalResultBag.memoryWrite = registerBag.regMemoryWrite;
         };

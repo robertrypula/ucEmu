@@ -13,7 +13,7 @@ var MicrocodeHandlerSh = (function () {
         MES.prototype = Object.create(AbstractMicrocode.prototype);
         MES.prototype.constructor = MES;
 
-        MES.prototype.propagateNewRegisterData = function (registerBag, inputBag, instruction, internalResultBag) {
+        MES.prototype.propagateNewRegisterData = function (registerBag, memoryRead, instruction, internalResultBag) {
             var regOut, regIn0, regIn1, regIn0Value, regIn1Value, result, addressByte;
 
             regOut = InstructionRegisterSpliter.getRegOut(registerBag.regInstruction);
