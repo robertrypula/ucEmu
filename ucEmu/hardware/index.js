@@ -45,13 +45,11 @@ TODO list:
     + add background color to changed log entries
     + reduce byteWidth of imm instruction
     + improve performance by spiting 'propagate' method into propagateDataNeededAtFallingClockEdge, propagateDataNeededAtClockLevel
-
-    - figure out how to load regClockTick (check last row address 0x3FFF at memory controller?)
-    - implement store instruction
-    - split address propagation to improve performance more?
+    + figure out how to load regClockTick (check last row address 0x3FFF at memory controller?)
+    + implement store instruction
     
         :: fun starts here ::
-    - add DI and clean up
+    - add DI and clean up (for example hardcoded variables, bit sizes)
     - test performance with dedicated Register and Signal classes (masking by bitSize and toString would be inside)
     - move project to separate GitHub repo ('SimpleCPU')
  */
@@ -66,7 +64,7 @@ TODO list:
 // 2.53 emulated MHz / second @ 3.6 GHz real cpu      # current score 2016-10-20   better :)
 
 var
-    benchmarkMode = null,//2.35,
+    benchmarkMode = null,//2.4,
     staticRamData = [
         { rowAddress: 0x0000, data: [0x50, 0x00, 0x0A, 0x55] },
         { rowAddress: 0x0001, data: [0x00, 0x01, 0x56, 0xFF] },

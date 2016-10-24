@@ -139,23 +139,47 @@ var Cpu = (function () {
         };
 
         C.prototype.$$update = function () {
-            if (this.$$isFallingClockEdge()) {
-                // two calls because of performance reasons
-                this.$$microcodeHandler.propagateNewRegisterDataCommon(this.$$registerBag, this.$$inputBag.memoryRead, this.$$instruction, this.$$internalResultBag);
-                this.$$microcodeHandler.propagateNewRegisterData(this.$$registerBag, this.$$inputBag.memoryRead, this.$$instruction, this.$$internalResultBag);
+            var
+                memoryRead,
+                ib = this.$$inputBag,
+                rb = this.$$registerBag,
+                iResB = this.$$internalResultBag,
+                ob = this.$$outputBag;
 
-                this.$$microcodeHandler.storeResults(this.$$internalResultBag, this.$$inputBag.reset, this.$$registerBag);
+            if (this.$$isFallingClockEdge()) {
+                memoryRead = this.$$getMemoryRead();
+                this.$$microcodeHandler.propagateNewRegisterDataCommon(rb, memoryRead, this.$$instruction, iResB);
+                this.$$microcodeHandler.propagateNewRegisterData(rb, memoryRead, this.$$instruction, iResB);
+                this.$$microcodeHandler.storeResults(iResB, ib.reset, rb);
+
                 this.$$updateControlUnitContext();
             }
 
+            ob.memoryRowAddress = rb.regMemoryRowAddress;
+            ob.memoryWrite = rb.regMemoryWrite;
+            ob.memoryWE = this.$$getMemoryWE();
+
+            this.$$clockPrevious = ib.clock;
+        };
+
+        C.prototype.$$getMemoryRead = function () {
+            var isLastMemoryRow = this.$$registerBag.regMemoryRowAddress === 0x3FFF;  // TODO move magic number somewhere else
+
+            return isLastMemoryRow ? this.$$registerBag.regClockTick : this.$$inputBag.memoryRead;
+        };
+
+        C.prototype.$$getMemoryWE = function () {
+            var result = this.$$outputBag.memoryWE;
+
             if (this.$$isClockDifferentThanBefore()) {
-                this.$$microcodeHandler.propagateMemoryWE(this.$$inputBag.clock, this.$$internalResultBag);
+                result = MemoryController.getMemoryWE(
+                    this.$$inputBag.clock,
+                    this.$$microcodeHandler.memoryWEPositive,
+                    this.$$microcodeHandler.memoryWENegative
+                );
             }
 
-            this.$$clockPrevious = this.$$inputBag.clock;
-            this.$$outputBag.memoryRowAddress = this.$$registerBag.regMemoryRowAddress;
-            this.$$outputBag.memoryWrite = this.$$registerBag.regMemoryWrite;
-            this.$$outputBag.memoryWE = this.$$internalResultBag.memoryWE;
+            return result;
         };
 
         C.prototype.$$updateControlUnitContext = function () {

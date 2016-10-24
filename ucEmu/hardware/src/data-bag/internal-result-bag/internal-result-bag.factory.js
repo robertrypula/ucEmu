@@ -16,8 +16,6 @@ var InternalResultBag = (function () {
             this.memoryBuffer = undefined;
             this.memoryRowAddress = undefined;
             this.memoryWrite = undefined;
-
-            this.memoryWE = undefined;
         };
 
         return IRB;

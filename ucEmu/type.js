@@ -1,3 +1,4 @@
+/*
 var a = 2;
 var arr = $([ 
     $.BYTE(1), 32, 43, $.WORD01, 32232, 423423, "some text", $.WORD32
@@ -86,3 +87,4 @@ var _ = {
         return r;
     }
 }
+*/
