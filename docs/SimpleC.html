@@ -972,6 +972,61 @@ testFunction(1, 3) testFunction(i, 3) *(pointerToFunction)(i, 3)
 /* comment */  // comment
 
 
+------------------------------------------
+2016.11.15 new aproach with memory handling
+------------------------------------------
+
+var list;
+var element;
+
+list = memGet(256);
+$ptrAssing(list, 0, 1);
+$ptrAssing(list, 1, 2);
+element = $ptr(list, 32);                       --> element = *(list + 32);
+memFree(256)
+
+    OR
+
+var list = [ <byte>, 1, 2, <byte{254, 12}>, 0 ];    --> listPointer: 0x0001, listData: 0x01, 0x02, 0x00, 0x00, ...
+var element;
+element = $ptr(list, 32);                       --> element = *(list + 32);
+
+- Global variables initialized by '{}' will be pointers. They will point to memory reserved on 'SimpleHeap' on the compile time
+- Remove ability to reserve data at functions !!!!!!
+- Remove [] operator
+- New syntax:
+    &variableName         NOT: &(variableName)
+    *pointerName          NOT: *(pointerName)
+    *(pointerName + 32)   same as it was before
+    (*functionPointer)()  new function pointers support
+
+- Operators in function parameters:
+    someFunction(a, b)        ONLY normal vars
+    someFunction(&a, b)       ...and addressed of vars
+    someFunction(&sortFunction, b)       ...and addressed of functions
+
+- Functions in conditions allowed
+    if (someFunction(a, b)) { }      
+    if (someFunction(a, &b)) { }
+    while (eq(&a, &b)) { }        BUT not functions invoked via function pointer !!
+
+- Redesign initialization list:
+    var stringByte = { byte { 'Hello world', '!', "double quites works too!", 0x00 } };  // one byte per char
+    var stringWord = { word { 'Hello world', '!', 0x00 } };                              // two bytes per char
+    var memoryBuffer = { word[1233] { 21, 32 } };                                        // other values initialized by zero
+
+- Allow defines:
+    #define ASCII_a 0x61
+    #define ASCII_b 0x62
+    #define ASCII_c 0x63
+
+    var abcList = {
+        byte { ASCII_a, ASCII_b, ASCII_c }
+    };
+    var code = ASCII_b; 
+    var index;
+    index = findIndex(code, abcList));
+
 
 
 </pre>
