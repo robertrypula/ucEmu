@@ -5,7 +5,7 @@ Main project file [here](http://uc-emu.rypula.pl/ucEmu.html). Please refresh pag
 
 Tiny font editor [here](http://uc-emu.rypula.pl/pixfont.html)
 
-SimpleCpu emulator [here](http://uc-emu.rypula.pl/ucEmu/hardware/hardware.html)
+SimpleCpu emulator [here](http://uc-emu.rypula.pl/ucEmu/hardware/index.html)
 
 SimpleC doc draft [here](http://uc-emu.rypula.pl/docs/SimpleC.html).
 
