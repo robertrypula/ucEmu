@@ -1,0 +1,5 @@
+@simple-machine/cpu-emu
+@simple-machine/cpu-sim
+@simple-machine/assembler
+@simple-machine/compiller
+@simple-machine/cli

@@ -1027,6 +1027,46 @@ element = $ptr(list, 32);                       --> element = *(list + 32);
     var index;
     index = findIndex(code, abcList));
 
+------------------------------------------
+2018.08.20
+------------------------------------------
+
+var $test = _globalByte(233);
+var $test2 = _sB('233');
+var $test3 = _sB([ 'fds', 43 ]);
+var $test3 = _sB(Array(343));
+
+function test(param) {
+    var inside = _dynamicByte();
+
+    inside.v = $param.ptr(23);         inside = *(param + 23);
+    test.ptr()
+}
+
+
+test.v + test2.v;
+
+test.v = test.a + test2.a;
+
+
+-------
+
+var params = {
+    a: 'test',    // 0
+    b: 123        // 4
+}
+params.b = 3;
+something(params);
+
+        var params = _sB(['test', b]);
+        $params.ptr(+4).v = 3;
+        something(&params);
+
+
+
+
+
+
 
 
 </pre>
