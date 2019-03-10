@@ -1,15 +1,14 @@
 Bloxorz
 land on moon
-ships - stara gra gdzie rzycalo die miny na plynace lodzie podwodbe
+Sub Scan (Atari 2600)
 tetris
 lab
 kula world
 
 Volfied
-gra gdzie zakreslalo sie terytorium i trzebabylo zamknac latajacych wrogow. bezpiecznym bylo sie tylko na swoim teryforium. gra byla u kuzynek
 
-red baron, atati latanie 3d
-bradley trainer, atari czolgi 3d
+red baron, atari flying 3d
+bradley trainer, atari tanks 3d
 
 space wars deluxe 3d
 

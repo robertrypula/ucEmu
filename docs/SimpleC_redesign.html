@@ -1,0 +1,161 @@
+
+<!-- saved from url=(0023)http://rypula.pl/_.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body><pre style="width: 2000px;">---------------------------------------------------------------------------
+
+UPDATE 2018.08.24 - complete language redesign
+-------------------------------------------------------
+
+import { reserveByte, ... } from './keywords';     // this line will be ignored by SimpleC compiller
+
+var a = reserveByte(3);
+var b = reserveWord(3);
+var c = byte([3]);                    // every variable is treated as pointer, for single number we also need to use brackets []
+var d = word([3]);
+var e = byte([`some text`, 0]);       // strings use always ``, they are not terminated by 0 you need to do it on your own
+                                      // there is no escape character, if you want to put ` you need to use ASCII code
+
+var text = byte([
+  `very very long`,
+  `text in`,
+  `few lines`,
+  0
+]);
+
+// only defines starts from $
+// defined cannot be places inside strings ``
+
+#define $someTextDefine `everything up to line end will be the replace value`
+
+var f = initByte([$someTextDefine]);
+
+#define $incFirst self.idx(0).v
+
+var inc = func((param, self) =&gt; {    // always two parameters called: param, self
+  self.a = memTake(4);               // two words allocated on stack
+
+  $incFirst = 5423;
+  self.idx(2).v = 0;
+
+  param.idx().v = add(param.v, 1);   
+
+  memDrop(4);                        // non required in function calls - return will crear the stack anyway
+
+  return;                            // required always at the end of function
+});
+
+var incCallData = reserveWord(2);
+
+incCallData.v = 10;
+call(inc.v, incCallData.a);
+incCallData.idx(2).v
+
+var x = word([3]);
+var y = word([10]);
+var z = wordReserve(1);
+
+// build in operators: add, nand, sh
+z.v = add(x.v, y.v);
+
+while () {
+  break;
+}
+
+if () {
+  
+} else {
+  
+}
+
+
+if () {
+  
+}
+
+
+var mainLoopInteration = func(() =&gt; {});
+
+Var main = func(() {                              // one 'main' variable is required
+    infinite(mainLoopIteration.v)                 // infinite will call requrestAnimationFrame on browser
+});
+
+// --------------------------
+Important to understand:
+
+test.v      - it's returning value of the memory location that is pointed by address stored in pointer
+test.a      - it's returning value of the address stored in pointer
+
+!!! there is no way to read the actual pointer adress !!!
+
+test.idx()  - adds offset to the address stored in pointer
+
+// --------------------------
+
+a)     test.v =   
+b)     test.a =   
+c)     test.idx(0).v =           same as a)
+d)     test.idx(0).a =           forbidden, cannot assign to temporarly calculated pointer (in registers)
+e)     test.idx(other.a).v =     
+f)     test.idx(other.v).a =     forbidden, cannot assign to temporarly calculated pointer (in registers)
+g)     test.idx(other.v).v =     
+h)     test.idx(other.a).a =     forbidden, cannot assign to temporarly calculated pointer (in registers)
+
+e)     = test.v
+f)     = test.a
+g)     = test.idx(0).v
+h)     = test.idx(0).a
+i)     = test.idx(other.v).v
+j)     = test.idx(other.a).a
+g)     = test.idx(other.a).v
+h)     = test.idx(other.v).a
+
+// --------------------------
+
+func will return artifiicial memory location
+call will check if any function is registered on that location
+
+requiredVariables:
+  - stackPointer
+  - framePointer
+  - global variables pointer
+
+memory areas:
+  - global scope data (at the beggning)
+  - pointers as it happen in the code
+  - stack
+  - artificial code area
+
+let offset = 0;
+
+class Variable {
+  constructor(
+    private adress,
+    private temporaryPointer
+  ) {
+  }
+
+  get v() {
+
+  }
+
+  get a() {
+
+  }
+
+  get idx()
+}
+
+
+
+   frame pointer
+   | 
+   ret   par   self
+0  1  2  3  4  5  6  7  8 
+                     ^
+                     stack pointer
+
+How to deal with recursion and frame pointers:
+  https://github.com/robertrypula/ucEmu/blob/master/ucEmu/hardware/example/04-fibonacci-recursion-test/recursion.js
+
+------------------------------
+
+</pre></body></html>

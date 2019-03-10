@@ -1,0 +1,95 @@
+2018.09.10 - new approach, as simple as possible but each instruction takes a lot of cycles
+
+
+
+fetch
+    address = reg[PC]                     // SEQ
+    data = [0xRAM, 0x00]
+    regTmp = 1                            // SEQ 
+    address = reg[PC] + regTmp            // SEQ
+    instruction = data | [0x00, 0xRAM]
+    regTmp = 2                            // SEQ 
+    regResult = reg[PC] + regTmp          // SEQ
+    reg[PC] = regResult                   // SEQ
+
+execute
+
+    {{imm}} 
+                    address = reg[PC]                     // SEQ
+                    data = [0xRAM, 0x00]
+                    regTmp = 1                            // SEQ 
+                    address = reg[PC] + regTmp            // SEQ
+                    regResult = data | [0x00, 0xRAM]
+                    reg[PC] = regResult                   // SEQ
+                    regTmp = 2                            // SEQ 
+                    regResult = reg[PC] + regTmp          // SEQ
+                    reg[PC] = regResult                   // SEQ
+
+        OR
+
+    {{ALU related}} 
+                    regTmp = reg[regIn1]
+                    regResult = regTmp {operation} reg[regIn2]
+                    reg[regOut] = regResult
+
+        OR
+
+    {{jnz}}         regDecision = regX not zero check        // ALU not zero check
+                    regPC = regDecision ? regLabel : regPC   // ALU take left or right
+
+        OR
+
+    {{ld}}          address = regX                 // ALU pass trought
+                    data = [0xRAM, 0x00]
+                    address = regX + 1             // ALU increment
+                    regX = data | [0x00, 0xRAM]
+
+        OR
+
+    {{st}}          data = regD                      // ALU pass trought
+                    address = regX                   // ALU pass trought
+                    RAM = data[0xFF, 0x--] -> 0xFF
+                    hold
+                    address = regX + 1               // ALU increent
+                    RAM = data[0x--, 0xFF] -> 0xFF
+
+---------------------------------------
+
+update 2019.01.23
+
+00 | add     regOut, regIn0, regIn1  | regOut = regIn0 + regIn1
+01 | nand    regOut, regIn0, regIn1  | regOut = regIn0 nand regIn1
+02 | sh      regOut, regIn0, regIn1  | regOut = (regIn1 >= 0) ? (regIn0 >> abs(regIn1))
+03 | jnz             regIn0, regIn1  | if (regIn1 !== 0) jump to address from regIn0
+04 | copy    regOut, regIn0          | regOut = regIn0
+05 | imm     regOut, _constant16bit_ | regOut = _constant16bit_
+06 | ld      regOut, regIn0          | regOut = MemoryAt[regIn0]
+07 | st              regIn0, regIn1  | MemoryAt[regIn0] = regIn1
+
+
+
+fetch
+    address = reg[PC]
+    memData = ram[LEFT]
+
+
+
+ALU
+    - alu reg
+    - registers out
+    - 
+
+
+
+
+
+PC -> bus -> adress 
+
+RAM ->  0xDD 0x00  -> data, instruction
+
+adress + 1 -> address
+
+RAM ->  0xDD 0xdd  -> instuction
+
+
+
