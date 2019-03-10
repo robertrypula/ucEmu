@@ -7,8 +7,8 @@ UPDATE 2018.08.24 - complete language redesign
 
 import { reserveByte, ... } from './keywords';     // this line will be ignored by SimpleC compiller
 
-var a = reserveByte(3);
-var b = reserveWord(3);
+var a = byte([], 3);
+var b = word([], 3);
 var c = byte([3]);                    // every variable is treated as pointer, for single number we also need to use brackets []
 var d = word([3]);
 var e = byte([`some text`, 0]);       // strings use always ``, they are not terminated by 0 you need to do it on your own
@@ -43,7 +43,7 @@ var inc = func((param, self) =&gt; {    // always two parameters called: param, 
   return;                            // required always at the end of function
 });
 
-var incCallData = reserveWord(2);
+var incCallData = word([], 2);
 
 incCallData.v = 10;
 call(inc.v, incCallData.a);
@@ -51,7 +51,7 @@ incCallData.idx(2).v
 
 var x = word([3]);
 var y = word([10]);
-var z = wordReserve(1);
+var z = word([], 1);   // reserve one word without settings the values
 
 // build in operators: add, nand, sh
 z.v = add(x.v, y.v);
