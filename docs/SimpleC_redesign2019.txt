@@ -1,0 +1,140 @@
+------------------------------------------------------
+ UPDATE: 2019.10.11 - Looks like final SimpleC design
+ 
+ Probably I should rename it to SimpleJS... :)
+ Every limitaton is only to simplify compiler.
+------------------------------------------------------
+
+var length = word(1, []);
+var text = word(20, [`lorem ipsum`]);    // we need to provide length long enought to keep all text
+
+var getLength = word(1, [(bag) => {  // always only one parameter passed to function!!
+  var text = word(0, []);    // 0 words reserved as we need only pointer
+  var i = word(0, []);       // 0 words reserved as we need only pointer
+  var chars = word(1, []);   // in functions always empty initialization value: word(?, []);
+  var isEnd = word(1, []);
+  var offset = word(1, []);
+  var bufferExample = word(100, []); // only mem reserving is alowed, no initialization
+   
+  isEnd.v = 0;
+  i.v = -1;
+
+  text.a = bag.idx(0).v;
+  i.a = bag.idx(1).v;
+ 
+  // text.v         // -> word with letters 'lo'
+  // text.idx(1).v  // -> word with letters 're'
+
+  do {
+    i.v = add(i.v, 1);
+   
+    chars.v = text.idx(i.v).v;
+    chars.v = sh(chars.v, 8);
+    offset.v = 0;
+   
+    if (char.v) {
+      chars = text.idx(i.v).v;
+      chars.v = sh(chars.v, -8);
+      chars.v = sh(chars.v, 8);
+      if (chars.v) {
+      } else {
+        offset.v = 1;
+        isEnd.v = 1;
+      }
+    } else {
+      isEnd.v = 1;
+    }
+  } while (isEnd.v);
+ 
+  i.v = sh(i.v, -1);
+  i.v = add(i.v, offset.v);
+ 
+ 
+  ret();     // return is required at the end of function, return value is passed to 'bag' parameter
+]);
+
+var getLengthBag = word(2, []);
+getLengthBag.idx(0).v = text.a;
+getLengthBag.idx(1).v = length.a;
+
+call(getLength.a, getLengthBag.a);  // we use getLength.a as getLength.v would be the first byte of the function's code!!!!!!!
+// length.v;    <-- result is here
+
+----------------------------------------------------------------------------------------------------------------
+
+// it will point to the next address after pointer itself but this memory is not reserved that this pointer
+var pointerWithoutAcctualMemoryA = word(0, []); 
+
+// preset data will be truncated (in the case below no data will be stored in memory as pointer points to zero bytes)
+var pointerWithoutAcctualMemoryB = word(0, [12, 23, 54]); 
+
+----------------------------------------------------------------------------------------------------------------
+
+Every 'word' keyword is is creating pointer and place being pointed 
+with given amount of bytes just after the pointer itself.
+If amout of bytes to point is zero the pointer addess will still 
+point to to the memory location just after the pointer itself but 
+it would be not his memory!!!
+          
+var test = word(4, [0x61, 0xabcd]);   // note that 4 is more than preset list
+var foo = word(1, [`ab`]);
+
+[address] [data]
+0x0000:   0x00 0x02   'test' pointer with address to first value
+0x0002:   0x00 0x61   idx 0
+0x0004:   0xab 0xcd   idx 1
+0x0006:   0x?? 0x??   idx 2 reserved memory
+0x0008:   0x?? 0x??   idx 3 reserved memory
+0x000a:   0x00 0x0a   'foo' pointer with address to first value
+0x000c:   0x61 0x62   idx 0
+
+test.a         -> read: 0x0002, write: @address 0x0000
+test.v         -> read: 0x0061, write: @address 0x0002
+test.idx(0).v  -> read: 0x0061, write: @address 0x0002
+test.idx(1).v  -> read: 0xabcd, write: @address 0x0004
+test.idx(0).a  -> read: 0x0002, write: imposible as you cannot write to indexed address calculated in CPU register!!
+test.idx(1).a  -> read: 0x0004, write: imposible as you cannot write to indexed address calculated in CPU register!!
+ 
+----------------------------------------------------------------------------------------------------------------
+
+    Instruction set:
+
+        00 | add     regOut, regIn0, regIn1  | regOut = regIn0 + regIn1
+        01 | nand    regOut, regIn0, regIn1  | regOut = regIn0 nand regIn1
+        02 | sh      regOut, regIn0, regIn1  | regOut = (regIn1 >= 0) ? (regIn0 >>> regIn1) : (regIn0 << abs(regIn1))
+        03 | jz              regIn0, regIn1  | if (regIn1 === 0) jump to address from regIn0
+        04 | copy    regOut, regIn0          | regOut = regIn0
+        05 | imm     regOut, _constant16bit_ | regOut = _constant16bit_
+        06 | ld      regOut, regIn0          | regOut = MemoryAt[regIn0]
+        07 | st              regIn0, regIn1  | MemoryAt[regIn0] = regIn1
+
+
+    Registers:
+
+        We have 16 registers. Each can hold 16 bits of data.
+
+        reg00-11          Normal
+        reg12     regDP   DataPointer      (software)    ???? hmmmm, probably not needed as global variables could also be a frame - a root-frame!!!!
+        reg13     regFP   FramePointer     (software)
+        reg14     regSP   StackPointer     (software)
+        reg15     regPC   ProgramCounter   (hardware)
+        
+
+    How to call and return:
+    
+        ucEmu/hardware/examples/04-fibonnaci-recursion-test/recursion.js
+
+
+    How to start the program:
+
+        0x0000: imm regDP, 0x2000     ?? probably it could be replaced just by: 0x0000: imm regFP, 0x2000
+        0x0001: imm regSP, 0x3000
+        0x0002: imm regPC, 0x1000
+        0x0003: return here after running program
+                ...
+        0x1000: (first instruction of the program)
+                (program code)
+        0x1020: imm regPC, 0x0003  (return to boot loader)
+
+
+
